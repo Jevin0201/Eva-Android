@@ -1,0 +1,39 @@
+{
+  "source": "D:\\network shared\\Eva-0.1.17-Source-20261029-094504\\Eva-Source",
+  "scope": "User-owned Eva source, read-only source snapshot for Android port; not a public redistribution license grant",
+  "kernelVersion": "0.166.0",
+  "files": [
+    {
+      "path": "src/main/app-server.js",
+      "sha256": "cb604b90c927ea389a03e83c9112ac6d36180146709560709e7774ec44a8dd7b"
+    },
+    {
+      "path": "src/main/providers.js",
+      "sha256": "608b439e0d84c3cd92db5a19f0f9da3ec6b26364a9804d2dceafad1498b16978"
+    },
+    {
+      "path": "src/renderer/stream-state.js",
+      "sha256": "d38b4d24971330149dffe5aaf889cd71d8a081dead00832cb7ac448b347b88d7"
+    },
+    {
+      "path": "src/renderer/transcript-dom.js",
+      "sha256": "8d19d94c7164a59592bd570c29b81e7677fd40bcd2eb4437330f500d396a17b2"
+    },
+    {
+      "path": "src/renderer/render.js",
+      "sha256": "bbde7dd49072daa9c2ea873a768b104db1fed5709cba4aa55c6bb476af865863"
+    },
+    {
+      "path": "outputs/mobile-live/flow-view.js",
+      "sha256": "ee92ae05a88333d0f6a4ba459c0732f9a4b212f81e5ccce01d3b6f3407c1b34e"
+    },
+    {
+      "path": "outputs/mobile-live/native-message-adapter.js",
+      "sha256": "b445c21937eb257cc50351181f1c23a9bbe3c859d7ad618684511477e1cc47e5"
+    },
+    {
+      "path": "outputs/mobile-live/work-groups.cjs",
+      "sha256": "ed4b1c25ea5cf6aab228da97f3924af86156c56d69c80f7d5b5d375567aac2d3"
+    }
+  ]
+}

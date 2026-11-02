@@ -1,0 +1,5 @@
+package ai.eva.android.probe;
+import android.app.*;import android.os.*;import android.widget.*;
+public class PhoneFixtureActivity extends Activity {
+ public void onCreate(Bundle b){super.onCreate(b);LinearLayout layout=new LinearLayout(this);layout.setOrientation(1);layout.setPadding(30,120,30,30);TextView title=new TextView(this);title.setText("EVA_PHONE_FIXTURE");layout.addView(title);EditText input=new EditText(this);input.setContentDescription("fixture-input");layout.addView(input);Button button=new Button(this);button.setAllCaps(false);button.setText("fixture-click");button.setOnClickListener(v->title.setText("fixture-clicked"));layout.addView(button);LinearLayout parent=new LinearLayout(this);parent.setOnClickListener(v->title.setText("ancestor-clicked"));TextView child=new TextView(this);child.setText("fixture-child");child.setPadding(10,30,10,30);parent.addView(child);layout.addView(parent);setContentView(layout);new Handler().postDelayed(()->new Thread(()->{String result=PhoneSelfCheck.check(this);getSharedPreferences("eva-phone-check",0).edit().putString("result",result).commit();runOnUiThread(()->title.setText(result));}).start(),1000);}
+}

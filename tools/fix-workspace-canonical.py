@@ -1,0 +1,3 @@
+from pathlib import Path
+p=Path('probe/src/WorkspaceFiles.java');s=p.read_text(encoding='utf-8').replace('static File root(Context c){return new File(c.getFilesDir(),"alpine/root/eva-workspace");}', 'static File root(Context c)throws IOException{return new File(c.getFilesDir(),"alpine/root/eva-workspace").getCanonicalFile();}').replace('root(c).toPath().relativize(f.toPath())','root(c).toPath().relativize(f.getCanonicalFile().toPath())');p.write_text(s,encoding='utf-8')
+p=Path('probe/src/WorkspaceCheck.java');s=p.read_text(encoding='utf-8').replace('new File(c.getFilesDir(),"alpine"+attachment.getString("path"))','WorkspaceFiles.resolve(c,attachment.getString("path").substring("/root/eva-workspace/".length()))');p.write_text(s,encoding='utf-8')

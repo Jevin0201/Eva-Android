@@ -1,0 +1,9 @@
+{
+  "name": "eva-android",
+  "private": true,
+  "version": "0.0.27",
+  "description": "Eva Android development workspace",
+  "devDependencies": {
+    "playwright-core": "1.59.1"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "repository": "https://github.com/AAswordman/OperitTerminalCore",
+  "commit": "e4442bc6a047b6165bf59103721ad143149c620d",
+  "submodules": [],
+  "scope": "Local compatibility experiment only; exact binary build provenance unresolved",
+  "files": [
+    {
+      "file": "liboperit_loader.so",
+      "sha256": "F149774236DB1E69B36CC1E4ED3866C7094DB2EEE52DA0D4956AA63A9BB26929"
+    },
+    {
+      "file": "liboperit_proot.so",
+      "sha256": "CB40A1CED11CEE76569B4008A9E478C87883CE831152BE4EB9570763B82E580D"
+    }
+  ]
+}

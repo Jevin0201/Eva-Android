@@ -1,0 +1,9 @@
+AndroidX WebKit 1.14.0 — Copyright The Android Open Source Project.
+AndroidX Core 1.1.0, Pair and ObjectsCompat source subset — Copyright 2009, 2017 The Android Open Source Project.
+AndroidX Annotation 1.1.0 — Copyright The Android Open Source Project.
+
+These components are licensed under the Apache License, Version 2.0.
+See ANDROIDX_LICENSE.txt in the same assets directory.
+Upstream: https://android.googlesource.com/platform/frameworks/support
+Published artifacts: https://dl.google.com/dl/android/maven2/
+This development APK uses a reduced dependency set documented in research/androidx-webkit/README.md.

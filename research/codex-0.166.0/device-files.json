@@ -1,0 +1,22 @@
+[
+  {
+    "file": "bin/codex",
+    "sha256": "f2e6c980c937e734644bed1b4a9a018d3e63a0ccbe71aafc85c86a8c6e4b462a"
+  },
+  {
+    "file": "bin/codex-code-mode-host",
+    "sha256": "587436a943a59c18cabdbe83f07800d237b60ddd2e0f54d05b23d8b37a0b36f4"
+  },
+  {
+    "file": "codex-path/rg",
+    "sha256": "e36d0eb52e70696bdf1781392722e05a21bb91d3b7b762ef5ec20e5df2ec687b"
+  },
+  {
+    "file": "codex-resources/bwrap",
+    "sha256": "c547cbdc762a70ed216789ffaa4c6c0e7d2beabe32245a498f8e365a9fc8dab4"
+  },
+  {
+    "file": "codex-package.json",
+    "sha256": "3dd9299b5782eac97b6dd2d570a33478f9473fe890622e0728a947a0f9955b08"
+  }
+]

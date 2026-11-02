@@ -1,0 +1,53 @@
+[
+  {
+    "name": "markdown-it",
+    "version": "14.3.3",
+    "license": "MIT",
+    "dependencies": {
+      "argparse": "^2.0.1",
+      "entities": "^4.5.0",
+      "linkify-it": "^5.0.2",
+      "mdurl": "^2.0.0",
+      "punycode.js": "^2.3.1",
+      "uc.micro": "^2.1.0"
+    }
+  },
+  {
+    "name": "argparse",
+    "version": "2.0.1",
+    "license": "Python-2.0",
+    "dependencies": {}
+  },
+  {
+    "name": "entities",
+    "version": "4.5.0",
+    "license": "BSD-2-Clause",
+    "dependencies": {}
+  },
+  {
+    "name": "linkify-it",
+    "version": "5.0.2",
+    "license": "MIT",
+    "dependencies": {
+      "uc.micro": "^2.0.0"
+    }
+  },
+  {
+    "name": "uc.micro",
+    "version": "2.1.0",
+    "license": "MIT",
+    "dependencies": {}
+  },
+  {
+    "name": "mdurl",
+    "version": "2.1.0",
+    "license": "MIT",
+    "dependencies": {}
+  },
+  {
+    "name": "punycode.js",
+    "version": "2.3.1",
+    "license": "MIT",
+    "dependencies": {}
+  }
+]
