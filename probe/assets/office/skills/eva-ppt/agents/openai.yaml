@@ -1,0 +1,6 @@
+interface:
+  display_name: "PPT"
+  short_description: "手机本地可编辑演示文稿与逐页渲染验收"
+  icon_small: "./assets/eva-icon.svg"
+  icon_large: "./assets/eva-icon.svg"
+  brand_color: "#EA7B39"

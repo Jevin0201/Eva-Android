@@ -35,7 +35,7 @@
   "generated": [
     {
       "path": "probe/assets/desktop-extensions.js",
-      "sha256": "279caaa23f2449af54191907079b3c8b3d67812181cbb3df2b1f3fd8e162b372"
+      "sha256": "9571b80e44605d791be8e243d142e9df20fe1da5d76500114eab77fb6f58d87b"
     },
     {
       "path": "probe/assets/desktop-authoring.cjs",

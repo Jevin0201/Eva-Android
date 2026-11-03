@@ -26,7 +26,7 @@ public class MainActivity extends Activity {
         File tmp = new File(getFilesDir(), "tmp"); tmp.mkdirs();
         builder.environment().put("PROOT_TMP_DIR", tmp.getAbsolutePath());
         builder.environment().put("PROOT_LOADER", getApplicationInfo().nativeLibraryDir + "/liboperit_loader.so");
-        Process p = builder.start();
+        Process p = LinuxRuntime.start(this,builder);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Thread reader = new Thread(() -> {
             try { byte[] b = new byte[4096]; int n;

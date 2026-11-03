@@ -23,7 +23,8 @@ final class KernelModelCatalog {
    // V2 direct collaboration messages require encrypted_function_args metadata.
    // DeepSeek emits ordinary function arguments; V1 delivers the actual task as user input.
    m.put("multi_agent_version","v1").put("auto_review_model_override",m.getString("slug"));
-   m.remove("base_instructions");m.put("tool_mode","direct").put("experimental_supported_tools",new JSONArray()).put("supports_parallel_tool_calls",false).put("input_modalities",new JSONArray().put("text")).put("supports_image_detail_original",false);result.put(m);
+   // Preserve the official DeepSeek manifest modalities, including Flash image input.
+   m.remove("base_instructions");m.put("tool_mode","direct").put("experimental_supported_tools",new JSONArray()).put("supports_parallel_tool_calls",false);result.put(m);
   }
   File target=new File(root,"root/.eva-codex/android-models.json"),tmp=new File(target.getPath()+".tmp");
   try(FileOutputStream out=new FileOutputStream(tmp)){out.write(new JSONObject().put("models",result).toString().getBytes("UTF-8"));out.getFD().sync();}

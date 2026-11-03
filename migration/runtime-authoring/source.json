@@ -1,0 +1,54 @@
+{
+  "path": "D:\\network shared\\Eva-0.1.17-Source-20261029-094504\\Eva-Source\\src\\renderer\\assets\\builtin-plugins\\ppt.svg",
+  "sha256": "ba517903ac82f5b4e6bfc122796e0cef982aed24ca172c696d2f72ee0c6ec2e0",
+  "scope": "Desktop source read-only; only the existing Eva-owned PPT SVG artwork is copied. Python and Java adapters are project-owned.",
+  "references": [
+    "https://github.com/termux/proot/blob/master/src/extension/link2symlink/link2symlink.c",
+    "https://github.com/termux/proot/issues/175",
+    "https://docs.libreoffice.org/vcl/html/salplug_8cxx_source.html",
+    "https://api-docs.deepseek.com/guides/vision/",
+    "https://api-docs.deepseek.com/quick_start/agent_integrations/codex/"
+  ],
+  "assets": [
+    {
+      "path": "probe/assets/office/eva-capabilities.py",
+      "sha256": "613baa19aaf69953a44fc13e7061f224bd377b0ab1cfb3cbe45a5582f61b88ed"
+    },
+    {
+      "path": "probe/assets/office/eva-office.py",
+      "sha256": "964c020c5c26d64a31b96fcfb4a4081caf4412ebd1204d891ec09c9e7172faca"
+    },
+    {
+      "path": "probe/assets/office/eva-presentations.py",
+      "sha256": "45747604444cdf193a2b62ebf5e08d97066f850f76b99f3f256721ad92817ed3"
+    },
+    {
+      "path": "probe/assets/office/eva-render.py",
+      "sha256": "e27c3ffe52ac562ddf4d8828d7979d9358a821043f69971b56d7bb1aa7c2064b"
+    },
+    {
+      "path": "probe/assets/office/skills/eva-capabilities/SKILL.md",
+      "sha256": "87a6d3e022a79d58eb821a249d88db138bfb36ac6a37f7071e15066d95f87768"
+    },
+    {
+      "path": "probe/assets/office/skills/eva-ppt/SKILL.md",
+      "sha256": "88b439da9d4cd7abb6f01b1477b1eace7b5d0018b45928d1a0ea7e189c9357ef"
+    },
+    {
+      "path": "probe/assets/office/skills/eva-ppt/agents/openai.yaml",
+      "sha256": "216b58a95b2a70f773f8e1fcd7b67e35a4383dcf1b701707f98891f35c9c2429"
+    },
+    {
+      "path": "probe/assets/office/skills/eva-ppt/assets/eva-icon.svg",
+      "sha256": "ba517903ac82f5b4e6bfc122796e0cef982aed24ca172c696d2f72ee0c6ec2e0"
+    },
+    {
+      "path": "probe/assets/office/skills/eva-ppt/references/design.md",
+      "sha256": "aacdc9744a4248f43bb23539249a324680ad4184c60456fcfd6b7dedd6588d65"
+    },
+    {
+      "path": "probe/assets/office/skills/eva-ppt/references/template-example.json",
+      "sha256": "c7dbc85b622f16ad79b3cae01248146147efd7819056f0e464a3f7bef99642c8"
+    }
+  ]
+}

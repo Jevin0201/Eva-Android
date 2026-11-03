@@ -1,7 +1,7 @@
 """Eva Android office runtime. Self-authored adapter; cloud models execute locally.
 All outputs are new workspace files. No desktop process or credentials are used.
 """
-import argparse, fcntl, hashlib, importlib, importlib.metadata, json, os, pathlib, shutil, subprocess, sys, tempfile, time, urllib.request, zipfile
+import argparse, runpy, fcntl, hashlib, importlib, importlib.metadata, json, os, pathlib, shutil, subprocess, sys, tempfile, time, urllib.request, zipfile
 BASE = pathlib.Path('/root/.eva-office')
 LIB = BASE / 'lib'
 WORKSPACE = pathlib.Path('/root/eva-workspace')
@@ -26,7 +26,7 @@ def status():
    except importlib.metadata.PackageNotFoundError: version=getattr(m,'__version__','installed')
    result[mod]={'ready':True,'version':version}
   except Exception as e: result[mod]={'ready':False,'error':str(e)}
- return {'ready':all(v['ready'] for v in result.values()) and FONT.is_file(),'modules':result,'chineseFont':FONT.is_file(),'entry':'python3 /root/eva-office.py','limitations':['不包含 Office 排版渲染引擎','Excel 公式保留但不会自动重算','不执行宏']}
+ return {'ready':all(v['ready'] for v in result.values()) and FONT.is_file(),'modules':result,'chineseFont':FONT.is_file(),'entry':'python3 /root/eva-office.py','rendererEntry':'python3 /root/.eva-office/eva-render.py status','limitations':['基础库状态与渲染引擎分别检查','基础 Excel 写入器保留公式但不会自动重算','不执行宏']}
 
 def install():
  BASE.mkdir(parents=True,exist_ok=True)
@@ -217,11 +217,29 @@ def selftest():
 def schema():
  return {'create':{'word':{'title':'Document title','paragraphs':['Plain text',{'text':'Heading','heading':1},{'text':'Bold text','bold':True}],'tables':[{'rows':[['Name','Count'],['Example',2]]}]},'excel':{'sheets':[{'name':'Sheet1','rows':[['Name','Count'],['Example',2]],'cells':{'B3':{'formula':'SUM(B2:B2)'}},'header':True}]},'ppt':{'slides':[{'title':'Slide title','body':['First point','Second point'],'images':[]}]},'pdf':{'title':'Document title','paragraphs':['Text with Chinese supported.']}},'usage':'python3 /root/eva-office.py create word|excel|ppt|pdf --input /root/eva-workspace/content.json --output /root/eva-workspace/new-file.ext','read':'python3 /root/eva-office.py inspect --input /root/eva-workspace/file.ext','scope':['New outputs only; existing files are never overwritten','DOCX/PPTX/XLSX structure and content, not pixel-identical Office rendering','XLSX formula strings retained, not recalculated','No macros or embedded scripts executed','PPT images require workspace path and optional x/y/w/h in inches']}
 
+def renderer_selftest():
+ CANCEL.unlink(missing_ok=True)
+ folder=WORKSPACE/'office-render-checks'/str(time.time_ns());folder.mkdir(parents=True)
+ example=pathlib.Path('/root/.eva-codex/skills/eva-ppt/references/template-example.json')
+ deck=folder/'editable.pptx'
+ generator=runpy.run_path(str(BASE/'eva-presentations.py'))
+ renderer=runpy.run_path(str(BASE/'eva-render.py'))
+ generator['create'](json.loads(example.read_text(encoding='utf-8')),str(deck))
+ preview=renderer['render'](str(deck),str(folder/'preview'),4,True)
+ if preview['possibleBlankPages']:raise RuntimeError('验收发现意外空白页')
+ result={'passed':True,'directory':str(folder),'renderedPages':preview['pageCount'],'editable':True,'report':str(folder/'preview/render-report.json'),'scope':'本地可编辑模板、图表、表格和讲师备注生成，PDF与全部页面渲染；仍需逐页目视检查'}
+ (folder/'result.json').write_text(json.dumps(result,ensure_ascii=False,indent=2),encoding='utf-8')
+ return result
+
 def main():
  parser=argparse.ArgumentParser(description='Eva 手机办公文档工具')
- parser.add_argument('action',choices=['status','install','selftest','create','inspect','schema']);parser.add_argument('kind',nargs='?');parser.add_argument('--input');parser.add_argument('--output')
+ parser.add_argument('action',choices=['status','install','selftest','create','inspect','schema','render-status','render-install','render-selftest','runtime-status']);parser.add_argument('kind',nargs='?');parser.add_argument('--input');parser.add_argument('--output')
  a=parser.parse_args()
- if a.action=='schema':result=schema()
+ if a.action=='render-status':result=runpy.run_path(str(BASE/'eva-render.py'))['status']()
+ elif a.action=='render-install':result=runpy.run_path('/root/.eva-runtime/eva-capabilities.py')['install']('office-render')
+ elif a.action=='runtime-status':result=runpy.run_path('/root/.eva-runtime/eva-capabilities.py')['preflight']()
+ elif a.action=='render-selftest':result=renderer_selftest()
+ elif a.action=='schema':result=schema()
  elif a.action=='status':result=status()
  elif a.action=='install':result=install()
  elif a.action=='selftest':CANCEL.unlink(missing_ok=True);result=selftest()

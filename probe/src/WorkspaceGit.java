@@ -19,7 +19,7 @@ final class WorkspaceGit {
   builder.environment().put("PROOT_LOADER",lib+"/liboperit_loader.so");builder.environment().put("PROOT_TMP_DIR",new File(files,"tmp").getAbsolutePath());builder.environment().put("PATH","/usr/bin:/bin");
   File output=File.createTempFile("git-result-",".json",context.getCacheDir()),errors=File.createTempFile("git-error-",".txt",context.getCacheDir());
   try {
-   builder.redirectOutput(output);builder.redirectError(errors);Process process=builder.start();
+   builder.redirectOutput(output);builder.redirectError(errors);Process process=LinuxRuntime.start(context,builder);
    if(!process.waitFor(35,TimeUnit.SECONDS)){process.destroyForcibly();throw new IOException("Git 超时，请刷新检查状态，勿重复提交");}
    if(process.exitValue()!=0||output.length()>2097152)throw new IOException("Git 运行环境不可用或结果过大");
    JSONObject envelope=new JSONObject(new String(Files.readAllBytes(output.toPath()),"UTF-8"));

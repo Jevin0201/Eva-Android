@@ -28,7 +28,7 @@ public class TerminalActivity extends ToolPageActivity {
             String lib=getApplicationInfo().nativeLibraryDir;
             ProcessBuilder pb=new ProcessBuilder(lib+"/liboperit_proot.so","-0","-r",new File(getFilesDir(),"alpine").getAbsolutePath(),"-b","/dev","-b","/proc","-w","/root/eva-workspace","/usr/bin/python3","/root/eva-command.py",text,"/root/cancel-"+id,String.valueOf(getSharedPreferences("eva-settings",MODE_PRIVATE).getInt("commandTimeout",120)));
             pb.environment().put("PROOT_LOADER",lib+"/liboperit_loader.so");pb.environment().put("PROOT_TMP_DIR",new File(getFilesDir(),"tmp").getAbsolutePath());pb.environment().put("PATH","/usr/bin:/bin:/usr/sbin:/sbin");pb.redirectErrorStream(true);
-            Process p=pb.start();StringBuilder result=new StringBuilder();String finalState="unknown";long lastPaint=0;
+            Process p=LinuxRuntime.start(this,pb);StringBuilder result=new StringBuilder();String finalState="unknown";long lastPaint=0;
             try(BufferedReader reader=new BufferedReader(new InputStreamReader(p.getInputStream(),"UTF-8"))){String line;while((line=reader.readLine())!=null){
                 try{org.json.JSONObject event=new org.json.JSONObject(line);String type=event.optString("type");
                     if(type.equals("output")){String chunk=event.optString("text");int remaining=150000-result.length();if(remaining>0)result.append(chunk.substring(0,Math.min(remaining,chunk.length())));if(System.currentTimeMillis()-lastPaint>100){lastPaint=System.currentTimeMillis();String update=result.toString();runOnUiThread(()->output.setText(update));}}

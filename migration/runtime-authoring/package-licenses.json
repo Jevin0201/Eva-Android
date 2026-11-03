@@ -1,0 +1,122 @@
+[
+  {
+    "name": "chromium",
+    "version": "142.0.7444.59-r0",
+    "license": "BSD-3-Clause",
+    "source": "https://www.chromium.org/Home",
+    "origin": "chromium",
+    "checksum": "Q18/nDiekTFgYDI+memuR+9o/UWeM="
+  },
+  {
+    "name": "coreutils",
+    "version": "9.7-r1",
+    "license": "GPL-3.0-or-later",
+    "source": "https://www.gnu.org/software/coreutils/",
+    "origin": "coreutils",
+    "checksum": "Q1o4YvVXqGZNS408w6Zc1mlhyy9JY="
+  },
+  {
+    "name": "file",
+    "version": "5.46-r2",
+    "license": "BSD-2-Clause",
+    "source": "https://www.darwinsys.com/file/",
+    "origin": "file",
+    "checksum": "Q1qOI58SXPfgiC4xqQqfH0vuMzOdE="
+  },
+  {
+    "name": "findutils",
+    "version": "4.10.0-r0",
+    "license": "GPL-3.0-or-later",
+    "source": "https://www.gnu.org/software/findutils/",
+    "origin": "findutils",
+    "checksum": "Q1sgkcoBVPHo3MvWL7Kjy7aWvy7WQ="
+  },
+  {
+    "name": "font-noto-cjk",
+    "version": "0_git20220127-r1",
+    "license": "OFL-1.1",
+    "source": "https://github.com/notofonts/noto-fonts",
+    "origin": "font-noto-cjk",
+    "checksum": "Q1qDwOIIjJPTOc4+NiKLFEADmsx+g="
+  },
+  {
+    "name": "jq",
+    "version": "1.8.2-r0",
+    "license": "MIT",
+    "source": "https://jqlang.github.io/jq/",
+    "origin": "jq",
+    "checksum": "Q1qrhch+c0d7LCMWwwznGnQxlzLH8="
+  },
+  {
+    "name": "libreoffice-calc",
+    "version": "25.2.5.2-r0",
+    "license": "MPL-2.0",
+    "source": "https://www.libreoffice.org/",
+    "origin": "libreoffice",
+    "checksum": "Q1REQrWiYh3bhKebfZ8W0ZhZqIcUk="
+  },
+  {
+    "name": "libreoffice-common",
+    "version": "25.2.5.2-r0",
+    "license": "MPL-2.0",
+    "source": "https://www.libreoffice.org/",
+    "origin": "libreoffice",
+    "checksum": "Q1/kdhZ2hyNmbbgbBtAvmd06O4kfE="
+  },
+  {
+    "name": "libreoffice-draw",
+    "version": "25.2.5.2-r0",
+    "license": "MPL-2.0",
+    "source": "https://www.libreoffice.org/",
+    "origin": "libreoffice",
+    "checksum": "Q1pjBORMUrMK1l4x5b+5ch0xvEVLg="
+  },
+  {
+    "name": "libreoffice-impress",
+    "version": "25.2.5.2-r0",
+    "license": "MPL-2.0",
+    "source": "https://www.libreoffice.org/",
+    "origin": "libreoffice",
+    "checksum": "Q1oLzCVyAIawG3g90PYS6Une7sc04="
+  },
+  {
+    "name": "libreoffice-writer",
+    "version": "25.2.5.2-r0",
+    "license": "MPL-2.0",
+    "source": "https://www.libreoffice.org/",
+    "origin": "libreoffice",
+    "checksum": "Q1/0XvHDD5a9WpywbimusZcprolJo="
+  },
+  {
+    "name": "poppler-utils",
+    "version": "25.04.0-r0",
+    "license": "GPL-2.0-or-later",
+    "source": "https://poppler.freedesktop.org/",
+    "origin": "poppler",
+    "checksum": "Q1qL1zcqUH8JfQ4Y+ZnBQULM7/iaU="
+  },
+  {
+    "name": "ripgrep",
+    "version": "14.1.1-r0",
+    "license": "MIT OR Unlicense",
+    "source": "https://github.com/BurntSushi/ripgrep",
+    "origin": "ripgrep",
+    "checksum": "Q1iB5DqbEzRu+bEC31J++uqjDpeO4="
+  },
+  {
+    "name": "unzip",
+    "version": "6.0-r15",
+    "license": "custom",
+    "source": "http://www.info-zip.org/UnZip.html",
+    "origin": "unzip",
+    "checksum": "Q1oEExAr9wyd/I8emzxn4unpIo4A8="
+  },
+  {
+    "name": "zip",
+    "version": "3.0-r13",
+    "license": "Info-ZIP",
+    "source": "http://www.info-zip.org/pub/infozip/Zip.html",
+    "origin": "zip",
+    "checksum": "Q12YGkjWXhBZ2o8Fz1oPaQWktyyfU="
+  }
+]
