@@ -1,0 +1,6 @@
+# Keep retained desktop bytes and generated provenance hashes stable on Windows.
+migration/desktop-extensions/** -text whitespace=cr-at-eol,-blank-at-eof
+probe/assets/desktop-extensions.js -text whitespace=cr-at-eol
+probe/assets/desktop-extensions.css -text whitespace=cr-at-eol
+probe/assets/desktop-authoring.cjs -text whitespace=cr-at-eol
+probe/assets/native-plugin-add/** -text -whitespace

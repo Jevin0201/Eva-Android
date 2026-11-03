@@ -1,0 +1,12 @@
+// Exact shipped function bodies; declared imports are an explicit host boundary.
+export function bindOriginalComponent(deps={}) {
+const {__vite__mapDeps,e,t,n,r,i,a,o,s,c,u}=deps;
+function d(e){return/\.(zip|tar\.gz|tgz)$/i.test(e.name)?e.size>104857600?`size`:null:`type`}
+async function f(e,t,n){return(await p(e,t,n))?.can_refresh_from_source===!1}
+async function p(e,t,n){let r;do{let i=await o.safeGet(`/ps/plugins/workspace/created`,{surface:`plugin_management`,additionalHeaders:{"ChatGPT-Account-Id":t},parameters:{query:{limit:100,pageToken:r}},signal:n,expectedErrorStatuses:[403,404]}),a=i.plugins.find(({id:t})=>t===e);if(a!=null)return a;r=i.pagination.next_page_token??void 0}while(r!=null);return null}
+async function m(e,t,n){let r=await g(t,n,e);await o.safePost(`/public/plugins/workspace/{plugin_id}`,{surface:`plugin_management`,additionalHeaders:{"ChatGPT-Account-Id":t},parameters:{path:{plugin_id:e}},requestBody:r,expectedErrorStatuses:[400,403,409,422]})}
+async function h(e,t){let n=await g(e,t);return(await o.safePost(`/public/plugins/workspace`,{surface:`plugin_management`,additionalHeaders:{"ChatGPT-Account-Id":e},requestBody:n,expectedErrorStatuses:[400,403,409,422]})).plugin_id}
+async function g(e,t,r){if(d(t)!=null)throw Error(`Invalid plugin archive`);let{uploadChatGptFileBytes:i}=await n(async()=>{let{uploadChatGptFileBytes:e}=await import(`./chatgpt-file-upload-502fb0ac54f8.js`);return{uploadChatGptFileBytes:e}},__vite__mapDeps([0,1,2,3,4,5]),import.meta.url),a=t.name.toLowerCase().endsWith(`.zip`)?`application/zip`:`application/gzip`;for(let n=0;n<2;n+=1){let s=await o.safePost(`/public/plugins/workspace/upload-url`,{surface:`plugin_management`,additionalHeaders:{"ChatGPT-Account-Id":e},requestBody:{filename:t.name,mime_type:a,size_bytes:t.size,...r==null?{}:{plugin_id:r}},expectedErrorStatuses:[400,403,409,413,422]});if(!s.etag)throw Error(`Plugin upload session is missing an etag`);try{await i(void 0,{fileId:s.file_id,file:t,fileName:t.name,contentType:a,uploadUrl:s.upload_url})}catch(e){if(n===0&&e instanceof u&&e.status===403)continue;throw e}return{file_id:s.file_id,etag:s.etag}}throw Error(`Plugin upload failed`)}
+async function _(e,t){let n=await s.getInstance().fetch(`/ps/plugins/${encodeURIComponent(e)}/archive`,{headers:{"ChatGPT-Account-Id":t,[r]:`plugin_management`}});c(await n.blob(),`plugin.zip`)}
+return {d,f,p,m,h,g,_};
+}

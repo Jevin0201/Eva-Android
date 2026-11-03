@@ -1,0 +1,1 @@
+const {chromium}=require('playwright-core');(async()=>{const b=await chromium.connectOverCDP('http://127.0.0.1:9223');try{const p=b.contexts()[0].pages().find(p=>p.url().includes('eva.invalid'));console.log(await p.evaluate(()=>({sending:kernelBusy,running:data.chats.concat(data.drafts).filter(c=>c.running).length,pendingRpc:kernelPending.size})));}finally{await b.close()}})();

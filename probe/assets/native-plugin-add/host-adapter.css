@@ -1,0 +1,12 @@
+/* EVA runtime adapter, NOT shipped Codex CSS: the retained hosted form uses raw
+   native radio/select controls, while shipped preflight removes their appearance.
+   Restore browser indicators only; no replacement icons, geometry or layout.
+   See analysis/plugin-add-20261028/form-appearance-source-audit.json. */
+.eva-native-plugin-add [role="dialog"]:has(input[name="mcp-connection"]) input[type="radio"],
+.eva-native-plugin-add [role="dialog"]:has(input[name="mcp-connection"]) select {
+  appearance: auto;
+}
+
+/* The scoped stylesheet needs theme switches on the portal scope root itself. */
+.eva-native-plugin-add[data-theme="light"]{--lightningcss-light:initial;--lightningcss-dark: ;color-scheme:light}
+.eva-native-plugin-add[data-theme="dark"]{--lightningcss-light: ;--lightningcss-dark:initial;color-scheme:dark}

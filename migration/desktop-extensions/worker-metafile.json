@@ -1,0 +1,464 @@
+{
+  "inputs": {
+    "migration/desktop-extensions/zip-reader.cjs": {
+      "bytes": 2678,
+      "imports": [
+        {
+          "path": "node:fs",
+          "kind": "require-call",
+          "external": true
+        },
+        {
+          "path": "node:zlib",
+          "kind": "require-call",
+          "external": true
+        },
+        {
+          "path": "node:stream",
+          "kind": "require-call",
+          "external": true
+        }
+      ],
+      "format": "cjs"
+    },
+    "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/events-universal/default.js": {
+      "bytes": 35,
+      "imports": [
+        {
+          "path": "events",
+          "kind": "require-call",
+          "external": true
+        }
+      ],
+      "format": "cjs"
+    },
+    "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/fast-fifo/fixed-size.js": {
+      "bytes": 875,
+      "imports": [],
+      "format": "cjs"
+    },
+    "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/fast-fifo/index.js": {
+      "bytes": 972,
+      "imports": [
+        {
+          "path": "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/fast-fifo/fixed-size.js",
+          "kind": "require-call",
+          "original": "./fixed-size"
+        }
+      ],
+      "format": "cjs"
+    },
+    "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/b4a/index.js": {
+      "bytes": 4157,
+      "imports": [],
+      "format": "cjs"
+    },
+    "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/text-decoder/lib/pass-through-decoder.js": {
+      "bytes": 269,
+      "imports": [
+        {
+          "path": "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/b4a/index.js",
+          "kind": "require-call",
+          "original": "b4a"
+        }
+      ],
+      "format": "cjs"
+    },
+    "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/text-decoder/lib/utf8-decoder.js": {
+      "bytes": 4429,
+      "imports": [
+        {
+          "path": "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/b4a/index.js",
+          "kind": "require-call",
+          "original": "b4a"
+        }
+      ],
+      "format": "cjs"
+    },
+    "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/text-decoder/index.js": {
+      "bytes": 1371,
+      "imports": [
+        {
+          "path": "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/text-decoder/lib/pass-through-decoder.js",
+          "kind": "require-call",
+          "original": "./lib/pass-through-decoder"
+        },
+        {
+          "path": "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/text-decoder/lib/utf8-decoder.js",
+          "kind": "require-call",
+          "original": "./lib/utf8-decoder"
+        }
+      ],
+      "format": "cjs"
+    },
+    "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/streamx/lib/errors.js": {
+      "bytes": 1096,
+      "imports": [],
+      "format": "cjs"
+    },
+    "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/streamx/index.js": {
+      "bytes": 34248,
+      "imports": [
+        {
+          "path": "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/events-universal/default.js",
+          "kind": "require-call",
+          "original": "events-universal"
+        },
+        {
+          "path": "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/fast-fifo/index.js",
+          "kind": "require-call",
+          "original": "fast-fifo"
+        },
+        {
+          "path": "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/text-decoder/index.js",
+          "kind": "require-call",
+          "original": "text-decoder"
+        },
+        {
+          "path": "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/streamx/lib/errors.js",
+          "kind": "require-call",
+          "original": "./lib/errors.js"
+        }
+      ],
+      "format": "cjs"
+    },
+    "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/tar-stream/headers.js": {
+      "bytes": 8621,
+      "imports": [
+        {
+          "path": "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/b4a/index.js",
+          "kind": "require-call",
+          "original": "b4a"
+        }
+      ],
+      "format": "cjs"
+    },
+    "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/tar-stream/extract.js": {
+      "bytes": 9595,
+      "imports": [
+        {
+          "path": "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/streamx/index.js",
+          "kind": "require-call",
+          "original": "streamx"
+        },
+        {
+          "path": "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/fast-fifo/index.js",
+          "kind": "require-call",
+          "original": "fast-fifo"
+        },
+        {
+          "path": "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/b4a/index.js",
+          "kind": "require-call",
+          "original": "b4a"
+        },
+        {
+          "path": "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/tar-stream/headers.js",
+          "kind": "require-call",
+          "original": "./headers"
+        }
+      ],
+      "format": "cjs"
+    },
+    "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/tar-stream/constants.js": {
+      "bytes": 258,
+      "imports": [
+        {
+          "path": "fs",
+          "kind": "require-call",
+          "external": true
+        }
+      ],
+      "format": "cjs"
+    },
+    "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/tar-stream/pack.js": {
+      "bytes": 6291,
+      "imports": [
+        {
+          "path": "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/streamx/index.js",
+          "kind": "require-call",
+          "original": "streamx"
+        },
+        {
+          "path": "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/b4a/index.js",
+          "kind": "require-call",
+          "original": "b4a"
+        },
+        {
+          "path": "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/tar-stream/constants.js",
+          "kind": "require-call",
+          "original": "./constants"
+        },
+        {
+          "path": "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/tar-stream/headers.js",
+          "kind": "require-call",
+          "original": "./headers"
+        }
+      ],
+      "format": "cjs"
+    },
+    "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/tar-stream/index.js": {
+      "bytes": 72,
+      "imports": [
+        {
+          "path": "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/tar-stream/extract.js",
+          "kind": "require-call",
+          "original": "./extract"
+        },
+        {
+          "path": "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/tar-stream/pack.js",
+          "kind": "require-call",
+          "original": "./pack"
+        }
+      ],
+      "format": "cjs"
+    },
+    "migration/desktop-extensions/src/renderer/native-plugin-add/original-hosted-service.mjs": {
+      "bytes": 8249,
+      "imports": [],
+      "format": "esm"
+    },
+    "migration/desktop-extensions/src/renderer/native-plugin-add/original-archive-service.mjs": {
+      "bytes": 2401,
+      "imports": [
+        {
+          "path": "./chatgpt-file-upload-502fb0ac54f8.js",
+          "kind": "dynamic-import",
+          "external": true
+        }
+      ],
+      "format": "esm"
+    },
+    "migration/desktop-extensions/src/renderer/native-plugin-add/original-marketplace-service.mjs": {
+      "bytes": 677,
+      "imports": [],
+      "format": "esm"
+    },
+    "migration/desktop-extensions/src/renderer/native-plugin-add/service-adapter.mjs": {
+      "bytes": 2035,
+      "imports": [
+        {
+          "path": "migration/desktop-extensions/src/renderer/native-plugin-add/original-hosted-service.mjs",
+          "kind": "import-statement",
+          "original": "./original-hosted-service.mjs"
+        },
+        {
+          "path": "migration/desktop-extensions/src/renderer/native-plugin-add/original-archive-service.mjs",
+          "kind": "import-statement",
+          "original": "./original-archive-service.mjs"
+        },
+        {
+          "path": "migration/desktop-extensions/src/renderer/native-plugin-add/original-marketplace-service.mjs",
+          "kind": "import-statement",
+          "original": "./original-marketplace-service.mjs"
+        }
+      ],
+      "format": "esm"
+    },
+    "migration/desktop-extensions/src/main/local-plugin-authoring.js": {
+      "bytes": 13948,
+      "imports": [
+        {
+          "path": "node:fs",
+          "kind": "require-call",
+          "external": true
+        },
+        {
+          "path": "node:path",
+          "kind": "require-call",
+          "external": true
+        },
+        {
+          "path": "node:crypto",
+          "kind": "require-call",
+          "external": true
+        },
+        {
+          "path": "node:zlib",
+          "kind": "require-call",
+          "external": true
+        },
+        {
+          "path": "node:stream/promises",
+          "kind": "require-call",
+          "external": true
+        },
+        {
+          "path": "node:stream",
+          "kind": "require-call",
+          "external": true
+        },
+        {
+          "path": "migration/desktop-extensions/zip-reader.cjs",
+          "kind": "require-call",
+          "original": "unzipper"
+        },
+        {
+          "path": "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/tar-stream/index.js",
+          "kind": "require-call",
+          "original": "tar-stream"
+        },
+        {
+          "path": "migration/desktop-extensions/src/renderer/native-plugin-add/service-adapter.mjs",
+          "kind": "dynamic-import",
+          "original": "../renderer/native-plugin-add/service-adapter.mjs"
+        }
+      ],
+      "format": "cjs"
+    },
+    "migration/desktop-extensions/authoring-worker.cjs": {
+      "bytes": 1132,
+      "imports": [
+        {
+          "path": "node:readline",
+          "kind": "require-call",
+          "external": true
+        },
+        {
+          "path": "migration/desktop-extensions/src/main/local-plugin-authoring.js",
+          "kind": "require-call",
+          "original": "./src/main/local-plugin-authoring.js"
+        }
+      ],
+      "format": "cjs"
+    }
+  },
+  "outputs": {
+    "probe/assets/desktop-authoring.cjs": {
+      "imports": [
+        {
+          "path": "node:fs",
+          "kind": "require-call",
+          "external": true
+        },
+        {
+          "path": "node:zlib",
+          "kind": "require-call",
+          "external": true
+        },
+        {
+          "path": "node:stream",
+          "kind": "require-call",
+          "external": true
+        },
+        {
+          "path": "events",
+          "kind": "require-call",
+          "external": true
+        },
+        {
+          "path": "fs",
+          "kind": "require-call",
+          "external": true
+        },
+        {
+          "path": "./chatgpt-file-upload-502fb0ac54f8.js",
+          "kind": "dynamic-import",
+          "external": true
+        },
+        {
+          "path": "node:fs",
+          "kind": "require-call",
+          "external": true
+        },
+        {
+          "path": "node:path",
+          "kind": "require-call",
+          "external": true
+        },
+        {
+          "path": "node:crypto",
+          "kind": "require-call",
+          "external": true
+        },
+        {
+          "path": "node:zlib",
+          "kind": "require-call",
+          "external": true
+        },
+        {
+          "path": "node:stream/promises",
+          "kind": "require-call",
+          "external": true
+        },
+        {
+          "path": "node:stream",
+          "kind": "require-call",
+          "external": true
+        },
+        {
+          "path": "node:readline",
+          "kind": "require-call",
+          "external": true
+        }
+      ],
+      "exports": [],
+      "entryPoint": "migration/desktop-extensions/authoring-worker.cjs",
+      "inputs": {
+        "migration/desktop-extensions/zip-reader.cjs": {
+          "bytesInOutput": 3811
+        },
+        "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/events-universal/default.js": {
+          "bytesInOutput": 198
+        },
+        "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/fast-fifo/fixed-size.js": {
+          "bytesInOutput": 1154
+        },
+        "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/fast-fifo/index.js": {
+          "bytesInOutput": 1289
+        },
+        "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/b4a/index.js": {
+          "bytesInOutput": 4920
+        },
+        "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/text-decoder/lib/pass-through-decoder.js": {
+          "bytesInOutput": 512
+        },
+        "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/text-decoder/lib/utf8-decoder.js": {
+          "bytesInOutput": 5092
+        },
+        "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/text-decoder/index.js": {
+          "bytesInOutput": 1748
+        },
+        "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/streamx/lib/errors.js": {
+          "bytesInOutput": 1393
+        },
+        "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/streamx/index.js": {
+          "bytesInOutput": 37270
+        },
+        "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/tar-stream/headers.js": {
+          "bytesInOutput": 8943
+        },
+        "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/tar-stream/extract.js": {
+          "bytesInOutput": 11071
+        },
+        "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/tar-stream/constants.js": {
+          "bytesInOutput": 473
+        },
+        "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/tar-stream/pack.js": {
+          "bytesInOutput": 7402
+        },
+        "../Eva-0.1.17-Source-20261029-094504/Eva-Source/node_modules/tar-stream/index.js": {
+          "bytesInOutput": 221
+        },
+        "migration/desktop-extensions/src/renderer/native-plugin-add/original-hosted-service.mjs": {
+          "bytesInOutput": 10382
+        },
+        "migration/desktop-extensions/src/renderer/native-plugin-add/original-archive-service.mjs": {
+          "bytesInOutput": 3115
+        },
+        "migration/desktop-extensions/src/renderer/native-plugin-add/original-marketplace-service.mjs": {
+          "bytesInOutput": 932
+        },
+        "migration/desktop-extensions/src/renderer/native-plugin-add/service-adapter.mjs": {
+          "bytesInOutput": 2272
+        },
+        "migration/desktop-extensions/src/main/local-plugin-authoring.js": {
+          "bytesInOutput": 18457
+        },
+        "migration/desktop-extensions/authoring-worker.cjs": {
+          "bytesInOutput": 1376
+        }
+      },
+      "bytes": 125370
+    }
+  }
+}

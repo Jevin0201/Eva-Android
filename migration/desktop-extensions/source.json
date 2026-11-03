@@ -1,0 +1,57 @@
+{
+  "sourceRoot": "D:\\network shared\\Eva-0.1.17-Source-20261029-094504\\Eva-Source",
+  "scope": "Read-only desktop source; mobile implementation stays in Eva-Android. No desktop user data or credentials copied.",
+  "files": [
+    {
+      "path": "src/renderer/customize.js",
+      "sha256": "d925f91f221fe0f6d6bc2aa783aa9e3a9bbabd97332002a2709938161acee3bd"
+    },
+    {
+      "path": "src/renderer/plugin-detail.js",
+      "sha256": "08df7b8febf9a2e748468e52916a567ba644d47a5ca45fc2b1e942ab726c42a1"
+    },
+    {
+      "path": "src/renderer/native-plugin-add-host.js",
+      "sha256": "3398149f3b9b8775869adcae45e74b72d68914fe031d0e738fd58f28bd967138"
+    },
+    {
+      "path": "src/renderer/cloud-auth.js",
+      "sha256": "b400064286d4e8a98a1cf83b798d5a42924e5a417f09863a2127ec2b02f723fd"
+    },
+    {
+      "path": "src/main/plugin-sources.js",
+      "sha256": "9c9d91b132f0a82f4b7e39ff3565773edfd91d1768b8f49e0ae2b07cc48327e9"
+    },
+    {
+      "path": "src/main/local-plugin-authoring.js",
+      "sha256": "4a6e52c54b684906467bc65abfd9542ee3b1e37199fd0ab45d3a1a3d819d947b"
+    },
+    {
+      "path": "src/main/plugin-authoring.js",
+      "sha256": "9c74f631da08533045612129d41bd96b5b7afd33898ec24788f74d8e67f32bcc"
+    }
+  ],
+  "adaptation": "Exact desktop originals retained in src/. Android head/tail supply host, navigation, media and safe SKILL frontmatter rendering; adapted renderer retains Customize/PluginDetail/AddHost with platform auth/theme/reload-label patches. LocalPluginAuthoring bundled unchanged with owned ZIP adapter and retained tar-stream. Original source files are not edited.",
+  "generated": [
+    {
+      "path": "probe/assets/desktop-extensions.js",
+      "sha256": "279caaa23f2449af54191907079b3c8b3d67812181cbb3df2b1f3fd8e162b372"
+    },
+    {
+      "path": "probe/assets/desktop-authoring.cjs",
+      "sha256": "b8b4321eac8a37c3a86202c19aa989f44cea594983d47bff56a1f2c858fe923b"
+    },
+    {
+      "path": "probe/assets/native-plugin-add/bundle.js",
+      "sha256": "e99edc3d38235c0ab77635ee81fde04fb98d66b780acfa02164198e7c3d89f98"
+    },
+    {
+      "path": "probe/assets/native-plugin-add/controls.css",
+      "sha256": "123cf7c5a8647b672aa50b9a0b556260f75608de992b2aca80973c746eb07291"
+    },
+    {
+      "path": "probe/assets/desktop-extensions.css",
+      "sha256": "fe68ce95d29dc10c3e21eade77a445a50203ce6811649d28dc49f2e7adc95c84"
+    }
+  ]
+}

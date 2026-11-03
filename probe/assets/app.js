@@ -1,6 +1,6 @@
 'use strict';
 const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const icon=n=>`<svg aria-hidden="true"><use href="#i-${n}"/></svg>`;
+const icon=n=>`<svg class="eva-ui-icon" aria-hidden="true"><use href="#i-${n}"/></svg>`;
 let data;try{data=JSON.parse(EvaHost.load())}catch{data={chats:[],draft:'',active:null}};if(!Array.isArray(data.chats))data.chats=[];
 if(!Array.isArray(data.drafts))data.drafts=[];
 // Keep unsent drafts separate from the conversation list, including older empty entries.
