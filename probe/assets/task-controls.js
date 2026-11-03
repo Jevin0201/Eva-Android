@@ -33,13 +33,13 @@
   finally{interrupting.delete(c.id);scheduleKernelSave();if(active()===c)refreshKernelControls();}
  }
  async function steer(){
-  const c=active(),turn=turnOf(c),input=$('#prompt'),text=input?.value.trim()||'',attachments=[...(c?.attachments||[])];
+  const c=active(),turn=turnOf(c),input=$('#prompt'),text=input?.value.trim()||'',attachments=[...(c?.attachments||[])],references=window.evaReferences?.selected(c)||[];
   if(!turn||(!text&&!attachments.length)||steering.has(c.id)||stopping.has(c.id))return;
   steering.add(c.id);input.value='';c.draft='';refreshKernelControls();
   try{
-   const content=[{type:'text',text:text+(attachments.length?'\n\n附件：\n'+attachments.map(a=>JSON.stringify({name:a.name,path:a.path})).join('\n'):''),text_elements:[]},...attachments.filter(a=>/^image\/(png|jpeg|webp|gif)$/.test(a.mime||'')).map(a=>({type:'localImage',path:a.path}))];
+   const referenceInput=await (window.evaReferences?.inputs(references,c)||Promise.resolve([]));const content=[{type:'text',text:text+(attachments.length?'\n\n附件：\n'+attachments.map(a=>JSON.stringify({name:a.name,path:a.path})).join('\n'):''),text_elements:[]},...attachments.filter(a=>/^image\/(png|jpeg|webp|gif)$/.test(a.mime||'')).map(a=>({type:'localImage',path:a.path})),...referenceInput];
    await kernelCall('turn/steer',{threadId:c.kernelThread.id,expectedTurnId:turn.id,clientUserMessageId:crypto.randomUUID(),input:content});
-   c.attachments=(c.attachments||[]).filter(a=>!attachments.some(sent=>sent.id===a.id));kernelNotice='引导信息已接收';
+   c.attachments=(c.attachments||[]).filter(a=>!attachments.some(sent=>sent.id===a.id));window.evaReferences?.accepted(c,references);kernelNotice='引导信息已接收';
   }catch(e){c.draft=[text,c.draft].filter(Boolean).join('\n');if(active()===c&&$('#prompt'))$('#prompt').value=c.draft;kernelNotice='引导未确认：'+e.message+'；内容已保留，请先核对执行过程，勿重复发送。';}
   finally{steering.delete(c.id);scheduleKernelSave();if(active()===c){updateKernelFlow(c);refreshKernelControls();}}
  }

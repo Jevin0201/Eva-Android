@@ -1,0 +1,9 @@
+{
+  "version": "v2.0.2",
+  "url": "https://github.com/emanuele-f/PCAPdroid/releases/download/v2.0.2/PCAPdroid_v2.0.2.apk",
+  "sha256": "eb437cbe10e2c7e332c06d7401d8f9036c3722747f541e6e231d1bd9ab6dbffc",
+  "releaseDigest": "sha256:eb437cbe10e2c7e332c06d7401d8f9036c3722747f541e6e231d1bd9ab6dbffc",
+  "bytes": 17571744,
+  "license": "GPL-3.0",
+  "integration": "external local capture engine; no PCAPdroid source embedded in Eva"
+}

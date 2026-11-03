@@ -5,6 +5,7 @@ window.mobileFlow=(()=>{
  function outputHtml(value){const text=display(value);return `<pre>${esc(text.slice(0,100000))}</pre>${text.length>100000?'<p class="preview-label">输出过长，当前展示前 100000 个字符。</p>':''}`;}
  const display=value=>typeof value==='string'?value:JSON.stringify(value,null,2);
  function item(i){
+  if(['imageGeneration','image','imageView'].includes(i.type))return ''; // Render media once outside collapsed work.
   const agent=window.mobileSubagents?.item(i);if(agent!=null)return agent;
   if(i.type==='agentMessage')return `<div class="assistant markdown" data-flow-key="${esc(i.id||'assistant')}">${prose(itemText(i))}</div>`;
   if(i.type==='reasoning')return `<div class="tool-item" data-flow-key="${esc(i.id||'reasoning')}"><strong>思考</strong>${textBlock((i.summary||[]).map(x=>typeof x==='string'?x:x.text||'').join('\n'))}</div>`;
@@ -22,6 +23,7 @@ window.mobileFlow=(()=>{
  const persistent=groups(b.persistentGroups,b.persistent,b.key+':persistent'),final=groups(b.finalGroups,b.final,b.key+':final');
  const hasWork=b.workGroups?b.workGroups.length>0:b.work.length>0;
  if(hasWork){const value={groups:b.workGroups,items:b.work,scope:b.key};processes.set(b.key,value);if(b.collapsible){const open=expanded.has(b.key)?expanded.get(b.key):b.open;out+=`<div class="mobile-turn-process"><details class="activity" data-process="${esc(b.key)}" data-disclosure="${esc(b.key)}" ${open?'open':''}><summary>${esc(b.label||'处理过程')}${icon('arrow')}</summary><div class="process-body disclosure-content">${open?body(value):''}</div></details>${persistent}</div>`}else out+=persistent+`<div class="process-live">${body(value)}</div>`}else out+=persistent;out+=`<div class="turn-final">${final}</div>`}
+ const delivered=new Set();for(const i of t.items||[]){if(!['imageGeneration','image','imageView'].includes(i.type))continue;const marker='data-generated-item="'+esc(i.id||'image')+'"';if(!out.includes(marker)&&!delivered.has(marker)){out+=window.generatedImages?.html(i)||'';delivered.add(marker)}}
  if(t.error)out+=`<p class="error">${esc(t.error.message||'执行失败')}</p>`;return out;
  }
  document.addEventListener('click',e=>{const summary=e.target.closest('details[data-disclosure]>summary');if(summary){const d=summary.parentElement;expanded.set(d.dataset.disclosure,!d.open)}});

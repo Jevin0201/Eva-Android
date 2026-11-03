@@ -20,7 +20,7 @@ const {chromium,launchOptions}=require('./browser-test-env.cjs');
   await page.evaluate(()=>{evaFlowFeedback.stage(active(),'submitting');updateKernelFlow(active());});
   assert.equal(await feedback.locator('.eva-thinking-text').evaluate(el=>el.firstChild.textContent),'正在提交任务');
   await page.evaluate(()=>kernelEvent({method:'turn/started',params:{threadId:'thread',turn:{id:'turn',status:'inProgress',items:[]}}}));
-  assert.equal(await feedback.locator('.eva-thinking-text').evaluate(el=>el.firstChild.textContent),'正在思考','accepted empty turn replaces submission feedback');
+  assert.equal(await feedback.locator('.eva-thinking-text').evaluate(el=>el.firstChild.textContent),'正在思考','accepted empty turn replaces submission feedback');const geometry=await feedback.evaluate(el=>{const base=el.querySelector('.eva-thinking-text'),sweep=el.querySelector('.eva-thinking-sweep');return {position:getComputedStyle(sweep).position,font:getComputedStyle(el).fontSize,contained:sweep.getBoundingClientRect().width<=base.getBoundingClientRect().width+1}});assert.equal(geometry.position,'absolute');assert.equal(geometry.font,'14px');assert(geometry.contained);for(const width of [320,390]){await page.setViewportSize({width,height:844});assert(await page.locator('.controls').evaluate(el=>el.scrollWidth<=el.clientWidth+1))}await page.setViewportSize({width:390,height:844});
   await page.evaluate(()=>kernelEvent({method:'item/started',params:{threadId:'thread',turnId:'turn',item:{id:'command',type:'commandExecution',command:'echo test',status:'inProgress'}}}));
   assert.equal(await feedback.count(),0,'active tool owns progress without second thinking row');
   assert.equal(await page.locator('[data-activity-state="active"]').count(),1);

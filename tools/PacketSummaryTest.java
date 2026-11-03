@@ -1,0 +1,5 @@
+package ai.eva.android.probe;
+import java.io.*;
+public final class PacketSummaryTest {
+ public static void main(String[] args)throws Exception{PacketSummary p=PacketSummary.read(new File(args[0],"fixture.pcap"));if(p.packets!=3||p.flows.size()!=3||!p.dns.contains("fixture.example"))throw new AssertionError("PCAP/DNS counts");boolean tls=false,http=false;for(PacketSummary.Flow f:p.flows.values()){tls|=f.tls&&f.sni.equals("fixture.example");http|=f.http.startsWith("GET ");}if(!tls||!http)throw new AssertionError("TLS SNI/HTTP detection");if(p.json().contains("fixture_secret"))throw new AssertionError("Leaked request body/header/path");if(!PacketSummary.read(new File(args[0],"truncated.pcap")).truncated)throw new AssertionError("Truncated tail not flagged");boolean denied=false;try{PacketSummary.read(new File(args[0],"not-pcap.bin"));}catch(IOException e){denied=true;}if(!denied)throw new AssertionError("Invalid file accepted");System.out.println("PASS PCAP framing, flow/DNS/TLS SNI extraction, no auth/path leakage, truncated and malformed capture handling");}
+}

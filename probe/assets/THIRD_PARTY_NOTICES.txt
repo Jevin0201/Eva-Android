@@ -24,3 +24,5 @@ Upstream downloads, hashes, source inspection and build dependency notes:
 research/voice/dependencies.json and docs/VOICE_0_0_29.md in the source workspace.
 No upstream source or model weights modified; assets renamed for packaging.
 Eva's keywords.txt and Android integration are project-specific additions.
+
+PCAPdroid capture engine is a separately installed external application (GPL-3.0-or-later), controlled using its documented Intent/UDP exporter API. No PCAPdroid implementation source is embedded in Eva. Source, COPYING and submodule provenance are under research/network-capture.

@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 /** Dedicated Eva browser. Remote pages never receive a native bridge. */
 public final class BrowserWindow extends Dialog {
     final ShellActivity host;final android.content.Intent intent;
-    LinearLayout root,body;int ink=0xff202124,paper=0xffFFFFFF;
+    LinearLayout root,body;int ink=EvaUi.INK,paper=0xffFFFFFF;
     static final String INPUT_METHOD_SERVICE=android.content.Context.INPUT_METHOD_SERVICE,CLIPBOARD_SERVICE=android.content.Context.CLIPBOARD_SERVICE;
     BrowserWindow(ShellActivity host,android.content.Intent intent,Bundle restoredState){super(host,host.getResources().getIdentifier("BrowserWindowTheme","style",host.getPackageName()));this.host=host;this.intent=intent;restored=restoredState;setOwnerActivity(host);setOnDismissListener(dialog->destroyBrowser());}
     static BrowserWindow open(ShellActivity host,android.content.Intent intent,Bundle restoredState){BrowserWindow b=live;if(b!=null&&b.host==host){b.show();b.windowMode(false,false);if(intent.hasExtra("initialUrl")){b.browserUrl.setText(intent.getStringExtra("initialUrl"));b.openAddress();}if(intent.getBooleanExtra("browser-check",false))b.runCheck();return b;}if(b!=null)b.dismiss();b=new BrowserWindow(host,intent,restoredState);b.show();return b;}
@@ -25,7 +25,7 @@ public final class BrowserWindow extends Dialog {
     void runOnUiThread(Runnable action){host.runOnUiThread(action);}
     int dp(int value){return (int)(value*getResources().getDisplayMetrics().density+.5f);}
     TextView label(String text,int size){TextView view=new TextView(getContext());view.setText(text);view.setTextSize(size);view.setTextColor(ink);view.setPadding(0,dp(8),0,dp(8));return view;}
-    void page(String title,String subtitle){if(getSharedPreferences("eva-settings",0).getString("theme","light").equals("dark")){ink=0xffeeeeee;paper=0xff191b1d;}root=new LinearLayout(getContext());root.setOrientation(1);root.setBackgroundColor(paper);setContentView(root);}
+    void page(String title,String subtitle){if(getSharedPreferences("eva-settings",0).getString("theme","light").equals("dark")){ink=0xffe9edf3;paper=0xff191e25;}root=new LinearLayout(getContext());root.setOrientation(1);root.setBackgroundColor(paper);setContentView(root);}
     void finish(){dismiss();}
     @Override public void show(){super.show();if(browserStage!=null)windowMode(maximized,minimized);}
 

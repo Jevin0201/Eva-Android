@@ -7,11 +7,12 @@ import android.widget.*;
 
 /** Shared native visual tokens and original vector controls. */
 public final class EvaUi {
- public static final int INK=0xff262a30,MUTED=0xff858b92,LINE=0xffe7e9ec,SOFT=0xfff5f6f8;
+ public static final int INK=0xff202832,MUTED=0xff687582,LINE=0xffe4e9ee,SOFT=0xfff3f6f8;
  public static int dp(Context c,int n){return (int)(n*c.getResources().getDisplayMetrics().density+.5f);}
  public static GradientDrawable surface(Context c,int color,int radius){GradientDrawable d=new GradientDrawable();d.setColor(color);d.setCornerRadius(dp(c,radius));return d;}
- public static void style(Button b){Context c=b.getContext();b.setAllCaps(false);b.setTextSize(14);b.setTextColor(INK);b.setStateListAnimator(null);b.setElevation(0);b.setMinHeight(dp(c,48));b.setMinimumHeight(dp(c,48));b.setBackground(new RippleDrawable(android.content.res.ColorStateList.valueOf(0xffe4e8ee),surface(c,SOFT,12),null));}
- public static View icon(Context c,String kind,String label,Runnable action){ImageView v=new ImageView(c);v.setImageDrawable(new Glyph(kind));v.setPadding(dp(c,12),dp(c,12),dp(c,12),dp(c,12));v.setLayoutParams(new LinearLayout.LayoutParams(dp(c,44),dp(c,44)));v.setContentDescription(label);v.setBackground(new RippleDrawable(android.content.res.ColorStateList.valueOf(0xffe4e8ee),surface(c,0x00ffffff,14),null));v.setOnClickListener(x->action.run());return v;}
+ public static boolean dark(Context c){return c.getSharedPreferences("eva-settings",0).getString("theme","light").equals("dark");}
+ public static void style(Button b){Context c=b.getContext();boolean dark=dark(c);LinearLayout.LayoutParams spacing=new LinearLayout.LayoutParams(-1,-2);spacing.topMargin=dp(c,4);spacing.bottomMargin=dp(c,4);b.setLayoutParams(spacing);b.setAllCaps(false);b.setTextSize(14);b.setTextColor(dark?0xffe9edf3:INK);b.setStateListAnimator(null);b.setElevation(0);b.setMinHeight(dp(c,48));b.setMinimumHeight(dp(c,48));b.setPadding(dp(c,16),dp(c,10),dp(c,16),dp(c,10));GradientDrawable bg=surface(c,dark?0xff242c36:SOFT,12);bg.setStroke(dp(c,1),dark?0xff323c48:LINE);b.setBackground(new RippleDrawable(android.content.res.ColorStateList.valueOf(dark?0xff3b4c64:0xffdfe8f7),bg,null));}
+ public static View icon(Context c,String kind,String label,Runnable action){ImageView v=new ImageView(c);v.setImageDrawable(new Glyph(kind));v.setPadding(dp(c,12),dp(c,12),dp(c,12),dp(c,12));v.setLayoutParams(new LinearLayout.LayoutParams(dp(c,44),dp(c,44)));v.setContentDescription(label);v.setFocusable(true);if(dark(c))v.setColorFilter(0xffe9edf3);v.setBackground(new RippleDrawable(android.content.res.ColorStateList.valueOf(0xffe4e8ee),surface(c,0x00ffffff,14),null));v.setOnClickListener(x->action.run());return v;}
  public static class Glyph extends Drawable {
   final String kind;final Paint p=new Paint(3);public Glyph(String k){kind=k;}
   public void draw(Canvas c){c.save();c.translate(getBounds().left,getBounds().top);c.scale(getBounds().width()/24f,getBounds().height()/24f);p.setColor(INK);p.setStrokeWidth(1.7f);p.setStyle(Paint.Style.STROKE);p.setStrokeCap(Paint.Cap.ROUND);p.setStrokeJoin(Paint.Join.ROUND);

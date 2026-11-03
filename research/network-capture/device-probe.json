@@ -1,0 +1,49 @@
+{
+  "identity": {
+    "code": 0,
+    "output": "uid=2000(shell) gid=2000(shell) groups=2000(shell),1004(input),1007(log),1011(adb),1015(sdcard_rw),1028(sdcard_r),1078(ext_data_rw),1079(ext_obb_rw),3001(net_bt_admin),3002(net_bt),3003(inet),3006(net_bw_stats),3009(readproc),3011(uhid),3012(readtracefs) context=u:r:shell:s0",
+    "error": ""
+  },
+  "captureTools": {
+    "code": 0,
+    "output": "/system/bin/ip\n/system/bin/ss",
+    "error": ""
+  },
+  "selinux": {
+    "code": 0,
+    "output": "Enforcing",
+    "error": ""
+  },
+  "proxy": {
+    "code": 0,
+    "output": "null",
+    "error": ""
+  },
+  "packages": {
+    "code": 0,
+    "output": "package:com.sankuai.meituan\npackage:moe.shizuku.privileged.api",
+    "error": ""
+  },
+  "vpnState": {
+    "timeout": true
+  },
+  "rawCaptureProbe": {
+    "executed": false,
+    "reason": "No tcpdump executable found; prior shell invocation had a syntax error and is not evidence of a kernel permission denial."
+  },
+  "capabilities": {
+    "code": 0,
+    "output": "CapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t00000000008000c0",
+    "error": ""
+  },
+  "vpnProfile": {
+    "code": 0,
+    "output": "null",
+    "error": ""
+  },
+  "debugApps": {
+    "code": 0,
+    "output": "null",
+    "error": ""
+  }
+}

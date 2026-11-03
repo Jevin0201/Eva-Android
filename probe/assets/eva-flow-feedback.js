@@ -14,7 +14,7 @@
   if(!last)return true;
   if(last.type==='agentMessage')return !itemText(last).trim();
   // Desktop groups thinking/tool progress into one activity row, not a second spinner.
-  if(last.type==='reasoning'||['commandExecution','dynamicToolCall','mcpToolCall','fileChange','webSearch','collabAgentToolCall','contextCompaction'].includes(last.type))return false;
+  if(last.type==='reasoning'||['commandExecution','dynamicToolCall','mcpToolCall','fileChange','webSearch','collabAgentToolCall','contextCompaction','imageGeneration'].includes(last.type))return false;
   return last.status!=='inProgress';
  }
  function html(c){if(!c?.running||blocked(c))return '';const turn=c.kernelThread?.turns?.findLast(t=>t.status==='inProgress'),s=submissions.get(c);let text='';

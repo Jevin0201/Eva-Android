@@ -1,0 +1,26 @@
+{
+  "source": "D:\\network shared\\Eva-0.1.17-Source-20261029-094504\\Eva-Source\\src\\renderer\\assets\\builtin-plugins",
+  "files": [
+    {
+      "path": "browser.svg",
+      "sha256": "9cf0e2f6e1f4ed25158388fdb5d65fc2b71f97ba7398051e5c1b1133d350b349"
+    },
+    {
+      "path": "excel.svg",
+      "sha256": "3d564ab3db4b4a566af1417bcca776a96e5c49bab42aac68a05fd6f9034480c6"
+    },
+    {
+      "path": "pdf.svg",
+      "sha256": "4851ece1351e5ffb0d7f73d9f3e3e2c5aa47652dc8983418dd3d3207f6327c2d"
+    },
+    {
+      "path": "ppt.svg",
+      "sha256": "ba517903ac82f5b4e6bfc122796e0cef982aed24ca172c696d2f72ee0c6ec2e0"
+    },
+    {
+      "path": "word.svg",
+      "sha256": "c4812601563c7f9c3daadca1755820a08695006b796cfd31cf367fe7af38e1fa"
+    }
+  ],
+  "scope": "Existing user-authorized Eva source assets; original SVG content retained."
+}
