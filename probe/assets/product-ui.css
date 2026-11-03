@@ -73,3 +73,58 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-vi
 .panel-content{padding:20px;line-height:1.7}
 .panel-content input,.panel-content select,.panel-content textarea{font-size:14px;min-height:44px;border-radius:10px}
 .panel-content label{line-height:1.7}
+
+/* Eva task entry: keep a single workspace, surface the tools already available. */
+.welcome{position:relative;gap:10px;padding:24px 20px 102px;background:var(--paper);overflow:auto;min-height:180px}
+.welcome .word{font-size:18px;font-weight:650;letter-spacing:-.5px;color:var(--muted);margin-bottom:4px}
+.welcome h2{font-size:27px;font-weight:650;letter-spacing:-.6px;line-height:1.45}
+.welcome p{font-size:13px;line-height:1.8;max-width:290px}
+.welcome .examples{position:absolute;bottom:12px;left:16px;right:16px;display:flex;justify-content:flex-start;flex-wrap:nowrap;gap:8px;margin:0;overflow-x:auto;padding:2px 0 6px;scrollbar-width:none}
+.welcome .examples::-webkit-scrollbar{display:none}
+.welcome .examples button{flex:none;display:inline-flex;align-items:center;gap:7px;min-height:44px;padding:10px 13px;border-radius:12px;font-size:12px;border:1px solid var(--line);background:var(--paper);white-space:nowrap}
+.welcome .examples svg{width:17px;height:17px;color:var(--ink)}
+.tree-capabilities{padding:0 4px 10px;border-bottom:1px solid var(--line);margin-bottom:8px}
+.tree-capabilities button{display:flex;align-items:center;gap:10px;width:100%;min-height:44px;padding:9px 12px;border-radius:11px;font-size:13px;text-align:left}
+.tree-capabilities button:hover{background:var(--hover)}
+.tree-capabilities span{flex:1;min-width:0}
+.tree-capabilities svg{width:19px;height:19px;flex:none}
+.tree-capabilities svg:last-child{width:15px;height:15px;color:var(--muted)}
+@media(min-width:700px){.welcome h2{font-size:32px}.welcome .examples{justify-content:center}}
+@media(max-height:600px){.welcome{justify-content:flex-start;padding-top:16px;gap:4px}.welcome h2{font-size:23px}.welcome .word{margin-bottom:0}}
+
+/* Capability discovery uses Eva's existing plugin / skill / MCP contracts. */
+.eva-extension-tabs{display:flex;gap:4px;padding:5px;background:var(--soft);border:0;border-radius:14px;margin-bottom:20px}
+.eva-extension-tabs button{flex:1;min-height:44px;padding:10px 12px;border-radius:10px;font-size:14px}
+.eva-extension-tabs [aria-current=page]{background:var(--paper);color:var(--ink);box-shadow:0 1px 4px #172b4510;font-weight:600}
+.eva-customize-intro{font-size:13px;line-height:1.8;margin-bottom:18px;max-width:38em}
+.eva-plugin-section{margin:24px 0}
+.eva-plugin-section h3{font-size:12px;color:var(--muted);font-weight:550;margin-bottom:8px}
+.eva-plugin-card{min-height:92px;gap:12px}
+.eva-plugin-main{padding:14px 0;gap:12px}
+.eva-plugin-logo{width:42px;height:42px;border-radius:13px;background:var(--soft)}
+.eva-plugin-card .extension-copy small{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.6;margin-top:5px}
+.eva-plugin-native-label{font-size:11px;min-height:44px;padding:8px;color:var(--muted);max-width:64px}
+.eva-plugin-action{border:1px solid var(--line);font-size:20px;width:40px;height:40px;flex:none}
+.eva-plugin-tools{flex-wrap:wrap;gap:10px}
+.eva-plugin-tools .extension-search{flex:1 1 160px}
+.eva-plugin-tools button{min-height:44px}
+.extension-entry>summary{padding:18px 4px;gap:12px}
+.extension-icon{background:var(--soft);color:var(--ink);width:42px;height:42px;border-radius:13px}
+.extension-copy small{font-size:12px;line-height:1.7}
+.extension-status{background:transparent;border:0;font-size:11px;color:var(--muted);padding:4px 0}
+.extension-actions{padding:0 4px 20px 54px}
+.extension-actions button,.plugin-toolbar button,#skill-refresh,#skill-new,#skill-import,#mcp-refresh{min-height:44px;border-radius:11px;padding:10px 13px;line-height:1.5}
+.extension-actions [data-skill-apply],.plugin-toolbar [data-plugin-apply]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.extension-add{background:var(--soft);border:0;border-radius:14px;padding:16px;margin-top:24px}
+.extension-add>summary{min-height:32px;font-size:13px;line-height:1.7}
+.extension-add .group{margin:16px 0 0}
+.extension-add p{font-size:12px;line-height:1.8;color:var(--muted)}
+#skill-scope{min-height:44px;max-width:100%;padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink)}
+#skill-name,#skill-text{border:1px solid var(--line);border-radius:10px;background:var(--soft);color:var(--ink);padding:12px;font-size:14px}
+.reference-picker{border-radius:18px;padding:8px;box-shadow:0 -8px 32px #172b4520}
+.reference-picker>[role=option]{padding:12px;min-height:64px}
+.reference-picker-actions{gap:8px;flex-wrap:wrap}
+.reference-picker-actions button{min-height:44px;padding:8px}
+.eva-panel{border-radius:24px 24px 0 0}
+@media(min-width:700px){.eva-panel{border-radius:24px}}
+@media(max-width:350px){.extension-actions{padding-left:8px}.eva-plugin-card{gap:8px}.eva-plugin-logo{width:36px;height:36px}.eva-plugin-native-label{padding:4px}}

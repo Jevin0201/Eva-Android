@@ -1,0 +1,440 @@
+{
+  "doubaoResolve": {
+    "evidence_id": "ev_683d7471154a483206da8b80569473352443d75c379e4a9ccdf389b2006dbd31",
+    "subject": null,
+    "provider": {
+      "id": "adb",
+      "name": "Android Debug Bridge",
+      "version": "37.0.1-15733141"
+    },
+    "analysis_profile": null,
+    "predicate_type": "rea.analysis",
+    "operation": "resolve_adb_packages",
+    "parameters": {
+      "serial": "509655c7",
+      "query": "larus"
+    },
+    "raw_result": null,
+    "normalized_result": {
+      "client": {
+        "binary_path": "C:\\Users\\Jevin\\AppData\\Local\\Eva\\Tools\\android\\platform-tools\\adb.exe",
+        "path_source": "environment",
+        "version": "37.0.1-15733141",
+        "installed_path": "C:\\Users\\Jevin\\AppData\\Local\\Eva\\Tools\\android\\platform-tools\\adb.exe"
+      },
+      "serial": "509655c7",
+      "query": "larus",
+      "matches": [
+        {
+          "package_name": "com.larus.nova",
+          "base_apk_device_path": "/data/app/~~LA3ERty2CwkVbGi7wVKWkQ==/com.larus.nova-Hc9aJMNKlj0czonQzmjEjQ==/base.apk"
+        }
+      ],
+      "exact_match": false,
+      "unparsed_lines": [],
+      "coverage": "complete"
+    },
+    "confidence": "observed",
+    "authority": "shipped-artifact",
+    "environment": null,
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "Matching is a case-insensitive substring over package names; application display labels are not part of pm output"
+    ],
+    "relationship_coverage": null,
+    "locations": [],
+    "evidence_links": []
+  },
+  "doubaoPackage": {
+    "evidence_id": "ev_2ad4c838e56e90fd98177c5ae26d6a8184556cfa3f1ca168a4bb8073aaa6d380",
+    "subject": null,
+    "provider": {
+      "id": "adb",
+      "name": "Android Debug Bridge",
+      "version": "37.0.1-15733141"
+    },
+    "analysis_profile": null,
+    "predicate_type": "rea.analysis",
+    "operation": "inspect_adb_package",
+    "parameters": {
+      "serial": "509655c7",
+      "package": "com.larus.nova"
+    },
+    "raw_result": null,
+    "normalized_result": {
+      "client": {
+        "binary_path": "C:\\Users\\Jevin\\AppData\\Local\\Eva\\Tools\\android\\platform-tools\\adb.exe",
+        "path_source": "environment",
+        "version": "37.0.1-15733141",
+        "installed_path": "C:\\Users\\Jevin\\AppData\\Local\\Eva\\Tools\\android\\platform-tools\\adb.exe"
+      },
+      "serial": "509655c7",
+      "package_name": "com.larus.nova",
+      "version_name": "15.5.0",
+      "version_code": "15050040",
+      "first_install_time": "2000-01-01 00:00:00",
+      "last_update_time": "2026-10-29 12:35:17",
+      "installer_package_name": "com.xiaomi.market",
+      "user_id": 10320,
+      "pkg_flags": "[ HAS_CODE ALLOW_CLEAR_USER_DATA LARGE_HEAP ]",
+      "requested_permissions_count": 242,
+      "numeric_issues": {
+        "sample": [],
+        "total": 0
+      },
+      "coverage": "complete"
+    },
+    "confidence": "observed",
+    "authority": "shipped-artifact",
+    "environment": null,
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "Fields are a fixed projection of dumpsys package output; version-dependent sections are ignored rather than guessed",
+      "requested_permissions_count counts the listed requested permissions section; an absent section is zero only when dumpsys confirms a loaded parsed package",
+      "A null requested_permissions_count means dumpsys reported pkg=null or did not establish that an omitted permission section is an empty inventory"
+    ],
+    "relationship_coverage": null,
+    "locations": [],
+    "evidence_links": []
+  },
+  "doubaoPull": {
+    "evidence_id": "ev_f3a6d3d18d176866a905db18e1e3cba5d0b657585b8d2afef32d6987dc8b6829",
+    "subject": null,
+    "provider": {
+      "id": "adb",
+      "name": "Android Debug Bridge",
+      "version": "37.0.1-15733141"
+    },
+    "analysis_profile": null,
+    "predicate_type": "rea.analysis",
+    "operation": "pull_adb_package",
+    "parameters": {
+      "serial": "509655c7",
+      "package": "com.larus.nova",
+      "output_directory": "D:/network shared/Eva-Android/research/doubao/apk"
+    },
+    "raw_result": null,
+    "normalized_result": {
+      "client": {
+        "binary_path": "C:\\Users\\Jevin\\AppData\\Local\\Eva\\Tools\\android\\platform-tools\\adb.exe",
+        "path_source": "environment",
+        "version": "37.0.1-15733141",
+        "installed_path": "C:\\Users\\Jevin\\AppData\\Local\\Eva\\Tools\\android\\platform-tools\\adb.exe"
+      },
+      "serial": "509655c7",
+      "package_name": "com.larus.nova",
+      "output_directory": "D:\\network shared\\Eva-Android\\research\\doubao\\apk",
+      "artifacts": [
+        {
+          "device_path": "/data/app/~~LA3ERty2CwkVbGi7wVKWkQ==/com.larus.nova-Hc9aJMNKlj0czonQzmjEjQ==/base.apk",
+          "file_name": "base.apk",
+          "local_path": "D:\\network shared\\Eva-Android\\research\\doubao\\apk\\com.larus.nova\\base.apk",
+          "bytes": 421779278,
+          "sha256": "87f0e93e15663f7040bdbfebff87ad7b7883ac5064dde6327549820a6bb40f69",
+          "role": "base",
+          "role_basis": "file_name"
+        }
+      ],
+      "failures": [],
+      "coverage": "complete"
+    },
+    "confidence": "observed",
+    "authority": "shipped-artifact",
+    "environment": null,
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "APK role names derive from the pulled file names (base.apk, split_*.apk)",
+      "Pulled artifacts are host-local copies; the device retains the originals"
+    ],
+    "relationship_coverage": null,
+    "locations": [],
+    "evidence_links": []
+  },
+  "doubaoHome": {
+    "evidence_id": "ev_a088ff77c72f3e11b67310d3075ce0f079255275f0096a4677c5f38db30b98a3",
+    "subject": null,
+    "provider": {
+      "id": "adb",
+      "name": "Android Debug Bridge",
+      "version": "37.0.1-15733141"
+    },
+    "analysis_profile": null,
+    "predicate_type": "rea.analysis",
+    "operation": "capture_adb_screen",
+    "parameters": {
+      "serial": "509655c7",
+      "output_directory": "D:/network shared/Eva-Android/research/doubao/screens/home"
+    },
+    "raw_result": null,
+    "normalized_result": {
+      "client": {
+        "binary_path": "C:\\Users\\Jevin\\AppData\\Local\\Eva\\Tools\\android\\platform-tools\\adb.exe",
+        "path_source": "environment",
+        "version": "37.0.1-15733141",
+        "installed_path": "C:\\Users\\Jevin\\AppData\\Local\\Eva\\Tools\\android\\platform-tools\\adb.exe"
+      },
+      "serial": "509655c7",
+      "local_path": "D:\\network shared\\Eva-Android\\research\\doubao\\screens\\home\\screen.png",
+      "bytes": 537577,
+      "sha256": "5ab8bd0421d8f0b89715956ac0a8de1670bd0d29e45a69916f9b4ed618099879",
+      "width": 1280,
+      "height": 2772
+    },
+    "confidence": "observed",
+    "authority": "shipped-artifact",
+    "environment": null,
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "The capture is one frame at read time; no recording or interaction occurred"
+    ],
+    "relationship_coverage": null,
+    "locations": [],
+    "evidence_links": []
+  },
+  "doubaoNewChat": {
+    "evidence_id": "ev_9df18be8910db9201da643f69c8908b9371d498d0c452bf67830205f47ee1ceb",
+    "subject": null,
+    "provider": {
+      "id": "adb",
+      "name": "Android Debug Bridge",
+      "version": "37.0.1-15733141"
+    },
+    "analysis_profile": null,
+    "predicate_type": "rea.analysis",
+    "operation": "capture_adb_screen",
+    "parameters": {
+      "serial": "509655c7",
+      "output_directory": "D:/network shared/Eva-Android/research/doubao/screens/new-conversation"
+    },
+    "raw_result": null,
+    "normalized_result": {
+      "client": {
+        "binary_path": "C:\\Users\\Jevin\\AppData\\Local\\Eva\\Tools\\android\\platform-tools\\adb.exe",
+        "path_source": "environment",
+        "version": "37.0.1-15733141",
+        "installed_path": "C:\\Users\\Jevin\\AppData\\Local\\Eva\\Tools\\android\\platform-tools\\adb.exe"
+      },
+      "serial": "509655c7",
+      "local_path": "D:\\network shared\\Eva-Android\\research\\doubao\\screens\\new-conversation\\screen.png",
+      "bytes": 183412,
+      "sha256": "b2e87f3e89e35e89b24461f8658e22d501625fac730dbd7af8df0db27ed7b569",
+      "width": 1280,
+      "height": 2772
+    },
+    "confidence": "observed",
+    "authority": "shipped-artifact",
+    "environment": null,
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "The capture is one frame at read time; no recording or interaction occurred"
+    ],
+    "relationship_coverage": null,
+    "locations": [],
+    "evidence_links": []
+  },
+  "doubaoSide": {
+    "evidence_id": "ev_915151ec9578f3e21d171bd3bb44bd0aa171607d4c151fb2b64d965de66d7ac9",
+    "subject": null,
+    "provider": {
+      "id": "adb",
+      "name": "Android Debug Bridge",
+      "version": "37.0.1-15733141"
+    },
+    "analysis_profile": null,
+    "predicate_type": "rea.analysis",
+    "operation": "capture_adb_screen",
+    "parameters": {
+      "serial": "509655c7",
+      "output_directory": "D:/network shared/Eva-Android/research/doubao/screens/sidebar"
+    },
+    "raw_result": null,
+    "normalized_result": {
+      "client": {
+        "binary_path": "C:\\Users\\Jevin\\AppData\\Local\\Eva\\Tools\\android\\platform-tools\\adb.exe",
+        "path_source": "environment",
+        "version": "37.0.1-15733141",
+        "installed_path": "C:\\Users\\Jevin\\AppData\\Local\\Eva\\Tools\\android\\platform-tools\\adb.exe"
+      },
+      "serial": "509655c7",
+      "local_path": "D:\\network shared\\Eva-Android\\research\\doubao\\screens\\sidebar\\screen.png",
+      "bytes": 382353,
+      "sha256": "19989b9a98a304d5c5316320b22fe2fb7c11d0de3b48016f7c99a77af3fa5ef2",
+      "width": 1280,
+      "height": 2772
+    },
+    "confidence": "observed",
+    "authority": "shipped-artifact",
+    "environment": null,
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "The capture is one frame at read time; no recording or interaction occurred"
+    ],
+    "relationship_coverage": null,
+    "locations": [],
+    "evidence_links": []
+  },
+  "doubaoExtensions": {
+    "evidence_id": "ev_c4e9ccfef0d1332e1b57008edfc1ffc879fcaeb269ae4503dcb4057ae10db30d",
+    "subject": null,
+    "provider": {
+      "id": "adb",
+      "name": "Android Debug Bridge",
+      "version": "37.0.1-15733141"
+    },
+    "analysis_profile": null,
+    "predicate_type": "rea.analysis",
+    "operation": "capture_adb_screen",
+    "parameters": {
+      "serial": "509655c7",
+      "output_directory": "D:/network shared/Eva-Android/research/doubao/screens/extensions"
+    },
+    "raw_result": null,
+    "normalized_result": {
+      "client": {
+        "binary_path": "C:\\Users\\Jevin\\AppData\\Local\\Eva\\Tools\\android\\platform-tools\\adb.exe",
+        "path_source": "environment",
+        "version": "37.0.1-15733141",
+        "installed_path": "C:\\Users\\Jevin\\AppData\\Local\\Eva\\Tools\\android\\platform-tools\\adb.exe"
+      },
+      "serial": "509655c7",
+      "local_path": "D:\\network shared\\Eva-Android\\research\\doubao\\screens\\extensions\\screen.png",
+      "bytes": 104015,
+      "sha256": "71095e90e02eda8fd89df1416c81d8ea9a5ed3d824ced83e40c118812834df8a",
+      "width": 1280,
+      "height": 2772
+    },
+    "confidence": "observed",
+    "authority": "shipped-artifact",
+    "environment": null,
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "The capture is one frame at read time; no recording or interaction occurred"
+    ],
+    "relationship_coverage": null,
+    "locations": [],
+    "evidence_links": []
+  },
+  "doubaoExtensionLoaded": {
+    "evidence_id": "ev_0116eaab989cefb7f3ef57e1619a5e6088736efd2dde11ae465100ebcda3b382",
+    "subject": null,
+    "provider": {
+      "id": "adb",
+      "name": "Android Debug Bridge",
+      "version": "37.0.1-15733141"
+    },
+    "analysis_profile": null,
+    "predicate_type": "rea.analysis",
+    "operation": "capture_adb_screen",
+    "parameters": {
+      "serial": "509655c7",
+      "output_directory": "D:/network shared/Eva-Android/research/doubao/screens/extensions-loaded"
+    },
+    "raw_result": null,
+    "normalized_result": {
+      "client": {
+        "binary_path": "C:\\Users\\Jevin\\AppData\\Local\\Eva\\Tools\\android\\platform-tools\\adb.exe",
+        "path_source": "environment",
+        "version": "37.0.1-15733141",
+        "installed_path": "C:\\Users\\Jevin\\AppData\\Local\\Eva\\Tools\\android\\platform-tools\\adb.exe"
+      },
+      "serial": "509655c7",
+      "local_path": "D:\\network shared\\Eva-Android\\research\\doubao\\screens\\extensions-loaded\\screen.png",
+      "bytes": 418961,
+      "sha256": "3aabefaed7ab90467e2861ba2bb6a2a0f4874939ccfb4d4f1409761ec13d4589",
+      "width": 1280,
+      "height": 2772
+    },
+    "confidence": "observed",
+    "authority": "shipped-artifact",
+    "environment": null,
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "The capture is one frame at read time; no recording or interaction occurred"
+    ],
+    "relationship_coverage": null,
+    "locations": [],
+    "evidence_links": []
+  },
+  "doubaoSkillsFinal": {
+    "evidence_id": "ev_f7f5456d5a045a731b792cc4943c132ce439dfd001aacf3d16acef4a5ee87344",
+    "subject": null,
+    "provider": {
+      "id": "adb",
+      "name": "Android Debug Bridge",
+      "version": "37.0.1-15733141"
+    },
+    "analysis_profile": null,
+    "predicate_type": "rea.analysis",
+    "operation": "capture_adb_screen",
+    "parameters": {
+      "serial": "509655c7",
+      "output_directory": "D:/network shared/Eva-Android/research/doubao/screens/skills-final"
+    },
+    "raw_result": null,
+    "normalized_result": {
+      "client": {
+        "binary_path": "C:\\Users\\Jevin\\AppData\\Local\\Eva\\Tools\\android\\platform-tools\\adb.exe",
+        "path_source": "environment",
+        "version": "37.0.1-15733141",
+        "installed_path": "C:\\Users\\Jevin\\AppData\\Local\\Eva\\Tools\\android\\platform-tools\\adb.exe"
+      },
+      "serial": "509655c7",
+      "local_path": "D:\\network shared\\Eva-Android\\research\\doubao\\screens\\skills-final\\screen.png",
+      "bytes": 418727,
+      "sha256": "5a89d97436326bc3eb9151b4983895577e66fbf41a59c8b57a5dd0d41763ece2",
+      "width": 1280,
+      "height": 2772
+    },
+    "confidence": "observed",
+    "authority": "shipped-artifact",
+    "environment": null,
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "The capture is one frame at read time; no recording or interaction occurred"
+    ],
+    "relationship_coverage": null,
+    "locations": [],
+    "evidence_links": []
+  },
+  "doubaoConnectDetail": {
+    "evidence_id": "ev_7c982aff82213d42982db1196dcb856082a9d2ddd7b8a8c1d0839014e7802f77",
+    "subject": null,
+    "provider": {
+      "id": "adb",
+      "name": "Android Debug Bridge",
+      "version": "37.0.1-15733141"
+    },
+    "analysis_profile": null,
+    "predicate_type": "rea.analysis",
+    "operation": "capture_adb_screen",
+    "parameters": {
+      "serial": "509655c7",
+      "output_directory": "D:/network shared/Eva-Android/research/doubao/screens/connect-detail"
+    },
+    "raw_result": null,
+    "normalized_result": {
+      "client": {
+        "binary_path": "C:\\Users\\Jevin\\AppData\\Local\\Eva\\Tools\\android\\platform-tools\\adb.exe",
+        "path_source": "environment",
+        "version": "37.0.1-15733141",
+        "installed_path": "C:\\Users\\Jevin\\AppData\\Local\\Eva\\Tools\\android\\platform-tools\\adb.exe"
+      },
+      "serial": "509655c7",
+      "local_path": "D:\\network shared\\Eva-Android\\research\\doubao\\screens\\connect-detail\\screen.png",
+      "bytes": 343149,
+      "sha256": "65863b65b5271bd19e8bae180e645ad1e4771afea1af16da30085d6ae5216435",
+      "width": 1280,
+      "height": 2772
+    },
+    "confidence": "observed",
+    "authority": "shipped-artifact",
+    "environment": null,
+    "limitations": [
+      "Artifact identity is unavailable for this observation.",
+      "The capture is one frame at read time; no recording or interaction occurred"
+    ],
+    "relationship_coverage": null,
+    "locations": [],
+    "evidence_links": []
+  }
+}

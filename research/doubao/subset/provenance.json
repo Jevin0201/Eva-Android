@@ -1,0 +1,23 @@
+{
+  "original_path": "D:\\network shared\\Eva-Android\\research\\doubao\\apk\\com.larus.nova\\base.apk",
+  "original_sha256": "87f0e93e15663f7040bdbfebff87ad7b7883ac5064dde6327549820a6bb40f69",
+  "derivation": "Each derived ZIP has exactly one unchanged original DEX member, renamed classes.dex. No manifest/resources/signature/dependency DEX. Analysis only; never installed or executed.",
+  "members": [
+    {
+      "original_member": "classes21.dex",
+      "original_member_sha256": "c43f71b7d2409a2f2b49e6fcd4633a4614fa120425c7269fac9d8f581484c0bb",
+      "derived_path": "D:\\network shared\\Eva-Android\\research\\doubao\\subset\\classes21.apk",
+      "derived_sha256": "1c2cfc1f431a225815ab9d329b0f80bec554bae96b523488754999665eb4ef0f",
+      "derived_member": "classes.dex",
+      "unchanged_bytes": 11659640
+    },
+    {
+      "original_member": "classes22.dex",
+      "original_member_sha256": "ca15418042afc8f49a12b3bb3747d3ed26b9fffd55fa943261e973cc13c1027c",
+      "derived_path": "D:\\network shared\\Eva-Android\\research\\doubao\\subset\\classes22.apk",
+      "derived_sha256": "8f78854abb62ab3b78e9e4fecd309f6102039b61330809b8ecd8798d8fd7697b",
+      "derived_member": "classes.dex",
+      "unchanged_bytes": 11688220
+    }
+  ]
+}
