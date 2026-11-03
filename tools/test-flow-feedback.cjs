@@ -40,7 +40,16 @@ const {chromium,launchOptions}=require('./browser-test-env.cjs');
   assert.equal(await feedback.count(),0);assert.equal(await page.locator('section[data-turn="response-status"]').count(),0);
   assert.equal(await page.evaluate(()=>active().running),false);
   assert.equal(await page.evaluate(()=>evaFlowFeedback.samples.at(-1)?.status),'completed');
+  // A thinking section already exists when the next user turn is appended.
+  await page.evaluate(()=>{const c=active();c.running=true;c.kernelThread.turns=[{id:'before-followup',status:'inProgress',items:[{id:'first-user',type:'userMessage',content:[{type:'inputText',text:'first task'}]}]}];updateKernelFlow(c);window.thinkingNode=document.querySelector('[data-turn="response-status"]');window.previousNode=document.querySelector('[data-turn="before-followup"]');c.kernelThread.turns[0].status='completed';c.kernelThread.turns.push({id:'after-followup',status:'inProgress',items:[{id:'followup-user',type:'userMessage',content:[{type:'inputText',text:'follow-up task'}]}]});updateKernelFlow(c);});
+  assert.deepEqual(await page.locator('.flow>section').evaluateAll(nodes=>nodes.map(n=>n.dataset.turn)),['before-followup','after-followup','response-status'],'existing thinking must move after the newest user turn');
+  assert(await page.evaluate(()=>thinkingNode===document.querySelector('[data-turn="response-status"]')&&previousNode===document.querySelector('[data-turn="before-followup"]')),'reordering retains existing DOM nodes');
+  assert(await page.evaluate(()=>document.querySelector('.eva-thinking').getBoundingClientRect().top>=document.querySelector('[data-flow-key="followup-user"]').getBoundingClientRect().bottom),'thinking is visually below the latest user bubble');
+  await page.evaluate(()=>{active().pending='pending next task';updateKernelFlow(active());});
+  assert.deepEqual(await page.locator('.flow>section').evaluateAll(nodes=>nodes.map(n=>n.dataset.turn)),['before-followup','after-followup','pending','response-status'],'pending bubble must precede existing thinking');
+  await page.evaluate(()=>{const c=active();c.pending='';c.kernelThread.turns.at(-1).items.push({id:'steering-user',type:'steeringUserMessage',content:[{type:'inputText',text:'guide current task'}]});updateKernelFlow(c);});
+  assert.equal(await feedback.count(),1);assert(await page.evaluate(()=>document.querySelector('.eva-thinking').getBoundingClientRect().top>=document.querySelector('[data-flow-key="steering-user"]').getBoundingClientRect().bottom),'thinking follows in-turn steering input');
   assert.deepEqual(errors,[],'page scripts must run without uncaught errors');
-  console.log('PASS feedback lifecycle, exclusive tool progress, approval blocking, completion cleanup, streaming assistant DOM identity');
+  console.log('PASS next-turn/pending/steering thinking order and node identity; feedback lifecycle, exclusive tool progress, approval blocking, completion cleanup, streaming assistant DOM identity');
  }finally{await browser.close();}
 })().catch(error=>{console.error(error);process.exitCode=1;});
