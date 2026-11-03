@@ -39,13 +39,13 @@ window.evaPlugins=(()=>{
  }
  function componentList(title,rows,label){return rows?.length?`<h4>${esc(title)}</h4><ul>${rows.map(x=>`<li>${esc(label(x))}</li>`).join('')}</ul>`:'';}
  async function requestCatalog(remote,refresh){
-  const installed=await kernelCall('plugin/installed',scope());
+  const installed=await (window.evaCapabilityReads?evaCapabilityReads.read('plugin/installed',scope(),refresh):kernelCall('plugin/installed',scope()));
   try{const catalog=await kernelCall('plugin/list',{...scope(),...(remote?{}:{marketplaceKinds:['local']}),forceRefetch:!!refresh&&remote});return {catalog,installed};}
   catch(e){return {catalog:{marketplaces:[],marketplaceLoadErrors:[{message:'目录读取失败：'+e.message}]},installed};}
  }
  async function load(remote=false,refresh=false){
   if(state.busy)return;const mine=++epoch;state.busy=true;state.notice='';state.remote=remote;draw();
-  try{const {catalog,installed}=await requestCatalog(remote,refresh);if(mine!==epoch)return;collect(catalog,installed);window.evaReferences?.invalidate();state.loaded=true;if(state.selected)await readDetail(state.selected);}
+  try{const {catalog,installed}=await requestCatalog(remote,refresh);if(mine!==epoch)return;collect(catalog,installed);state.loaded=true;if(state.selected)await readDetail(state.selected);}
   catch(e){state.notice='插件读取失败：'+e.message;}
   finally{if(mine===epoch){state.busy=false;draw();}}
  }
@@ -55,7 +55,7 @@ window.evaPlugins=(()=>{
   if(state.busy)return;if(pendingTasks()){state.notice='请先完成或停止当前任务，再修改插件。';draw();return;}
   state.busy=true;state.notice='';draw();
   try{
-   const result=await kernelCall(method,params),{catalog,installed}=await requestCatalog(state.remote,false);collect(catalog,installed);window.evaReferences?.invalidate();state.loaded=true;
+   const result=await kernelCall(method,params),{catalog,installed}=await requestCatalog(state.remote,true);collect(catalog,installed);window.evaReferences?.invalidate();state.loaded=true;
    const current=state.items.find(p=>p.id===id);
    if(action==='install'&&!current?.installed)throw Error('安装请求已返回，但内核尚未确认插件已安装；请刷新核对，不要重复安装。');
    if(action==='enable'&&!current?.enabled||action==='disable'&&current?.enabled)throw Error('内核返回的启停状态与请求不一致，可能受策略限制。');
