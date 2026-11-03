@@ -116,6 +116,7 @@ public final class KernelHost {
   JSONArray edits=new JSONArray().put(new JSONObject().put("keyPath","model_providers").put("value",definitions).put("mergeStrategy","replace")).put(new JSONObject().put("keyPath","model_provider").put("value",provider).put("mergeStrategy","replace"));
   rpc("config/batchWrite",new JSONObject().put("edits",edits));currentProvider=provider;if(process==child)providerConfigCache.accepted(child,selection,providerConfigFingerprint());KernelTrace.mark("provider-config:written");
  }
+ JSONObject providerRequest(String method,JSONObject prepared,String provider)throws Exception{return ProviderSwitch.execute(method,prepared,provider,this::rpc);}
  JSONObject dispatch(String method,JSONObject request)throws Exception{
   if(method.equals("android/extensions"))return ExtensionAuthoring.call(this,request);
   if(method.startsWith("android/memories/"))return MemoryStore.execute(context,method.substring("android/memories/".length()),request);
@@ -144,8 +145,7 @@ public final class KernelHost {
     }
    }
    selectKernelProvider(provider);
-   JSONObject result=rpc(method,params(method,request));
-   if(method.equals("thread/resume")&&!provider.equals(result.optString("modelProvider",provider)))throw new IOException("模型提供商切换尚未生效，原对话已保留，请稍后重试");
+   JSONObject prepared=params(method,new JSONObject(request.toString())),result=providerRequest(method,prepared,provider);
    if(!method.equals("turn/start")){JSONObject thread=result.getJSONObject("thread");threadProviders.put(thread.getString("id"),result.optString("modelProvider",provider));threadCwds.put(thread.getString("id"),thread.optString("cwd",request.optString("cwd","/root/eva-workspace")));context.getSharedPreferences("eva-kernel-routing",0).edit().putBoolean(thread.getString("id"),apiOnly).commit();}
    return result;
   }
