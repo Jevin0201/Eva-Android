@@ -1,0 +1,17 @@
+const {chromium}=require('playwright-core'),fs=require('fs');
+(async()=>{const b=await chromium.connectOverCDP('http://127.0.0.1:9223');try{const p=b.contexts()[0].pages().find(p=>p.url().includes('eva.invalid'));if(!p)throw Error('Eva WebView missing');
+if(!await p.evaluate(()=>!!window.taskTurnReady))throw Error('Native task-controls asset not loaded');
+const id=await p.evaluate(useDeepSeek=>{const provider=useDeepSeek?modelConfig.providers.find(p=>p.model.includes('deepseek')):null;const id=crypto.randomUUID();data.drafts.push({id,title:'停止与引导真机验收',messages:[],draft:'',providerId:provider?.id||'openai',model:provider?.model||'gpt-6.1-terra',effort:provider?'high':'low',permissionMode:'full',kernelThread:null});data.active=id;route='chat';saveKernel();render();return id;},process.env.EVA_ACCEPT_PROVIDER==='deepseek');
+await p.locator('#prompt').fill('这是手机验收测试。请调用终端执行 sleep 20，等待期间我会发一条引导信息。命令结束后按最新引导回复。不要操作手机、浏览器、文件或其他应用。');await p.locator('[data-action=kernel-send]').click();
+await p.waitForFunction(()=>active()?.kernelThread?.turns?.some(t=>t.status==='inProgress'),{},{timeout:90000});console.log('RUNNING '+id);
+await p.locator('#prompt').fill('验收引导：最终只回复 STEER_ACCEPTED_7319。');await p.locator('[data-action=kernel-steer]').click();
+await p.waitForFunction(()=>!active().running,{},{timeout:120000});
+const steer=await p.evaluate(()=>({notice:kernelNotice,turns:active().kernelThread.turns.map(t=>({id:t.id,status:t.status,items:t.items.map(i=>({type:i.type,text:itemText(i)}))}))}));
+if(!steer.turns.some(t=>t.items.some(i=>i.type==='agentMessage'&&i.text.includes('STEER_ACCEPTED_7319'))))throw Error('Steering not reflected: '+JSON.stringify(steer));console.log('STEER PASS');
+await p.locator('#prompt').fill('第二项停止验收：请调用终端执行 sleep 60，命令完成后回复 STOP_TEST_FINISHED。不要操作其他内容。');await p.locator('[data-action=kernel-send]').click();
+await p.waitForFunction(()=>active()?.kernelThread?.turns?.at(-1)?.items?.some(i=>i.type==='commandExecution'&&i.status==='inProgress'),{},{timeout:90000});
+const before=Date.now();await p.locator('[data-task-stop]').click();await p.waitForFunction(()=>!active().running,{},{timeout:30000});
+const stop=await p.evaluate(()=>({id:active().id,threadId:active().kernelThread.id,last:active().kernelThread.turns.at(-1).status,notice:kernelNotice}));if(stop.last!=='interrupted')throw Error('Not interrupted: '+JSON.stringify(stop));console.log('STOP PASS '+(Date.now()-before)+'ms');
+fs.mkdirSync('artifacts/task-controls',{recursive:true});fs.writeFileSync('artifacts/task-controls/real-device-'+(process.env.EVA_ACCEPT_PROVIDER||'openai')+'.json',JSON.stringify({steer,stop,stopMs:Date.now()-before},null,2));
+await p.reload();await p.waitForFunction(()=>!!window.taskTurnReady&&!active()?.running);console.log('RELOAD PASS');
+}finally{await b.close();}})().catch(e=>{console.error(e);process.exitCode=1;});

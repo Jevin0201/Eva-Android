@@ -1,0 +1,29 @@
+'use strict';
+// Android counterpart of desktop memory-settings.js; backed by MemoryStore.
+(()=>{
+ const state={items:[],current:null,name:'',draft:'',dirty:false,busy:false,notice:'',error:'',confirm:null,epoch:0};
+ const call=(action,params={})=>kernelCall('android/memories/'+action,params);
+ function paint(){if(settingPage!=='memories')return;const escText=v=>esc(String(v||''));
+  const editor=state.current?`<section class="group"><h3>${state.current.isNew?'新建记忆':escText(state.current.id)}</h3>${state.current.isNew?'<label class="field">文件名（.md 或 .txt）<input id="memory-name" maxlength="200" value="'+escText(state.name)+'" placeholder="偏好.md"></label>':''}<label class="field">记忆内容<textarea id="memory-content" rows="12" style="width:100%;min-height:220px;font:inherit;padding:12px;border:1px solid var(--line);border-radius:10px;background:transparent;color:inherit">${escText(state.draft)}</textarea></label><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="primary" data-memory-save ${state.busy||!state.dirty?'disabled':''}>${state.busy?'处理中…':'保存'}</button>${!state.current.isNew?'<button data-memory-reload '+(state.busy?'disabled':'')+'>重新读取</button><button data-memory-delete '+(state.busy?'disabled':'')+'>删除记忆</button>':''}</div><p class="preview-label">${state.dirty?'有未保存的修改':'已保存'}</p></section>`:'';
+  $('#screen').innerHTML=`<header class="app-head">${control('back','返回','memory-back')}<strong>记忆</strong></header><div class="flow"><p class="preview-label">记忆保存在 Eva 的手机独立目录。后续任务可按需读取；这里管理的是记忆文件，不代表已启用自动记忆生成。</p><section class="group"><div style="display:flex;gap:12px"><button data-memory-new ${state.busy?'disabled':''}>新建记忆</button><button data-memory-refresh ${state.busy?'disabled':''}>刷新</button></div>${state.items.map((item,index)=>`<button type="button" class="row" data-memory-index="${index}" ${state.busy?'disabled':''}><span class="copy"><b>${escText(item.id)}</b><small>${Math.ceil(item.size/1024)} KB · ${escText(new Date(item.updatedAt).toLocaleString())}</small></span></button>`).join('')||'<p class="preview-label">'+(state.busy?'正在读取…':'还没有记忆。')+'</p>'}</section><p id="memory-notice" role="status">${escText(state.notice)}</p><p id="memory-error" role="alert">${escText(state.error)}</p>${state.confirm?'<section class="group"><p>'+escText(state.confirm.message)+'</p><button data-memory-confirm>确认</button><button data-memory-cancel>取消</button></section>':''}${editor}</div>`;
+  $('#memory-name')?.addEventListener('input',e=>{state.name=e.target.value;state.dirty=true;const save=$('[data-memory-save]');if(save)save.disabled=state.busy;});
+  $('#memory-content')?.addEventListener('input',e=>{state.draft=e.target.value;state.dirty=state.current.isNew||state.draft!==state.current.content;const save=$('[data-memory-save]');if(save)save.disabled=state.busy||!state.dirty;});
+  for(const button of document.querySelectorAll('[data-memory-index]'))button.onclick=()=>discardThen(()=>read(state.items[Number(button.dataset.memoryIndex)].id));
+  $('[data-memory-new]')?.addEventListener('click',()=>discardThen(()=>{state.current={isNew:true};state.name='';state.draft='';state.dirty=false;state.notice=state.error='';paint();}));
+  $('[data-memory-refresh]')?.addEventListener('click',refresh);
+  $('[data-memory-save]')?.addEventListener('click',save);
+  $('[data-memory-reload]')?.addEventListener('click',()=>discardThen(()=>read(state.current.id)));
+  $('[data-memory-delete]')?.addEventListener('click',()=>{state.confirm={message:'删除这条记忆？删除后模型将不能再从此文件读取它。',action:remove};paint();});
+  $('[data-memory-confirm]')?.addEventListener('click',()=>{const action=state.confirm?.action;state.confirm=null;action?.();});
+  $('[data-memory-cancel]')?.addEventListener('click',()=>{state.confirm=null;paint();});
+ }
+ function discardThen(action){if(state.busy)return;if(state.dirty){state.confirm={message:'有未保存的修改，确认放弃后继续？',action:()=>{state.dirty=false;action();}};paint();}else action();}
+ async function refresh(){if(state.busy)return;state.busy=true;state.error='';paint();try{state.items=(await call('list')).items||[];}catch(e){state.error=e.message;}finally{state.busy=false;paint();}}
+ async function read(id){state.busy=true;state.error='';paint();try{state.current=await call('read',{id});state.draft=state.current.content;state.dirty=false;state.notice='';}catch(e){state.error=e.message;}finally{state.busy=false;paint();}}
+ async function save(){if(state.busy||!state.current||!state.dirty)return;state.busy=true;state.error='';paint();try{state.current=await call(state.current.isNew?'create':'save',{id:state.current.isNew?state.name.trim():state.current.id,content:state.draft,...(!state.current.isNew?{revision:state.current.revision}:{})});state.draft=state.current.content;state.dirty=false;state.notice='记忆已保存';state.items=(await call('list')).items||[];}catch(e){state.error=e.message;}finally{state.busy=false;paint();}}
+ async function remove(){if(state.busy||!state.current||state.current.isNew)return;state.busy=true;state.error='';paint();try{await call('delete',{id:state.current.id,revision:state.current.revision});state.current=null;state.draft='';state.dirty=false;state.notice='记忆已删除';state.items=(await call('list')).items||[];}catch(e){state.error=e.message;}finally{state.busy=false;paint();}}
+ function open(){settingPage='memories';$('#phone').classList.remove('drawer-open');paint();refresh();}
+ const previousSettings=settingsGo;settingsGo=function(page){if(page==='memories'){open();return;}previousSettings(page);if(page==='settings')$('.flow')?.insertAdjacentHTML('beforeend',settingGroup('记忆',row('file','记忆管理','查看和编辑此手机上的持久记忆','settings:memories')));};
+ const previousNavigate=navigate;navigate=function(action){if(settingPage==='memories'&&(action==='memory-back'||action==='settings-back')){discardThen(()=>settingsGo('settings'));return;}previousNavigate(action);};
+ window.memorySettings={open,refresh};
+})();

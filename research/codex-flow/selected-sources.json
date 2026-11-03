@@ -1,0 +1,97 @@
+[
+  {
+    "path": "package.json",
+    "size": 12576,
+    "sha256": "fd3f547a9d2efe631a446e9930d072e0ea9919f85eb35e7fa66483908fa43049"
+  },
+  {
+    "path": "webview/assets/active-tool-activity-label-31a3aa87d168.js",
+    "size": 7079,
+    "sha256": "66cbb8d0dcdee95bf43a5773d9b102187be9d3fa5d823467fae958685cbf83ed"
+  },
+  {
+    "path": "webview/assets/activity-row-f4b3a3a7be30.js",
+    "size": 1684,
+    "sha256": "25499c237629a91e7374ad50106be8042b905c7f814e7e29995358f7502252a9"
+  },
+  {
+    "path": "webview/assets/activity-state-label-5f148c98ffdb.js",
+    "size": 2036,
+    "sha256": "1527c72aa629ad96fdd2b2ad5758ae3a31ff91ea59be46f78cce94dd7326db24"
+  },
+  {
+    "path": "webview/assets/agent-activity-item-54cd8ee62ebc.js",
+    "size": 22927,
+    "sha256": "00af9f2e03df11896b3fdd152d06877872b896e67d132d53edd3ace4c175185d"
+  },
+  {
+    "path": "webview/assets/agent-activity-item-row-56ee4e39916f.js",
+    "size": 5641,
+    "sha256": "9f56d1208ad1653d4c3f265f0f5bdcb94895d03f0b9de1aa6d7b1060de41498d"
+  },
+  {
+    "path": "webview/assets/codex-composer-adapter-3c49ec4f0729.js",
+    "size": 279,
+    "sha256": "0e200a42a26ac7eca12b8eb30dd476785354636ef0b767c8efc5f7eb5cb98b23"
+  },
+  {
+    "path": "webview/assets/codex-composer-adapter-b3e68e8ae39b.js",
+    "size": 35460,
+    "sha256": "04a2e6d0bc53816bc3547c4dc6d94fcc845982407a00a0b273e9751ed4e018f7"
+  },
+  {
+    "path": "webview/assets/collapsed-turn-disclosure-60796455ae54.js",
+    "size": 4386,
+    "sha256": "d28586e6d11c5d42fa7ec8d2bce9b8e634c405622ce96e56b7cc4886556f88c0"
+  },
+  {
+    "path": "webview/assets/composer-controls-89d0509c296f.js",
+    "size": 232645,
+    "sha256": "2269949a58ba59a73d4dd867b79b75e884bb548b8b2848af44754dbcd185458f"
+  },
+  {
+    "path": "webview/assets/composer-send-c6a97339d30a.js",
+    "size": 6938,
+    "sha256": "e6a3eca4c8bc2b93c0002a58e89eca3520ca0b967f7bf2452b5bed1e3f17c524"
+  },
+  {
+    "path": "webview/assets/local-conversation-thread-turn-entries-5978cdd2a00b.js",
+    "size": 21134,
+    "sha256": "79590986a2b473d8d899b345271bfee71af65a96c683421ef802b61bee2cf9b5"
+  },
+  {
+    "path": "webview/assets/local-conversation-turn-db5559f1c48c.js",
+    "size": 93131,
+    "sha256": "f49650230b00dde35d931ef52e272c8a8b95e2dae99da7f261eb8c1a82f3bee9"
+  },
+  {
+    "path": "webview/assets/mcp-tool-activity-label-9caebccfc22c.js",
+    "size": 445834,
+    "sha256": "8495e1b96613a85cebead21a7398bc9c3d90f240bfeb3b75d32b3e64814a0c89"
+  },
+  {
+    "path": "webview/assets/start-turn-3f6fbf886410.js",
+    "size": 1732,
+    "sha256": "678096c813cb4846e4244a5db533557cd6cb33255b9ad8163b623c824c880f4d"
+  },
+  {
+    "path": "webview/assets/start-turn-lock-be4319076981.js",
+    "size": 259,
+    "sha256": "fa730a63b4f7a83181254dfee4a1c65bed1d810ba55dee864d910d05a7eaeced"
+  },
+  {
+    "path": "webview/assets/streaming-text-bcc3b24ae7fd.js",
+    "size": 1808,
+    "sha256": "586d2abffd6f290f6724b0d8259c7011d7c5d46b48d6701f873a45683d3e50c4"
+  },
+  {
+    "path": "webview/assets/timeline-activity-body-bf17f3414b6b.js",
+    "size": 869,
+    "sha256": "c180492d6fa61362e19b14e716e0919bafb51bab588626b5d1134655dee55956"
+  },
+  {
+    "path": "webview/assets/virtualized-turn-list-298945e6e65d.js",
+    "size": 31567,
+    "sha256": "be4ab2fbc0ba3281d95eb7c314afdfcb470de5156a0add5c45469b08d048805b"
+  }
+]

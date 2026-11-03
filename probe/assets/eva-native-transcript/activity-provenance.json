@@ -1,0 +1,106 @@
+{
+  "archive": "C:/Program Files/WindowsApps/OpenAI.Codex_26.1027.3384.0_x64__2p2nqsd0c76g0/app/resources/app.asar",
+  "archiveSHA256": "6fbedf054a8d8cafaf5c745b40aa59176512e106e0bd6308275ae123b60fd074",
+  "windowsPackageVersion": "26.1027.3384.0",
+  "reaEvidence": "ev_ebd648e47cab108b3f1346749689310f882a2d3975381629a93b42de8f6340b7",
+  "reaEvidenceScope": "Subagent module scoped REA; inline functions separately authenticated by member and range hashes.",
+  "functions": [
+    {
+      "member": "webview/assets/subagent-activity-chip-group-6fb64417b5f0.js",
+      "memberSHA256": "f5210b6e18772d165d509a9f1559cf0ee91012706f628e4f70ae48e2c1bbc4bf",
+      "name": "xk",
+      "start": 284409,
+      "end": 285256,
+      "bodySHA256": "3a986e73ab3e7ea1b685212f405894beaeec91da1b785773ddda016be044fb07"
+    },
+    {
+      "member": "webview/assets/subagent-activity-chip-group-6fb64417b5f0.js",
+      "memberSHA256": "f5210b6e18772d165d509a9f1559cf0ee91012706f628e4f70ae48e2c1bbc4bf",
+      "name": "Sk",
+      "start": 285256,
+      "end": 285341,
+      "bodySHA256": "a40040a1d79124ff4dd42a372a13120f92177be84bbb5911ffa2e81e112780cc"
+    },
+    {
+      "member": "webview/assets/subagent-activity-chip-group-6fb64417b5f0.js",
+      "memberSHA256": "f5210b6e18772d165d509a9f1559cf0ee91012706f628e4f70ae48e2c1bbc4bf",
+      "name": "_k",
+      "start": 282731,
+      "end": 282904,
+      "bodySHA256": "a8141e95e96cd4409c3baf62a4556433d88200307c01bac4dc730bff7a74b11e"
+    },
+    {
+      "member": "webview/assets/subagent-activity-chip-group-6fb64417b5f0.js",
+      "memberSHA256": "f5210b6e18772d165d509a9f1559cf0ee91012706f628e4f70ae48e2c1bbc4bf",
+      "name": "bk",
+      "start": 283708,
+      "end": 284409,
+      "bodySHA256": "9c7fac178a75ce023dc8661c8761aee06cafaa2ce68f784994f8df4d7983bd36"
+    },
+    {
+      "member": "webview/assets/inline-followup-markdown-4c23df21794a.js",
+      "memberSHA256": "f3bb69b4716c906cb8d5a3e02d4c5fb9c20188b9fa04575eb00315567e27bcce",
+      "name": "Ke",
+      "start": 20664,
+      "end": 21046,
+      "bodySHA256": "e36dfb90922dbd4cc3f5d30bcdf6fcd344894078486f8caab05b3c75ac1af32f"
+    },
+    {
+      "member": "webview/assets/inline-followup-markdown-4c23df21794a.js",
+      "memberSHA256": "f3bb69b4716c906cb8d5a3e02d4c5fb9c20188b9fa04575eb00315567e27bcce",
+      "name": "qe",
+      "start": 21046,
+      "end": 21218,
+      "bodySHA256": "0ff986605fef6064a8b841e954d8b014902793ebaa1f44bda78418bf0a7c4c7b"
+    },
+    {
+      "member": "webview/assets/inline-followup-markdown-4c23df21794a.js",
+      "memberSHA256": "f3bb69b4716c906cb8d5a3e02d4c5fb9c20188b9fa04575eb00315567e27bcce",
+      "name": "F",
+      "start": 7164,
+      "end": 7323,
+      "bodySHA256": "c58e3968f7d1adea8f7882f8ffe6438ea3c85cce76472f830e6b156fee8fd2cb"
+    },
+    {
+      "member": "webview/assets/inline-followup-markdown-4c23df21794a.js",
+      "memberSHA256": "f3bb69b4716c906cb8d5a3e02d4c5fb9c20188b9fa04575eb00315567e27bcce",
+      "name": "Q",
+      "start": 21218,
+      "end": 21969,
+      "bodySHA256": "b84f3dd40175f3955f912da4de7150251e7ad8a0f4bf6434549959b971756055"
+    },
+    {
+      "member": "webview/assets/inline-followup-markdown-4c23df21794a.js",
+      "memberSHA256": "f3bb69b4716c906cb8d5a3e02d4c5fb9c20188b9fa04575eb00315567e27bcce",
+      "name": "G",
+      "start": 11261,
+      "end": 12434,
+      "bodySHA256": "7f4131e60f4cafc7d9c74f11ae9079d27d13f1fc98be314b3e6c9fa803418e0c"
+    },
+    {
+      "member": "webview/assets/inline-followup-markdown-4c23df21794a.js",
+      "memberSHA256": "f3bb69b4716c906cb8d5a3e02d4c5fb9c20188b9fa04575eb00315567e27bcce",
+      "name": "Ge",
+      "start": 20427,
+      "end": 20664,
+      "bodySHA256": "fa90e4e103706dc4058bca2c074a23f222447fa340015712bfbffe8acdf20732"
+    },
+    {
+      "member": "webview/assets/inline-followup-markdown-4c23df21794a.js",
+      "memberSHA256": "f3bb69b4716c906cb8d5a3e02d4c5fb9c20188b9fa04575eb00315567e27bcce",
+      "name": "Oe",
+      "start": 7613,
+      "end": 8550,
+      "bodySHA256": "af9a8254106a2df4c8ec908a4eaa0770b03c4b087f30dcbaecb14e54cb2bcdc7"
+    },
+    {
+      "member": "webview/assets/inline-followup-markdown-4c23df21794a.js",
+      "memberSHA256": "f3bb69b4716c906cb8d5a3e02d4c5fb9c20188b9fa04575eb00315567e27bcce",
+      "name": "L",
+      "start": 8550,
+      "end": 8587,
+      "bodySHA256": "ddbe2328f7d1d4cad890c57bb43ce1e199bed328cca533f0ec0478eef5a6ccec"
+    }
+  ],
+  "outputSHA256": "0eb620e6888343a5932937770c301698784d17ca092620c172cc376bb84d90ee"
+}

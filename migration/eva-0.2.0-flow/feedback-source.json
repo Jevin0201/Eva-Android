@@ -1,0 +1,17 @@
+{
+  "files": [
+    {
+      "source": "D:\\Codex\\Eva-0.2.0-Source-20261102-204632-5dcffd9\\Eva-0.2.0-Source\\src\\renderer\\render.js",
+      "sha256": "bbde7dd49072daa9c2ea873a768b104db1fed5709cba4aa55c6bb476af865863"
+    },
+    {
+      "source": "D:\\Codex\\Eva-0.2.0-Source-20261102-204632-5dcffd9\\Eva-0.2.0-Source\\src\\renderer\\codex-chat-layout.css",
+      "sha256": "e351a6c53928584e7b83b83edbe70e720f9eda221f9257f0edc2300500922c6f"
+    },
+    {
+      "source": "D:\\Codex\\Eva-0.2.0-Source-20261102-204632-5dcffd9\\Eva-0.2.0-Source\\src\\renderer\\activity-disclosure.js",
+      "sha256": "0eb9e4ca1c742ed9f5f7e97060daaee85a9d2cf674afb908aeb03286b415cfd2"
+    }
+  ],
+  "adaptation": "renderThinking/shouldShowThinking adapted to Android kernel events; existing mobile-live flow-view retained; CSS selectors mapped to Android names. Not a new license grant."
+}

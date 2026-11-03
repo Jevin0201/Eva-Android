@@ -1,0 +1,17 @@
+[
+  {
+    "path": "webview/assets/split-items-into-render-groups-60ff256697ca.js",
+    "sha256": "7df182af82f5ecd3e2d856eeaabfde53aaf91ad337f852121ef92e79db23c7e9",
+    "size": 6901
+  },
+  {
+    "path": "webview/assets/inline-followup-markdown-4c23df21794a.js",
+    "sha256": "f3bb69b4716c906cb8d5a3e02d4c5fb9c20188b9fa04575eb00315567e27bcce",
+    "size": 22861
+  },
+  {
+    "path": "webview/assets/subagent-activity-chip-group-6fb64417b5f0.js",
+    "sha256": "f5210b6e18772d165d509a9f1559cf0ee91012706f628e4f70ae48e2c1bbc4bf",
+    "size": 450047
+  }
+]

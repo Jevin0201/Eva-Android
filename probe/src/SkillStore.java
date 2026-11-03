@@ -1,0 +1,31 @@
+package ai.eva.android.probe;
+import android.content.*;import android.net.Uri;import java.io.*;import java.nio.file.*;import java.util.*;import java.util.zip.*;import org.json.*;
+/** Explicit local skill management. No shell commands or downloaded code execution. */
+final class SkillStore {
+ static final int MAX=2*1024*1024;static final long PACKAGE_MAX=20*1024*1024;
+ static void validateProject(String project)throws IOException{if(!project.isEmpty()&&!project.matches("[A-Za-z0-9_-]{1,100}"))throw new IOException("项目编号无效");}
+ static void validateName(String name)throws IOException{if(!name.matches("[a-z0-9][a-z0-9_-]{0,63}"))throw new IOException("名称仅允许小写字母、数字、横线和下划线");}
+ static String utf8(byte[] bytes)throws Exception{return java.nio.charset.StandardCharsets.UTF_8.newDecoder().onMalformedInput(java.nio.charset.CodingErrorAction.REPORT).onUnmappableCharacter(java.nio.charset.CodingErrorAction.REPORT).decode(java.nio.ByteBuffer.wrap(bytes)).toString();}
+ static File zipTarget(File staging,String entry)throws Exception{String n=entry.replace('\\','/');if(n.startsWith("/")||Arrays.asList(n.split("/")).contains("..")||n.contains(":"))throw new IOException("技能包路径不安全");File target=new File(staging,n);if(!target.getCanonicalPath().startsWith(staging.getCanonicalPath()+File.separator))throw new IOException("技能包路径越界");return target;}
+ static File root(Context c,String project)throws Exception{validateProject(project);File value=new File(c.getFilesDir().getCanonicalFile(),project.isEmpty()?"alpine/root/.eva-codex/skills":"alpine/root/eva-workspace/projects/"+project+"/.agents/skills");if(!value.getCanonicalFile().equals(value.getAbsoluteFile()))throw new IOException("技能目录不能使用链接");return value;}
+ static String logical(String project,String name){return (project.isEmpty()?"/root/.eva-codex/skills/":"/root/eva-workspace/projects/"+project+"/.agents/skills/")+name+"/SKILL.md";}
+ static File skill(Context c,String project,String name)throws Exception{validateName(name);File base=root(c,project).getCanonicalFile(),dir=new File(base,name);if(!dir.getCanonicalFile().equals(dir.getAbsoluteFile())||!dir.getCanonicalPath().startsWith(base.getPath()+File.separator))throw new IOException("技能路径不安全");return dir;}
+ static byte[] read(InputStream in,int max)throws Exception{try(InputStream stream=in;ByteArrayOutputStream out=new ByteArrayOutputStream()){byte[] b=new byte[8192];int n;while((n=stream.read(b))!=-1){if(out.size()+n>max)throw new IOException("文件过大");out.write(b,0,n);}return out.toByteArray();}}
+ static void validate(String text)throws Exception{if(!text.startsWith("---\n")&&!text.startsWith("---\r\n"))throw new IOException("SKILL.md 须包含 YAML name 和 description 头部");String normalized=text.replace("\r\n","\n");int end=normalized.indexOf("\n---",4);if(end<0)throw new IOException("技能头部未结束");String head=normalized.substring(4,end);if(!head.matches("(?s).*?(?m)^name:\\s*\\S+.*")||!head.matches("(?s).*?(?m)^description:\\s*\\S+.*"))throw new IOException("技能缺少 name 或 description");}
+ static JSONObject call(Context c,String action,JSONObject a)throws Exception{
+  String project=a.optString("project"),name=a.optString("name");File dir=skill(c,project,name),file=new File(dir,"SKILL.md");
+  if(action.equals("read")){if(!file.getCanonicalFile().equals(file.getAbsoluteFile()))throw new IOException("不读取链接文件");return new JSONObject().put("text",utf8(read(new FileInputStream(file),MAX))).put("path",logical(project,name));}
+  if(action.equals("save")){String text=a.getString("text");validate(text);byte[] bytes=text.getBytes("UTF-8");if(bytes.length>MAX)throw new IOException("技能文件过大");if(file.exists()&&!a.optBoolean("overwrite"))throw new IOException("同名技能已存在，请打开后编辑");dir.mkdirs();if(!file.getCanonicalFile().equals(file.getAbsoluteFile()))throw new IOException("不覆盖链接文件");File temp=File.createTempFile(".skill-",".tmp",dir);try{Files.write(temp.toPath(),bytes);Files.move(temp.toPath(),file.toPath(),StandardCopyOption.REPLACE_EXISTING);}finally{temp.delete();}return new JSONObject().put("path",logical(project,name));}
+  if(action.equals("delete")){if(!file.isFile())throw new IOException("技能不存在");remove(dir,dir.getCanonicalPath());return new JSONObject().put("deleted",true);}
+  throw new IOException("未知技能操作");
+ }
+ static void remove(File f,String boundary)throws Exception{if(Files.isSymbolicLink(f.toPath())){Files.delete(f.toPath());return;}String path=f.getCanonicalPath();if(!path.equals(boundary)&&!path.startsWith(boundary+File.separator))throw new IOException("路径越界");if(f.isDirectory()){File[] children=f.listFiles();if(children==null)throw new IOException("无法读取目录");for(File child:children)remove(child,boundary);}Files.delete(f.toPath());}
+ static JSONObject importUri(Context c,Uri uri,String project,String name)throws Exception{
+  File destination=skill(c,project,name);if(destination.exists())throw new IOException("同名技能已存在，未覆盖");File base=root(c,project);base.mkdirs();File staging=Files.createTempDirectory(base.toPath(),".import-").toFile();
+  try{byte[] data=read(c.getContentResolver().openInputStream(uri),(int)PACKAGE_MAX);if(data.length>=4&&data[0]=='P'&&data[1]=='K'){
+    long total=0;int count=0;try(ZipInputStream zip=new ZipInputStream(new ByteArrayInputStream(data))){ZipEntry entry;byte[] buffer=new byte[8192];while((entry=zip.getNextEntry())!=null){if(++count>500)throw new IOException("技能包文件数量过多");File target=zipTarget(staging,entry.getName());if(entry.isDirectory()){target.mkdirs();continue;}target.getParentFile().mkdirs();try(OutputStream out=new FileOutputStream(target)){int size;while((size=zip.read(buffer))!=-1){total+=size;if(total>PACKAGE_MAX)throw new IOException("技能包解压后过大");out.write(buffer,0,size);}}}}
+   }else Files.write(new File(staging,"SKILL.md").toPath(),data);
+   File source=staging;File[] children=staging.listFiles();if(!new File(source,"SKILL.md").isFile()&&children!=null&&children.length==1&&children[0].isDirectory())source=children[0];File md=new File(source,"SKILL.md");if(!md.isFile())throw new IOException("包内需要 SKILL.md（可含 scripts 与 references）");validate(utf8(read(new FileInputStream(md),MAX)));Files.move(source.toPath(),destination.toPath());return new JSONObject().put("path",logical(project,name));
+  }finally{if(staging.exists())remove(staging,staging.getCanonicalPath());}
+ }
+}

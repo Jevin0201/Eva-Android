@@ -1,0 +1,84 @@
+{
+  "archive": "C:\\Program Files\\WindowsApps\\OpenAI.Codex_26.1023.6123.0_x64__2p2nqsd0c76g0\\app\\resources\\app.asar",
+  "archiveSHA256": "773eaad4039291c80217d62c97711bb0e4b941fcf4429aaeeb3b04856c4e83ab",
+  "packageVersion": "26.1023.50603",
+  "windowsPackageVersion": "26.1023.6123.0",
+  "reaEvidence": "ev_55a6b642d930e708e7d98e75c21038dcecc61774039bf0661387b3a9eb4a0a2d",
+  "rangeUnit": "UTF-16 code units",
+  "functions": [
+    {
+      "member": "webview/assets/generated-image-output-visibility-c361aa4f88a2.js",
+      "memberSHA256": "fe53c4043f50d27f367a834b0d21837a70a3f48cb0d270d50b4db144dddd656c",
+      "name": "N",
+      "start": 740,
+      "end": 1218,
+      "bodySHA256": "806ab11346100d5a0eede7a0ee289b33a97f48d8333dd1b96af2498b83f38bcf"
+    },
+    {
+      "member": "webview/assets/generated-image-output-visibility-c361aa4f88a2.js",
+      "memberSHA256": "fe53c4043f50d27f367a834b0d21837a70a3f48cb0d270d50b4db144dddd656c",
+      "name": "F",
+      "start": 1258,
+      "end": 2703,
+      "bodySHA256": "602cd91cd6b0558676f169ac52eae5080917cc0458f2603d561a3aa7d2622895"
+    },
+    {
+      "member": "webview/assets/generated-image-output-visibility-c361aa4f88a2.js",
+      "memberSHA256": "fe53c4043f50d27f367a834b0d21837a70a3f48cb0d270d50b4db144dddd656c",
+      "name": "I",
+      "start": 2703,
+      "end": 2856,
+      "bodySHA256": "4f4fb5e254415d01cf569edf1b068633dcb6020793941000d61ae12381d4e0f4"
+    },
+    {
+      "member": "webview/assets/generated-image-output-visibility-c361aa4f88a2.js",
+      "memberSHA256": "fe53c4043f50d27f367a834b0d21837a70a3f48cb0d270d50b4db144dddd656c",
+      "name": "L",
+      "start": 2856,
+      "end": 3142,
+      "bodySHA256": "9b99ec27184c8b849eff7e106bd909751ae2bdc074f06a21f6ca2681c68127b4"
+    },
+    {
+      "member": "webview/assets/command-execution-command-615dea847916.js",
+      "memberSHA256": "14f00c950de70f6ce1bf85b4532319fe05a53488addd04622eddbf4d97391a56",
+      "name": "t",
+      "start": 55,
+      "end": 231,
+      "bodySHA256": "ee246470820679b4d631210d94bd1deb369206003418cc475634f6b71284c80c"
+    },
+    {
+      "member": "webview/assets/command-execution-command-615dea847916.js",
+      "memberSHA256": "14f00c950de70f6ce1bf85b4532319fe05a53488addd04622eddbf4d97391a56",
+      "name": "n",
+      "start": 231,
+      "end": 354,
+      "bodySHA256": "404f15c8fc6190d561a1935217f0080f203a8ff16bbb3279e651272972151928"
+    },
+    {
+      "member": "webview/assets/local-conversation-summary-panel-sources-model-fff458e01bb9.js",
+      "memberSHA256": "94f69c34f3f48d3493d411ef2c863b1c9af030b3452cc13c87bbe15083545511",
+      "name": "q",
+      "start": 2867,
+      "end": 3498,
+      "bodySHA256": "d4ea31528f8d1d68fb3b0053a8a8ccc01628ed8a0441158459d9b9ae3af63006"
+    },
+    {
+      "member": "webview/assets/app-initial-b0cd131b9dba.js",
+      "memberSHA256": "8f1b5b9d08afad50c5b2efe4240dcfe6624e787d2b7ae46d0eeb38d18acc9b24",
+      "name": "Fvr",
+      "start": 4270087,
+      "end": 4270359,
+      "bodySHA256": "dc99227293ced9cfcbbe9d13f6e2129cb0a0725c3fca9f65f9dda0611b389109"
+    },
+    {
+      "member": "webview/assets/app-initial-b0cd131b9dba.js",
+      "memberSHA256": "8f1b5b9d08afad50c5b2efe4240dcfe6624e787d2b7ae46d0eeb38d18acc9b24",
+      "name": "LGn",
+      "start": 3779400,
+      "end": 3779444,
+      "bodySHA256": "8be2db64eee26646dfc19f63d319ad1f7d82cc380825adf161e0f2f818244572"
+    }
+  ],
+  "adapterBoundary": "Only event-shape conversion and host classification callbacks are supplied by Eva. Group segmentation, stable-key selection, command selection, filtering of nullable items and HTTP source validation retain the shipped function bodies.",
+  "outputSHA256": "a80f57ad4d677dfd153c48a49bb61d98f4479568d03ec7600b75710ce24406ed"
+}

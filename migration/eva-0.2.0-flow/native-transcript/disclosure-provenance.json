@@ -1,0 +1,64 @@
+{
+  "archive": "C:/Program Files/WindowsApps/OpenAI.Codex_26.1027.3384.0_x64__2p2nqsd0c76g0/app/resources/app.asar",
+  "archiveSHA256": "6fbedf054a8d8cafaf5c745b40aa59176512e106e0bd6308275ae123b60fd074",
+  "functions": [
+    {
+      "member": "app-initial-4267e52fe5b0.js",
+      "name": "FCo",
+      "start": 7722806,
+      "end": 7722905,
+      "memberSHA256": "ba06de8c5418586b49ca7d639ea5ad2af531c1037454ec69b10b9ea11e00992e",
+      "bodySHA256": "30cf3cedace6a4ec5f3d730606132e6524a4aef90ff88f276efbd8b64961f92d"
+    },
+    {
+      "member": "app-initial-4267e52fe5b0.js",
+      "name": "ICo",
+      "start": 7722905,
+      "end": 7723015,
+      "memberSHA256": "ba06de8c5418586b49ca7d639ea5ad2af531c1037454ec69b10b9ea11e00992e",
+      "bodySHA256": "254587ca63584e133e45f2dd8ca21408726817222a902e2b6ee3b94c5f4a90f7"
+    },
+    {
+      "member": "app-initial-4267e52fe5b0.js",
+      "name": "LCo",
+      "start": 7723015,
+      "end": 7723122,
+      "memberSHA256": "ba06de8c5418586b49ca7d639ea5ad2af531c1037454ec69b10b9ea11e00992e",
+      "bodySHA256": "7c55b7041f6e97b9ba66c7df639b160e99696b5f2fdd95b0e1abfb0922fc70d9"
+    },
+    {
+      "member": "mcp-tool-call-approval-1c00cd372297.js",
+      "name": "E",
+      "start": 2381,
+      "end": 2509,
+      "memberSHA256": "3d00656731b4bb46b180b24617437505d67edbe4a8d4327c7f4b298adc93cd03",
+      "bodySHA256": "95a7ee101840ef836f4bd5f606ea1e63f730ef78c6eda4307d9a3d6774e9b5bf"
+    },
+    {
+      "member": "subagent-activity-chip-group-6fb64417b5f0.js",
+      "name": "uM",
+      "start": 395880,
+      "end": 396167,
+      "memberSHA256": "f5210b6e18772d165d509a9f1559cf0ee91012706f628e4f70ae48e2c1bbc4bf",
+      "bodySHA256": "c26650f2a8aaf70ff8c2faeb835cb78c3379e4c141e74e0acf4828e59f63725c"
+    },
+    {
+      "member": "subagent-activity-chip-group-6fb64417b5f0.js",
+      "name": "rM",
+      "start": 393845,
+      "end": 394415,
+      "memberSHA256": "f5210b6e18772d165d509a9f1559cf0ee91012706f628e4f70ae48e2c1bbc4bf",
+      "bodySHA256": "7ece21d8ce24b4eb2be880c8cd8f047246ab7a10d12db15750fbfc2e67129829"
+    },
+    {
+      "member": "subagent-activity-chip-group-6fb64417b5f0.js",
+      "name": "rM",
+      "start": 393845,
+      "end": 394415,
+      "memberSHA256": "f5210b6e18772d165d509a9f1559cf0ee91012706f628e4f70ae48e2c1bbc4bf",
+      "bodySHA256": "7ece21d8ce24b4eb2be880c8cd8f047246ab7a10d12db15750fbfc2e67129829"
+    }
+  ],
+  "outputSHA256": "cf99f14c13aa7624b0502f555389b4789c1019714bafe8a8de364a41f3aa5329",
+  "boundary": "原始函数体保持不变；动态工具注册表和 MCP App 识别由宿主提供。"
+}

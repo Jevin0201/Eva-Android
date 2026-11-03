@@ -1,0 +1,54 @@
+{
+  "archive": "C:/Program Files/WindowsApps/OpenAI.Codex_26.1027.3384.0_x64__2p2nqsd0c76g0/app/resources/app.asar",
+  "archiveSHA256": "6fbedf054a8d8cafaf5c745b40aa59176512e106e0bd6308275ae123b60fd074",
+  "localThreadMember": "\\webview\\assets\\local-conversation-thread-81abf71c800a.js",
+  "localThreadSHA256": "76c672d98fef445bc62c262d8e7ad357d15a4a6c8b15c449b92159b5e845959e",
+  "finding": "Local conversation thread explicitly passes commentaryDisplay all. Native grouping does not disable whole-turn collapse.",
+  "ranges": [
+    {
+      "member": "local-conversation-turn-db5559f1c48c.js",
+      "name": "Kc",
+      "start": 58259,
+      "end": 84263
+    },
+    {
+      "member": "subagent-activity-chip-group-6fb64417b5f0.js",
+      "name": "fM",
+      "start": 396206,
+      "end": 399883
+    },
+    {
+      "member": "subagent-activity-chip-group-6fb64417b5f0.js",
+      "name": "uM",
+      "start": 395880,
+      "end": 396167
+    },
+    {
+      "member": "subagent-activity-chip-group-6fb64417b5f0.js",
+      "name": "nM",
+      "start": 393107,
+      "end": 393845
+    },
+    {
+      "member": "subagent-activity-chip-group-6fb64417b5f0.js",
+      "name": "rM",
+      "start": 393845,
+      "end": 394415
+    }
+  ],
+  "limits": [
+    "Static observation, no identical-input official runtime replay",
+    "Persistent interactive items and original disclosure animation not migrated by this fix",
+    "REA analysis scoped to four selected extracted modules; dependency graph incomplete",
+    "Active subagent rows preserve expanded work; exact manual-collapse override and widget expansion atom are not yet mapped."
+  ],
+  "defaultPresentation": "chat",
+  "presentationContextMember": "conversation-presentation-context-a80d11c0f83a.js",
+  "activityProvider": "side-panel-8b710fb11ea1.js",
+  "rule": "Main chat: final answer starts -> allow collapse, including streaming. Cancelled stays expanded. Explicit expanded state persists.",
+  "evidence": {
+    "id": "ev_796e1be99a203657547afe70de456a2145521496319934bee172456e4cb64eec",
+    "status": "partial",
+    "reason": "REA provider per-source timeout 300000ms. Static direct source-range observations remain separate from incomplete graph."
+  }
+}

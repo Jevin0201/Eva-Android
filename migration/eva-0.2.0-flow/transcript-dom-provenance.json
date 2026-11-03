@@ -1,0 +1,23 @@
+{
+  "source": "D:\\Codex\\Eva-0.2.0-Source-20261102-204632-5dcffd9\\Eva-0.2.0-Source\\src\\renderer\\transcript-dom.js",
+  "sourceSha256": "8d19d94c7164a59592bd570c29b81e7677fd40bcd2eb4437330f500d396a17b2",
+  "copiedReference": "migration/eva-0.2.0-flow/transcript-dom.js",
+  "destination": "probe/assets/eva-transcript-dom.js",
+  "destinationSha256": "f2e2227255e59c902adc782377d7141f10f35852f4e7a1a5f8041d23212ab1fd",
+  "authorization": "User explicitly supplied Eva source and requested reuse for this Android project. package.json private:true; no root LICENSE found. Do not relabel as MIT/Apache.",
+  "changes": [
+    "Closure wrapper and public evaTranscriptDOM.patch(host,html,options) API",
+    "Android item/group/output/request key attributes",
+    "Fallback turn scope for section-level hosts",
+    "Preserve native details user-open state unless authored open state changes",
+    "Remove desktop hydrate hooks; Android host retains own media/question hydration",
+    "Seed newly-created owned subtrees with their initial child markup; later patches preserve ownership without desktop hydration"
+  ],
+  "retained": [
+    "Registry keyed node reuse",
+    "Cross-parent keyed moves with delayed cleanup",
+    "Text.replaceData common-prefix/common-suffix updates",
+    "Chunk identity caching",
+    "Native-owned subtree preservation"
+  ]
+}

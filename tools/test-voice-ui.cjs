@@ -1,0 +1,13 @@
+const vm=require('vm'),fs=require('fs'),assert=require('assert');
+const source=fs.readFileSync('probe/assets/voice.js','utf8');
+let inbox=[{id:'voice-t',title:'语音测试',messages:[],kernelThread:{id:'t',turns:[]},running:true}];
+let saved=0,opened='',acks=0;
+const data={chats:[],draft:'尚未发送的文字',drafts:[{id:'draft',draft:'保留项目草稿'}]};
+const ctx={window:{openPhoneTask:t=>opened=t,evaPermissions:{current:()=> 'assisted'}},EvaHost:{voiceThreads:()=>JSON.stringify(inbox),voiceThreadsImported:()=>{inbox=[];acks++},voiceOpen:s=>opened=JSON.parse(s),open:s=>opened=s},data,saveKernel:()=>saved++,scheduleKernelSave:()=>{},sidebar:()=>{},kernelCall:()=>Promise.resolve({thread:{id:'t',turns:[]}}),active:()=>null,settingPage:null,render:()=>{},kernelEvent:()=>{},navigate:()=>{},readProviders:()=>{},selectedProvider:()=>({id:'provider',model:'chosen',effort:'high'})};
+Object.assign(ctx,ctx.window);ctx.window=ctx;vm.createContext(ctx);vm.runInContext(source,ctx);
+assert.equal(data.chats.length,1);assert.equal(data.draft,'尚未发送的文字');assert.equal(data.drafts[0].draft,'保留项目草稿');assert.equal(acks,1);
+ctx.window.importVoiceThreads();assert.equal(data.chats.length,1);
+data.chats=[];ctx.window.importVoiceThreads();assert.equal(data.chats.length,0,'Acknowledged deleted chats must not reappear');
+ctx.navigate('voice');assert.equal(opened.model,'chosen');assert.equal(opened.permissionMode,'assisted');
+ctx.selectedProvider=()=>null;ctx.navigate('voice');assert.equal(opened,'voice','Preview remains available without a model');
+console.log('PASS voice inbox imports once, preserves drafts, acknowledges only after saving, model and permission selection, model-free preview');

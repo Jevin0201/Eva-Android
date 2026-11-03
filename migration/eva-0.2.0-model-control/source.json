@@ -1,0 +1,30 @@
+{
+  "sourceRoot": "D:\\Codex\\Eva-0.2.0-Source-20261102-204632-5dcffd9\\Eva-0.2.0-Source",
+  "scope": "User-authorized read-only desktop source migration; no blanket license reclassification. No root LICENSE or .gitmodules present.",
+  "files": [
+    {
+      "path": "src/renderer/composer.js",
+      "sha256": "bda32351dcca698adadefb984a2f1d7890044080047dfb84ad3761f119773200"
+    },
+    {
+      "path": "src/renderer/ui.js",
+      "sha256": "e5073f8bbae9468eb6727ce0486f6244262095f63fb338f33f77102da9f62f21"
+    },
+    {
+      "path": "src/renderer/styles.css",
+      "sha256": "b8fd0193cd3609354fdeca1c1e8749a0d54510537471ff45056b2195a09ecac7"
+    },
+    {
+      "path": "src/renderer/cloud-composer-icons.js",
+      "sha256": "0ed4a064b38aad45958710835c634923779e68be292c15068cce2d407086e7a9"
+    },
+    {
+      "path": "src/main/model-catalog.js",
+      "sha256": "b7f29d1d0326edd203b12cb820468d3638af7d186b8fcc1c3ba34b628e4d7658"
+    },
+    {
+      "path": "src/main/catalogs/deepseek.json",
+      "sha256": "daca2edc75b002fa551b38318961b62ac775d2399274d54dd028cebaba43d057"
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+package ai.eva.android.probe;
+import android.app.*;import android.os.*;import android.view.*;import android.widget.*;import org.json.*;import java.util.concurrent.*;
+/** Bounded measurements on Eva's fixture; no other app data and no external sends. */
+final class PhonePerformanceCheck {
+ static void check(Activity activity,EditText input){new Thread(()->{JSONObject report=new JSONObject();boolean armed=PhoneAccessibility.armed;
+  try{for(int n=0;n<80&&PhoneAccessibility.live==null;n++)Thread.sleep(100);if(PhoneAccessibility.live==null)throw new Exception("Accessibility not connected");PhoneAccessibility.armed=true;long epoch=PhoneAccessibility.generation;
+   JSONObject state=PhoneTools.executeObserved(activity,new JSONObject().put("action","observe"),epoch);if(!activity.getPackageName().equals(state.optString("package")))throw new Exception("Fixture not foreground");if(state.has("imageUrl"))throw new Exception("Readable fixture unnecessarily screenshotted");
+   report.put("treeMs",state.optLong("elapsedMs")).put("treeNodes",state.getJSONArray("nodes").length()).put("treeBytes",state.toString().getBytes("UTF-8").length);
+   String field=PhoneSelfCheck.find(state,"description","fixture-input");JSONObject written=PhoneTools.executeObserved(activity,new JSONObject().put("action","input").put("snapshot",state.getString("snapshot")).put("node",field).put("text","速度测试"),epoch);PhoneSelfCheck.find(written,"text","速度测试");report.put("inputAndObserveMs",written.optLong("elapsedMs"));
+   JSONObject clicked=PhoneTools.executeObserved(activity,new JSONObject().put("action","click").put("snapshot",written.getString("snapshot")).put("node",PhoneSelfCheck.find(written,"text","fixture-click")),epoch);report.put("clickObservation",clicked);PhoneSelfCheck.find(clicked,"text","fixture-clicked");report.remove("clickObservation");report.put("clickAndObserveMs",clicked.optLong("elapsedMs"));
+   JSONObject rejected=PhoneTools.executeObserved(activity,new JSONObject().put("action","click").put("snapshot",written.getString("snapshot")).put("node",field),epoch);if(!rejected.has("actionError")||rejected.optBoolean("dispatched"))throw new Exception("Stale operation was replayed");
+   CompletableFuture<Void> hidden=new CompletableFuture<>();activity.runOnUiThread(()->{View root=((ViewGroup)activity.findViewById(android.R.id.content)).getChildAt(0);root.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);hidden.complete(null);});hidden.get(2,TimeUnit.SECONDS);Thread.sleep(400);
+   JSONObject visual=PhoneTools.executeObserved(activity,new JSONObject().put("action","observe"),epoch);if(!visual.has("imageUrl")||Math.max(visual.getInt("imageWidth"),visual.getInt("imageHeight"))>1280)throw new Exception("Automatic visual fallback unavailable");report.put("firstVisualMs",visual.optLong("elapsedMs")).put("autoImageBytes",visual.optInt("imageBytes"));
+   Thread.sleep(400);visual=PhoneTools.executeObserved(activity,new JSONObject().put("action","observe"),epoch);if(!visual.has("imageUrl"))throw new Exception("Repeated visual observation missing");report.put("repeatVisualMs",visual.optLong("elapsedMs"));
+   Thread.sleep(400);JSONObject detail=PhoneTools.executeObserved(activity,new JSONObject().put("action","screenshot"),epoch);if(!detail.has("imageUrl"))throw new Exception("Explicit detail screenshot missing");report.put("detailImageBytes",detail.optInt("imageBytes")).put("detailMaxDimension",Math.max(detail.getInt("imageWidth"),detail.getInt("imageHeight")));
+   JSONObject noMatch=PhoneAppActions.openApp(activity,new JSONObject().put("app","eva-missing-fixture-0298"));if(noMatch.optBoolean("dispatched")||!noMatch.has("actionError"))throw new Exception("Unknown app was guessed");
+   android.content.pm.ApplicationInfo info=activity.getPackageManager().getApplicationInfo(activity.getPackageName(),0);String name=String.valueOf(activity.getPackageManager().getApplicationLabel(info));JSONObject candidates=PhoneAppActions.apps(activity,new JSONObject().put("query",name));report.put("appNameCandidates",candidates.optInt("total"));
+   JSONObject opened=PhoneAppActions.openApp(activity,new JSONObject().put("app",name));report.put("directNameLaunch",opened.optBoolean("dispatched")).put("nameAmbiguityHandled",opened.has("actionError"));if(!opened.optBoolean("dispatched")&&!opened.has("actionError"))throw new Exception("Invalid app result");
+   report.put("result","PASS");
+  }catch(Exception e){try{report.put("result","FAIL").put("error",e.toString());}catch(Exception ignored){}}
+  finally{PhoneAccessibility.armed=armed;activity.runOnUiThread(()->{View root=((ViewGroup)activity.findViewById(android.R.id.content)).getChildAt(0);root.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_AUTO);});}
+  activity.getSharedPreferences("eva-phone-check",0).edit().putString("performance",report.toString()).commit();
+ }).start();}
+}

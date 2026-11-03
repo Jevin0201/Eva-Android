@@ -1,0 +1,6 @@
+const fs=require('fs'),crypto=require('crypto');
+const specs=JSON.parse(fs.readFileSync('research/voice/dependencies.json','utf8'));
+const hash=p=>crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
+(async()=>{fs.mkdirSync('downloads/voice',{recursive:true});for(const dep of specs){const path='downloads/voice/'+dep.file;if(fs.existsSync(path)&&hash(path)===dep.sha256){console.log('Verified',dep.file);continue;}let fd=fs.openSync(path+'.part','w'),next=0;
+async function worker(){while(next<dep.bytes){let start=next;next+=1048576;let end=Math.min(start+1048575,dep.bytes-1);for(let i=0;i<4;i++){try{let r=await fetch(dep.url,{headers:{Range:`bytes=${start}-${end}`},signal:AbortSignal.timeout(45000)});if(r.status!==206||r.headers.get('content-range')!==`bytes ${start}-${end}/${dep.bytes}`)throw Error('Range mismatch');let b=Buffer.from(await r.arrayBuffer());if(b.length!==end-start+1)throw Error('Truncated download');fs.writeSync(fd,b,0,b.length,start);break}catch(e){if(i===3)throw e}}}}
+try{await Promise.all(Array.from({length:6},worker));}finally{fs.closeSync(fd)}if(hash(path+'.part')!==dep.sha256)throw Error('Checksum mismatch: '+dep.file);fs.renameSync(path+'.part',path);console.log('Verified',dep.file);}})().catch(e=>{console.error(e);process.exitCode=1});

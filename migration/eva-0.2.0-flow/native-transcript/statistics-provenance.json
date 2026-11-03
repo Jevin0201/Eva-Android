@@ -1,0 +1,62 @@
+{
+  "archiveSHA256": "6fbedf054a8d8cafaf5c745b40aa59176512e106e0bd6308275ae123b60fd074",
+  "source": "webview/assets/inline-followup-markdown-4c23df21794a.js",
+  "records": [
+    {
+      "name": "X",
+      "start": 13288,
+      "end": 13356,
+      "sha256": "02585d43923cc570c1e0b35d95b42fd9aa53b2088136e6d20ace389613a76b46"
+    },
+    {
+      "name": "Fe",
+      "start": 13549,
+      "end": 14392,
+      "sha256": "710364ffd96518a130de9bcda7163402fd88cda76610f1d90b79e941fd8d4ca7"
+    },
+    {
+      "name": "Pe",
+      "start": 13356,
+      "end": 13549,
+      "sha256": "9a0dac4351a70898442e3498d75586a22358b228e7a65c75bb20d0ac0dca4bab"
+    },
+    {
+      "name": "Ie",
+      "start": 14392,
+      "end": 16696,
+      "sha256": "4b6414cf0fc51c6243ba0a5c346c11a2bf232ceeded315cfa47f6842d1fbbe40"
+    },
+    {
+      "name": "Z",
+      "start": 18352,
+      "end": 18395,
+      "sha256": "9f43ddd39072f311d6e7d1924a3d6c04334c17f9bf391a2b49125d5df61aed33"
+    },
+    {
+      "name": "Re",
+      "start": 18395,
+      "end": 18618,
+      "sha256": "992c49dc897803cfe08dd22488c11e812813c9aa9d2a60a4633b372ff3a8fe5c"
+    },
+    {
+      "name": "Le",
+      "start": 16696,
+      "end": 18352,
+      "sha256": "0c6dc89cc5582cf9fbccf40544c5f5c044ac7619306ccc1c7bccb7c64b92bd48"
+    },
+    {
+      "name": "Se",
+      "start": 4782,
+      "end": 5588,
+      "sha256": "f3559536d1134172542de55c2798ecfe27ab5840fab8b4d55759564bc771f067"
+    },
+    {
+      "name": "we",
+      "start": 5643,
+      "end": 5765,
+      "sha256": "6b2cae6700154fbece8836fb1d9e5b311ee8412c5f9054ddc4947c8bee554304"
+    }
+  ],
+  "boundary": "Path normalization identity only; retained aggregation and patch descriptors.",
+  "outputSHA256": "0ca46ac5aaa42e70e56b1ed1e590f817695052733093ba3e8036fbfba0b648ac"
+}

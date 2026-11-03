@@ -1,0 +1,30 @@
+{
+  "sourceRoot": "D:\\Codex\\Eva-0.2.0-Source-20261102-204632-5dcffd9\\Eva-0.2.0-Source\\src\\renderer",
+  "scope": "User-authorized desktop source migration; original files retained for provenance. No third-party license reclassification.",
+  "files": [
+    {
+      "path": "util.js",
+      "sha256": "afad6f1e8ee9a96242e80e3dfbba67c322aae2b6d78f253bea58ef11cf820fea"
+    },
+    {
+      "path": "composer.js",
+      "sha256": "bda32351dcca698adadefb984a2f1d7890044080047dfb84ad3761f119773200"
+    },
+    {
+      "path": "styles.css",
+      "sha256": "b8fd0193cd3609354fdeca1c1e8749a0d54510537471ff45056b2195a09ecac7"
+    },
+    {
+      "path": "icons.js",
+      "sha256": "d6238ce49325a66e038544b420543c02d4e6be98a59cfb669058d4a7149819da"
+    },
+    {
+      "path": "i18n.js",
+      "sha256": "0d215326d4c6bcc821d39579dd517726210c52878555f1fec6f631430bf56001"
+    },
+    {
+      "path": "actions.js",
+      "sha256": "4617a14ab34d783ab7ffd7176a3c6cadc0a3761a298803d272404e7311085402"
+    }
+  ]
+}

@@ -7,3 +7,20 @@ See ANDROIDX_LICENSE.txt in the same assets directory.
 Upstream: https://android.googlesource.com/platform/frameworks/support
 Published artifacts: https://dl.google.com/dl/android/maven2/
 This development APK uses a reduced dependency set documented in research/androidx-webkit/README.md.
+
+
+Voice prototype (0.0.29):
+- sherpa-onnx 2.0.1, copyright Xiaomi Corporation and contributors, Apache-2.0.
+  https://github.com/k2-fsa/sherpa-onnx/tree/v2.0.1
+- ONNX Runtime bundled in the official sherpa-onnx AAR, Microsoft, MIT.
+- Kotlin standard library 2.1.0, JetBrains and contributors, Apache-2.0.
+- sherpa-onnx-kws-zipformer-zh-en-3M-2025-12-20, pkufool, Apache-2.0.
+- sherpa-onnx-streaming-zipformer-small-ctc-zh-int8-2025-04-01,
+  csukuangfj/icefall model, Apache-2.0.
+- kaldi-native-fbank, kaldi-decoder, simple-sentencepiece: Apache-2.0;
+  utf8proc: MIT / Unicode data notices.
+License texts and ONNX Runtime third-party notices: assets/voice/licenses/.
+Upstream downloads, hashes, source inspection and build dependency notes:
+research/voice/dependencies.json and docs/VOICE_0_0_29.md in the source workspace.
+No upstream source or model weights modified; assets renamed for packaging.
+Eva's keywords.txt and Android integration are project-specific additions.

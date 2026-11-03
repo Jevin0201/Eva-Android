@@ -1,0 +1,63 @@
+{
+  "sourceRoot": "D:\\Codex\\Eva-0.2.0-Source-20261102-204632-5dcffd9\\Eva-0.2.0-Source",
+  "version": "0.2.0",
+  "commit": "5dcffd93432b54dc03c45dcc5d9ad9aef204f8b0",
+  "migration": "Exact bytes; no modifications. Not yet wired into Android.",
+  "licenseReview": {
+    "rootLicenseFound": false,
+    "packagePrivate": true,
+    "thirdPartyCoreOrigin": "Codex shipped module function bodies; original per-module provenance retained. No open-source license grant established by this source export."
+  },
+  "files": [
+    {
+      "source": "src/renderer/native-transcript/activity-core.js",
+      "destination": "native-transcript/activity-core.js",
+      "sha256": "0eb620e6888343a5932937770c301698784d17ca092620c172cc376bb84d90ee"
+    },
+    {
+      "source": "src/renderer/native-transcript/activity-provenance.json",
+      "destination": "native-transcript/activity-provenance.json",
+      "sha256": "9e12efd2a2c5ed1bfeb877245f55cf5dda22c5a7e255ddd57c8c46cde0b7226d"
+    },
+    {
+      "source": "src/renderer/native-transcript/disclosure-core.js",
+      "destination": "native-transcript/disclosure-core.js",
+      "sha256": "cf99f14c13aa7624b0502f555389b4789c1019714bafe8a8de364a41f3aa5329"
+    },
+    {
+      "source": "src/renderer/native-transcript/disclosure-provenance.json",
+      "destination": "native-transcript/disclosure-provenance.json",
+      "sha256": "bf46eef60f84a9594d3170f1571874b600cd1059905f70ef706fe90a9737956d"
+    },
+    {
+      "source": "src/renderer/native-transcript/host.js",
+      "destination": "native-transcript/host.js",
+      "sha256": "0563a3f43871b5677c9f62031d6ed1c5eac51aa4d4727c6c9364e227e8368a67"
+    },
+    {
+      "source": "src/renderer/native-transcript/original-core.js",
+      "destination": "native-transcript/original-core.js",
+      "sha256": "a80f57ad4d677dfd153c48a49bb61d98f4479568d03ec7600b75710ce24406ed"
+    },
+    {
+      "source": "src/renderer/native-transcript/provenance.json",
+      "destination": "native-transcript/provenance.json",
+      "sha256": "fff57866a1adb2bb76f6f506474a38ff58817fcdaf4a97ada43510ef68a1b4d1"
+    },
+    {
+      "source": "src/renderer/native-transcript/statistics-core.js",
+      "destination": "native-transcript/statistics-core.js",
+      "sha256": "0ca46ac5aaa42e70e56b1ed1e590f817695052733093ba3e8036fbfba0b648ac"
+    },
+    {
+      "source": "src/renderer/native-transcript/statistics-provenance.json",
+      "destination": "native-transcript/statistics-provenance.json",
+      "sha256": "b7d2cec1b878dd5cad52ece2460980b11df5eb65858a47fc0df21231f9a1a165"
+    },
+    {
+      "source": "src/renderer/native-transcript/turn-disclosure-provenance.json",
+      "destination": "native-transcript/turn-disclosure-provenance.json",
+      "sha256": "24b3976bb60a137df8facccf85f6253ab62ab691c968d2b78a856623837b6c67"
+    }
+  ]
+}

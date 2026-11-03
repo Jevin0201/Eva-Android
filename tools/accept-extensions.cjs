@@ -1,0 +1,13 @@
+const {chromium}=require('playwright-core'),fs=require('fs');
+(async()=>{const b=await chromium.connectOverCDP('http://127.0.0.1:9223');try{const p=b.contexts()[0].pages().find(p=>p.url().includes('eva.invalid'));
+console.log(await p.evaluate(()=>({skill:!!window.skillManager,plugins:!!window.evaPlugins,questions:!!window.agentQuestions,mcp:!!window.openMcpSettings})));
+const provider=process.env.EVA_ACCEPT_PROVIDER||'openai';
+await p.evaluate(provider=>{const api=modelConfig.providers.find(p=>p.model.includes('deepseek'));const c={id:crypto.randomUUID(),title:'扩展能力真机验收 '+provider,messages:[],draft:'',providerId:provider==='openai'?'openai':api.id,model:provider==='openai'?'gpt-6.1-terra':api.model,effort:provider==='openai'?'low':'high',permissionMode:'full'};data.drafts.push(c);data.active=c.id;route='chat';settingPage=null;saveKernel();render();},provider);
+await p.locator('#prompt').fill('这是扩展功能验收。请实际读取并使用 $eva-skill-acceptance 和插件技能 eva-plugin-acceptance，记录它们各自要求的验收标记。再调用 eva_acceptance MCP 的 echo_acceptance 工具，text 参数为 hello-phone。最后必须调用 request_user_input 工具问我选择 Green 还是 Blue，等我回答后把两项技能标记、MCP返回标记、我的选择一起回复。不要操作手机、浏览器或任何外部服务。');await p.locator('[data-action=kernel-send]').click();
+await p.waitForSelector('.agent-question-card',{timeout:180000});console.log('REAL QUESTION RECEIVED');
+await p.reload();await p.waitForSelector('.agent-question-card',{timeout:15000});console.log('PENDING QUESTION RESTORED');
+await p.locator('.agent-question-card textarea').first().fill('Green');await p.locator('.agent-question-card button[type=submit]').click();await p.waitForFunction(()=>active()?.running===false,{},{timeout:180000});
+const result=await p.evaluate(()=>({id:active().id,thread:active().kernelThread.id,turns:active().kernelThread.turns.map(t=>({status:t.status,items:t.items.map(i=>({type:i.type,text:itemText(i),tool:i.tool,status:i.status}))}))}));
+const all=JSON.stringify(result);for(const marker of ['EVA_SKILL_OK_5128','EVA_PLUGIN_SKILL_7391','EVA_MCP_OK_8427','Green'])if(!all.includes(marker))throw Error('Missing '+marker+': '+all);
+fs.mkdirSync('artifacts/extensions',{recursive:true});fs.writeFileSync('artifacts/extensions/'+provider+'.json',JSON.stringify(result,null,2));console.log('PASS skill + plugin skill + real MCP + user question roundtrip '+provider);
+}finally{await b.close();}})().catch(e=>{console.error(e);process.exitCode=1});
