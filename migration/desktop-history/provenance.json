@@ -1,0 +1,40 @@
+{
+  "method": "read-only desktop Eva source review; no new formal-app dynamic evidence",
+  "sourceCommit": "4134302",
+  "files": [
+    {
+      "path": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/actions.js",
+      "sha256": "09d846f42bb8ed1d11a676195bfa3a5c4e03bd51628307baaebb8af2893d2311"
+    },
+    {
+      "path": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-history/windows-resume-reference.js",
+      "sha256": "2cb0acecd52ed75a4bf5a7d5c5d22aec0bdd15a69e07b1a151092a029c244062"
+    },
+    {
+      "path": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-history/windows-resume-provenance.json",
+      "sha256": "56f3190621327fadff3e6c3e4653d343404cc0aa3d6b5f0bbc943581ac745355"
+    },
+    {
+      "path": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-history/README.md",
+      "sha256": "32c61fd095b524de28db46937f5c851856d110ad3c34cb35e003e562b0231a8c"
+    }
+  ],
+  "reference": "actions.js openThread 416-535: request epoch, cached loaded-turn merge, live-notification retention",
+  "adaptation": {
+    "android": [
+      "kernel-paged-history.js",
+      "models.js chat navigation"
+    ],
+    "retained": [
+      "metadata-only thread/read",
+      "summary 5 turns per page",
+      "10 detail items per page",
+      "never resubmit on refresh"
+    ],
+    "differences": [
+      "Android uses existing streamState.mergeTurn/mergeItem plus per-turn event sequence to merge live changes",
+      "Per-thread read epoch rejects superseded requests; per-navigation epoch prevents inactive thread applying UI results",
+      "No Electron API/store or full 10-turn payload copied; no full-history fallback"
+    ]
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "asarSha256": "0c951258b7ab381ec601045ffb02159e53f424548dda18e6a4dcfd126557383b",
+  "observations": [
+    {
+      "file": "webview/assets/async/24191.589dcc9878.js",
+      "sourceSha256": "bd23d61085fcad60b8f582112d4ca0695b34204510cff900ba0f87c9c61228d0",
+      "byteStart": 574283,
+      "byteEnd": 575249,
+      "excerpt": "async function n8(e,t,{markConversationNeedsResumeForUnavailableOwner:n,ownerWindowError:r,registerPendingManualContextCompaction:i,removePendingManualContextCompaction:a,resumeConversationForUnavailableOwner:s,sendThreadFollowerRequest:o}){try{await e.waitForPendingThreadSettingsUpdate(t)}catch(n){if(e.getStreamRole(t)?.role!==\"follower\"||!(0,eg.R)(n).includes(\"no-client-found\"))throw n}let l=e.getConversation(t),u=e.getConversationCwd(t);i(t);try{if(await n6({conversationId:t,getStreamRole:t=>e.getStreamRole(t),markConversationNeedsResumeForUnavailableOwner:(e,t)=>{n(e,t)},resumeConversationForUnavailableOwner:s,workspaceRoots:[u??\"/\"],collaborationMode:l?.latestCollaborationMode??null,reasoningEffort:l?.latestReasoningEffort??null,sendRequest:e=>o(e,\"thread-follower-compact-thread\",{conversationId:t})}))return;let i=e.getStreamRole(t);if(i?.role!==\"owner\")throw Error(r);await e.sendRequest(\"thread/compact/start\",{threadId:t})}catch(e){throw a(t),e}}",
+      "derivedPath": "artifacts/diagnosis-20261105/compaction-observed/manual-request.js",
+      "derivedSha256": "7178ee417b2a6eac48dfb6dfa5125081b633e585e1d7bdae2f4c21d9d8cc69a0"
+    },
+    {
+      "file": "webview/assets/async/24191.589dcc9878.js",
+      "sourceSha256": "bd23d61085fcad60b8f582112d4ca0695b34204510cff900ba0f87c9c61228d0",
+      "byteStart": 637847,
+      "byteEnd": 638933,
+      "excerpt": "let rF=\"pending-manual-context-compaction\";class rH{threadStore;addPendingContextCompactionSyntheticItem;pendingCounts=new Map;constructor(e,t){this.threadStore=e,this.addPendingContextCompactionSyntheticItem=t}register(e){this.pendingCounts.set(e,(this.pendingCounts.get(e)??0)+1),this.addPendingContextCompactionSyntheticItem(e,{type:\"contextCompaction\",id:rF,completed:!1,startedAtMs:Date.now(),source:\"manual\"})}remove(e){this.decrementPendingCount(e)&&this.removePendingItem(e)}consumeSource(e){return this.pendingCounts.has(e)?(this.decrementPendingCount(e),\"manual\"):\"automatic\"}clearConversation(e){this.pendingCounts.delete(e)}decrementPendingCount(e){let t=this.pendingCounts.get(e);return null!=t&&(t<=1?(this.pendingCounts.delete(e),!0):(this.pendingCounts.set(e,t-1),!1))}removePendingItemFromTurn(e){e.items=e.items.filter(e=>e.id!==rF)}removePendingItem(e){this.threadStore.updateConversationState(e,e=>{let t=(0,e3.fN)(e,e=>e.items.some(e=>e.id===rF));t&&(this.removePendingItemFromTurn(t),null==t.turnId&&\"inProgress\"===t.status&&0===t.items.length&&(0,e3.Oc)(e,t))})}}",
+      "derivedPath": "artifacts/diagnosis-20261105/compaction-observed/pending-state.js",
+      "derivedSha256": "ac6765c7a0c0426f920dc4c1acdbe456eb53132efd1f83211c9fd1c9a0f01214"
+    },
+    {
+      "file": "webview/assets/async/589850.4264f95e93.js",
+      "sourceSha256": "3e01ea1eaaacea58cda43e28dd8a3170243d017e5598083d2952f70de8aeb867",
+      "byteStart": 117844,
+      "byteEnd": 118229,
+      "excerpt": "function rM(e){let t=e?.modelContextWindow??null,n=e?.last.totalTokens??null;if(null==t||t<=0||null==n||n<0)return{percent:null,usedTokens:null,contextWindow:null,remainingTokens:null};let o=Math.min(n,t),a=o/t*100;return Number.isFinite(a)?{percent:a,usedTokens:o,contextWindow:t,remainingTokens:Math.max(t-o,0)}:{percent:null,usedTokens:null,contextWindow:null,remainingTokens:null}}",
+      "derivedPath": "artifacts/diagnosis-20261105/compaction-observed/usage-ratio.js",
+      "derivedSha256": "f8cbdd7d55a83fdfb31c0f2b98de6aa83a376a7fdad8e000cd94113f4981ae0b"
+    },
+    {
+      "file": "webview/assets/async/589850.4264f95e93.js",
+      "sourceSha256": "3e01ea1eaaacea58cda43e28dd8a3170243d017e5598083d2952f70de8aeb867",
+      "byteStart": 202324,
+      "byteEnd": 204322,
+      "excerpt": "function la(e){let t,n,r,i,s,l,d,c,m,h=(0,a.c)(31),{conversationId:p,isResponseInProgress:f}=e,g=(0,u.gh)(F.u),v=(0,w.A)(),b=(0,u._U)(k.k2,p);if(h[0]!==v||h[1]!==b){let{percent:e}=rM(b);t=e??0,n=null==e?v.formatMessage({id:\"composer.compactSlashCommand.description\",defaultMessage:\"Compact this chat's context\",description:\"Description for the compact slash command\"}):v.formatMessage({id:\"composer.compactSlashCommand.descriptionWithUsage\",defaultMessage:\"Compact this chat's context ({usage}% full)\",description:\"Description for the compact slash command with current context window usage\"},{usage:Math.round(e)}),h[0]=v,h[1]=b,h[2]=t,h[3]=n}else t=h[2],n=h[3];let x=n;h[4]!==t?(r=function(e){let{className:n}=e;return(0,o.jsx)(rg.G,{percent:t,className:n})},h[4]=t,h[5]=r):r=h[5];let y=r;h[6]!==v?(i=v.formatMessage({id:\"composer.compactSlashCommand.title\",defaultMessage:\"Compact\",description:\"Title for the compact slash command\"}),h[6]=v,h[7]=i):i=h[7],h[8]!==y?(s={light:y},h[8]=y,h[9]=s):s=h[9],h[10]!==y||h[11]!==s?(l={artwork:s,secondary:y},h[10]=y,h[11]=s,h[12]=l):l=h[12];let C=null!=p;return h[13]!==p||h[14]!==v||h[15]!==f||h[16]!==g?(d=async()=>{f?g.get(Q.Id).danger(v.formatMessage({id:\"composer.compactSlashCommand.disabledInProgressToast\",defaultMessage:\"Compact is disabled while a chat is in progress\",description:\"Toast shown when the compact slash command is used while a task is already in progress\"}),{errorAnalytics:{toastId:\"composer.compactSlashCommand.disabledInProgressToast\"}}):null!=p&&await (0,sa.V)(g,g.get(k.qX,p)).compactThread(p)},h[13]=p,h[14]=v,h[15]=f,h[16]=g,h[17]=d):d=h[17],h[18]!==t||h[19]!==p||h[20]!==v||h[21]!==f||h[22]!==g?(c=[g,t,p,v,f],h[18]=t,h[19]=p,h[20]=v,h[21]=f,h[22]=g,h[23]=c):c=h[23],h[24]!==x||h[25]!==i||h[26]!==l||h[27]!==C||h[28]!==d||h[29]!==c?(m={id:\"compact\",title:i,description:x,requiresEmptyComposer:!0,Icon:l,enabled:C,onSelect:d,dependencies:c},h[24]=x,h[25]=i,h[26]=l,h[27]=C,h[28]=d,h[29]=c,h[30]=m):m=h[30],(0,rq.r6)(m),null}",
+      "derivedPath": "artifacts/diagnosis-20261105/compaction-observed/compact-command.js",
+      "derivedSha256": "a6c0e81df6ab5494d4baeab299fcb8aa0ddcc20ef85c63478110b6e71f6a045d"
+    },
+    {
+      "file": "webview/assets/async/24191.589dcc9878.js",
+      "sourceSha256": "bd23d61085fcad60b8f582112d4ca0695b34204510cff900ba0f87c9c61228d0",
+      "term": "case\"thread/tokenUsage/updated\":{let",
+      "byteStart": 973847,
+      "byteEnd": 974197,
+      "excerpt": "case\"thread/tokenUsage/updated\":{let{threadId:t,tokenUsage:r}=n.params;e.updateConversationState((0,_.J)(t),e=>{e.latestTokenUsageInfo=r});return}}}(e,l);break;case\"turn/started\":case\"turn/completed\":case\"turn/diff/updated\":case\"turn/plan/updated\":case\"model/safetyBuffering/updated\":case\"model/rerouted\":case\"hook/started\":case\"hook/completed\":case\""
+    },
+    {
+      "file": "webview/assets/async/24191.589dcc9878.js",
+      "sourceSha256": "bd23d61085fcad60b8f582112d4ca0695b34204510cff900ba0f87c9c61228d0",
+      "term": "source:o.manualContextCompactions.consumeSource(u)",
+      "byteStart": 985295,
+      "byteEnd": 986095,
+      "excerpt": "a.aeonAssistantMessageStartedAtMsById={}))[n.id]=i),rV(n)&&(a.firstTurnWorkItemStartedAtMs=a.firstTurnWorkItemStartedAtMs??Date.now());let d=rz(e,n);rW(t,n),\"commandExecution\"===d.type&&((a.commandExecutionStartedAtMsById??(a.commandExecutionStartedAtMsById={}))[d.id]=i);let c=(0,eh.h4)(\"contextCompaction\"===d.type?{...d,completed:!1,startedAtMs:i,source:o.manualContextCompactions.consumeSource(u)}:d);\"contextCompaction\"===d.type&&o.manualContextCompactions.removePendingItemFromTurn(a),\"agentMessage\"===d.type&&(0,eH.gn)(a,d)||(0,nW.v)(a,c)});break}case\"item/completed\":{let{item:i,threadId:a,turnId:l,completedAtMs:d}=t.params;if(\"agentMessage\"===i.type)o.itemStreamState.flushPendingDeltas();else if(o.itemStreamState.drainBefore(()=>{s.onNotification(\"item/completed\",t.params,n,void 0,r)}))r"
+    },
+    {
+      "file": "webview/assets/async/24191.589dcc9878.js",
+      "sourceSha256": "bd23d61085fcad60b8f582112d4ca0695b34204510cff900ba0f87c9c61228d0",
+      "term": "if(rW(t,i),\"contextCompaction\"===a.type)",
+      "byteStart": 987058,
+      "byteEnd": 988258,
+      "excerpt": "e\"===i.type)return void(0,eH.ov)(n,i,\"completed\",t.modelProvider??null,l??n.turnId,d);let a=rz(e,i);if(rW(t,i),\"contextCompaction\"===a.type){for(let e of(delete t.lastInjectedPassiveContextKey,n.items))if(\"contextCompaction\"===e.type&&e.id===a.id){\"source\"in e&&(r=e.source);break}}if(\"commandExecution\"===i.type&&null!=i.durationMs){let e=d-i.durationMs,t=n.commandExecutionStartedAtMsById??(n.commandExecutionStartedAtMsById={});null==t[i.id]&&(t[i.id]=e)}let o=(0,eh.h4)(\"contextCompaction\"===a.type?{...a,completed:!0,source:r??\"automatic\"}:a);\"hookPrompt\"===i.type||(rV(i)&&(n.firstTurnWorkItemStartedAtMs=n.firstTurnWorkItemStartedAtMs??Date.now()),i.type),(0,nW.v)(n,o)}),(\"collabAgentToolCall\"===i.type&&\"spawnAgent\"===i.tool||\"subAgentActivity\"===i.type&&\"started\"===i.kind)&&o.subagentTopology.discoverForSpawn(u,i);break}case\"item/autoApprovalReview/started\":case\"item/autoApprovalReview/completed\":let d,c;i=t.params,d=function(e){let t=Date.now();return{type:\"automaticApprovalReview\",id:`automatic-approval-review:${e.reviewId}`,targetItemId:e.targetItemId,turnId:e.turnId,action:e.action,startedAtMs:t,completedAtMs:\"inProgress\"===e.review.status?null:t,serverStartedAtMs:e.startedAtMs"
+    },
+    {
+      "file": "webview/assets/async/24191.589dcc9878.js",
+      "sourceSha256": "bd23d61085fcad60b8f582112d4ca0695b34204510cff900ba0f87c9c61228d0",
+      "term": "case\"contextCompaction\":{let e=",
+      "byteStart": 4604229,
+      "byteEnd": 4604879,
+      "excerpt": "case\"contextCompaction\":{let e=\"completed\"===eC.status||!(\"completed\"in n)||n.completed,t=\"inProgress\"===eC.status?\"inProgress\":\"interrupted\",r=\"source\"in n?n.source:\"automatic\";ew.push({type:\"context-compaction\",id:n.id,status:e?\"completed\":t,startedAtMs:\"startedAtMs\"in n?n.startedAtMs??null:null,source:r});break}case\"worktreeInit\":ew.push({...n,type:\"worktree-init\"});break;case\"userMessage\":{if(e_(eC,e,n,eE))break;let a=ei||0!==ew.length?null:eR;ei&&null!=eC.turnId&&(a=(0,k.Yi)((0,c.JXB)(eC.params.threadId),eC.turnId,n.id)??null);let s=ey(n),o=(0,J.r)({input:n.content,clientUserMessageId:s,attachments:i,commentAttachments:n.commentAttachmen"
+    },
+    {
+      "file": "webview/assets/async/24191.589dcc9878.js",
+      "sourceSha256": "bd23d61085fcad60b8f582112d4ca0695b34204510cff900ba0f87c9c61228d0",
+      "term": "model_auto_compact_token_limit:null",
+      "byteStart": 6283781,
+      "byteEnd": 6284611,
+      "excerpt": "o=n(\"WFY2\"),l=n(\"rvFo\");let u=[\"config\",\"effective\"],d=[\"config\",\"layered-response\"],c=[\"config\",\"read-response\"],p={config:{model:null,review_model:null,model_context_window:null,model_auto_compact_token_limit:null,model_auto_compact_token_limit_scope:null,model_provider:null,approval_policy:null,approvals_reviewer:null,sandbox_mode:null,sandbox_workspace_write:null,forced_chatgpt_workspace_id:null,forced_login_method:null,web_search:null,tools:null,profile:null,profiles:{},instructions:null,developer_instructions:null,compact_prompt:null,model_reasoning_effort:null,model_reasoning_summary:null,service_tier:null,model_verbosity:null,analytics:null,mcp_servers:{},apps:{_default:{enabled:!0,omit_tools_from:null,approvals_reviewer:null,destructive_enabled:!1,open_world_enabled:!1,default_tools_approval_mode:null,default_"
+    },
+    {
+      "file": "webview/assets/async/545104.c407c1f749.js",
+      "sourceSha256": "d0ef4122e707a9ad9947c473cc457dd3f9324b2e7bd3e3eb2e21b5380d1fb46a",
+      "term": "showContextWindowUsage:",
+      "byteStart": 62408,
+      "byteEnd": 62758,
+      "excerpt": "showContextWindowUsage:eB({agentAccess:\"read-write\",default:!1,description:\"Whether context window usage is shown in the composer\",key:\"show-context-window-usage\",schema:eD}),showEducationalTips:eB({agentAccess:\"read-write\",default:!0,description:\"Whether educational tips are shown above the composer\",key:\"show-educational-tips\",schema:eD}),reviewD"
+    },
+    {
+      "file": "webview/assets/async/589850.4264f95e93.js",
+      "sourceSha256": "3e01ea1eaaacea58cda43e28dd8a3170243d017e5598083d2952f70de8aeb867",
+      "term": "id:\"composer.contextUsageIndicator.ariaLabel\"",
+      "byteStart": 115425,
+      "byteEnd": 117725,
+      "excerpt": "indow,p[3]=n):n=p[3];let I=n;p[4]===Symbol.for(\"react.memo_cache_sentinel\")?(r=(0,o.jsx)(X.A,{id:\"composer.contextWindowUsageLabel\",defaultMessage:\"Context window:\",description:\"Label describing the context window usage tooltip content\",children:rv}),p[4]=r):r=p[4];let S=y?\"opacity-60\":void 0;return p[5]!==x||p[6]!==b||p[7]!==y?(i=y?(0,o.jsx)(X.A,{id:\"composer.contextWindowUsageStatusFull\",defaultMessage:\"{usage}% full\",description:\"Context window usage percent indicating how full it is\",values:{usage:(0,o.jsx)(ec.Gr,{value:b})}}):(0,o.jsx)(X.A,{id:\"composer.contextWindowUsageStatusLeft\",defaultMessage:\"{usage}% used ({remaining}% left)\",description:\"Context window usage percent indicating how much is left\",values:{remaining:(0,o.jsx)(ec.Gr,{value:x}),usage:(0,o.jsx)(ec.Gr,{value:b})}}),p[5]=x,p[6]=b,p[7]=y,p[8]=i):i=p[8],p[9]!==S||p[10]!==i?(s=(0,o.jsx)(\"span\",{className:S,children:i}),p[9]=S,p[10]=i,p[11]=s):s=p[11],p[12]!==I||p[13]!==C?(l=null!=C&&null!=I?(0,o.jsx)(X.A,{id:\"composer.contextWindowUsageTooltip\",defaultMessage:\"{usedTokens}k / {contextWindow}k tokens used\",description:\"Tooltip shown in the composer footer indicating context window usage in thousands\",values:{contextWindow:(0,o.jsx)(ec.Gr,{value:I}),usedTokens:(0,o.jsx)(ec.Gr,{value:C})}}):null,p[12]=I,p[13]=C,p[14]=l):l=p[14],p[15]!==s||p[16]!==l?(d=(0,o.jsxs)(\"div\",{className:\"flex w-38 flex-col gap-0.5 text-center\",children:[r,s,l]}),p[15]=s,p[16]=l,p[17]=d):d=p[17],p[18]!==v||p[19]!==g?(c=g.formatMessage({id:\"composer.contextUsageIndicator.ariaLabel\",defaultMessage:\"Context usage: {percent}%\",description:\"Accessible label for the composer context usage donut\"},{percent:g.formatNumber(v,{maximumFractionDigits:0})}),p[18]=v,p[19]=g,p[20]=c):c=p[20],p[21]!==v?(u=(0,o.jsx)(rg.G,{percent:v}),p[21]=v,p[22]=u):u=p[22],p[23]!==u||p[24]!==c?(m=(0,o.jsx)(\"span\",{\"aria-label\":c,className:\"icon-xs inline-flex items-center justify-center align-middle text-codex-description\",role:\"img\",children:u}),p[23]=u,p[24]=c,p[25]=m):m=p[25],p[26]!==m||p[27]!==d?(h=(0,o.jsx)(eq.m,{content:d,align:\"center\",sideOffset:4,children:m}),p[26]=m,p[27]=d,p[28]=h):h=p[28],h}function rv(e){return(0,o.jsx)(\"span\",{className:\"whitespace-pre-line opacity-60\",children:e})}var rb=n(\"wtvr\");function rx(e,t){return\"cloud\"!==t&&(\"lo"
+    }
+  ]
+}

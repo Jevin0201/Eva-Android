@@ -1,0 +1,11 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert/strict');
+const source=fs.readFileSync('probe/assets/app.js','utf8');
+const code=source.slice(source.indexOf('function serializeUiState('),source.indexOf('let persistTimer;'));
+const ctx={};vm.createContext(ctx);vm.runInContext(code,ctx);
+const tool={type:'dynamicToolCall',id:'tool',status:'completed',arguments:{action:'observe'},contentItems:[{type:'inputText',text:'页面'.repeat(1100000)}]};
+const chat={id:'c',draft:'未发送草稿',kernelThread:{id:'t',turns:[{id:'turn',status:'completed',items:[{type:'userMessage',content:[{text:'用户原文'}]},tool,{type:'agentMessage',text:'完整回答'}]}]}};
+const state={chats:[chat],drafts:[],projects:[{id:'p'}]},before=JSON.stringify(state);
+const snapshot=JSON.parse(ctx.serializeUiState(state));
+assert.equal(ctx.serializeUiState(state),before);assert.equal(JSON.stringify(state),before);
+assert.deepEqual(snapshot,state);assert(ctx.serializeUiState(state).length>2000000);
+console.log('PASS: complete >2M state, tools, drafts and answers preserved for native transactional storage');

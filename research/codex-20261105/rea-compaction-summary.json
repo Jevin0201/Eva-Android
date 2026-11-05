@@ -1,0 +1,32 @@
+{
+  "evidence_id": "ev_fcfedff580bbe677d1ea9a2f52f641a636bf642fb5acaade8d98ee6aa5283e99",
+  "subject": {
+    "name": "compaction-observed",
+    "digest": {
+      "sha256": "544e6892be3ed2f06b7adf08bbee15267abc55fefd36f58e650e1ec80356348a"
+    },
+    "local_path": "/Users/jevin/Documents/Codex/Eva-Android/artifacts/diagnosis-20261105/compaction-observed",
+    "format": "directory",
+    "architecture": null
+  },
+  "operation": "analyze_javascript_application",
+  "parameters": {
+    "format": "auto",
+    "integrity_policy": "fail",
+    "max_semantic_nodes": 800,
+    "max_semantic_nodes_per_file": 250,
+    "max_semantic_unknowns": 400,
+    "analysis_timeout_ms": 30000
+  },
+  "confidence": "derived",
+  "authority": "shipped-artifact",
+  "limitations": [
+    "CommonJS and ESM binding relationships were recovered from inert syntax and resolved only within the inventoried artifact container.",
+    "JavaScript and HTML were parsed as inert text; bundle bootstrap code was never executed.",
+    "Static imports, entrypoints, workers, endpoints, and storage relationships do not prove runtime execution.",
+    "Static paths and relationships may remain unresolved when expressions are dynamic or obfuscated.",
+    "Webpack/Rspack factories were recovered from AST literals; REA did not invoke push handlers or bundle bootstrap code."
+  ],
+  "full_evidence_local_path": "artifacts/diagnosis-20261105/codex-rea-compaction.json",
+  "full_evidence_sha256": "689eb0a3122d61914685bdac1dd3e9329802a68fbb4ca05a096c074cae7cf3cc"
+}

@@ -1,0 +1,6 @@
+/* Eva desktop 0.2.1 compaction row; mobile selector/color-token adapter. */
+.flow .context-compaction-row{display:flex;align-items:center;gap:6px;min-width:0;font-size:var(--codex-chat-font-size,14px);line-height:22px;color:color-mix(in srgb,var(--ink) 60%,transparent)}
+.context-compaction-row>svg{width:16px;height:16px;flex:none;stroke:none}
+.context-compaction-row .compaction-summary{min-width:0;overflow-wrap:anywhere}
+.context-compaction-row .eva-thinking-text{color:inherit}
+.context-compaction-controls{display:inline-flex;align-items:center;gap:6px;margin-inline-start:6px}.context-compaction-controls button{font:inherit;color:inherit;border:0;background:transparent;padding:2px 4px;text-decoration:underline;cursor:pointer}.context-compaction-controls button:disabled{opacity:.5;cursor:default}

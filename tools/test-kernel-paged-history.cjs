@@ -1,0 +1,17 @@
+const assert=require('assert/strict'),fs=require('fs'),vm=require('vm');
+const user=id=>({id:'u'+id,type:'userMessage',content:[{text:'用户'+id}]}),answer=id=>({id:'a'+id,type:'agentMessage',text:'回答'+id});
+const turn=id=>({id,status:'completed',items:[user(id),answer(id)]});
+(async()=>{
+ const calls=[],queue=[],c={id:'chat',kernelThread:{id:'thread',turns:[]}},ctx={kernelEvent:()=>{},data:{chats:[c],drafts:[]},streamState:require('../probe/assets/eva-stream-state.js'),window:{},console,Promise,Map,Set,Error,flowHistoryLimits:new WeakMap(),kernelNotice:'',esc:x=>x,active:()=>c,scheduleKernelSave:()=>{},refreshKernelControls:()=>{},updateKernelFlow:()=>{},navigate:()=>{},document:{querySelector:()=>null}};
+ ctx.window=ctx;ctx.mobileFlow={turn:t=>t.items.map(i=>i.id).join(',')};ctx.kernelCall=async(method,params)=>{calls.push({method,params});const next=queue.shift();if(next instanceof Error)throw next;if(typeof next==='function')return next(method,params);return next};vm.createContext(ctx);vm.runInContext(fs.readFileSync('probe/assets/kernel-paged-history.js','utf8'),ctx);
+ queue.push({thread:{id:'thread'}},{data:[turn('2'),turn('1')],nextCursor:'older'});const result=await ctx.kernelCall('thread/read',{threadId:'thread',includeTurns:true});c.kernelThread=result.thread;
+ assert.deepEqual(calls.map(x=>x.method),['thread/read','thread/turns/list']);assert.equal(calls[0].params.includeTurns,false);assert.equal(calls[1].params.itemsView,'summary');assert.equal(calls[1].params.limit,5);assert.equal(result.thread.turns.map(t=>t.id).join(','),'1,2');assert.equal(result.thread.androidTurnsCursor,'older');
+ queue.push({thread:{id:'thread',turns:[]}});await ctx.kernelCall('thread/resume',{threadId:'thread',excludeTurns:false});assert.equal(calls.at(-1).params.excludeTurns,true);
+ queue.push({data:[turn('1'),turn('0')],nextCursor:null});await ctx.evaKernelHistory.loadOlder(c);assert.equal(c.kernelThread.turns.map(t=>t.id).join(','),'0,1,2');assert.equal(c.kernelThread.androidTurnsCursor,null);
+ const command={id:'cmd2',type:'commandExecution',command:'echo diagnostic'};
+ queue.push({data:[{turnId:'2',item:answer('2')},{turnId:'2',item:command}],nextCursor:'previous-items'});await ctx.evaKernelHistory.loadItems(c,'2');let t=c.kernelThread.turns.find(t=>t.id==='2');assert.equal(t.items.map(i=>i.id).join(','),'u2,cmd2,a2');assert.equal(t.androidItemsCursor,'previous-items');assert(!Object.hasOwn(t,'androidDetailItems'));assert(ctx.evaKernelHistory.moreButton(t).includes('加载更早执行详情'));
+ queue.push({data:[{turnId:'2',item:user('2')}],nextCursor:null});await ctx.evaKernelHistory.loadItems(c,'2');t=c.kernelThread.turns.find(t=>t.id==='2');assert.equal(t.items.map(i=>i.id).join(','),'u2,cmd2,a2');assert.equal(t.androidSummary,false);
+ queue.push({thread:{id:'thread'}},new Error('unsupported pagination'));await assert.rejects(()=>ctx.kernelCall('thread/read',{threadId:'thread',includeTurns:true}),/unsupported pagination/);assert(calls.every(x=>x.method!=='thread/read'||x.params.includeTurns===false));assert(calls.every(x=>x.method!=='turn/start'));
+ c.kernelThread.androidTurnsCursor='again';queue.push(new Error('network failure'));await assert.rejects(()=>ctx.evaKernelHistory.loadOlder(c),/network failure/);
+ console.log('PASS metadata-only read, 5-turn summary pages, lightweight resume, item pagination/dedup/order, visible detail control, errors propagate, no all-history fallback or task replay');
+})().catch(e=>{console.error(e);process.exitCode=1});

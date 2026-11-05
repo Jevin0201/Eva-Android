@@ -1,0 +1,3 @@
+const path=require('node:path');
+const dependencies=process.env.EVA_DESKTOP_NODE_MODULES||'/Users/jevin/Documents/Codex/Eva-Source/node_modules';
+require(path.join(dependencies,'esbuild')).build({absWorkingDir:process.cwd(),entryPoints:['migration/desktop-activity/adapter.jsx'],nodePaths:[dependencies],bundle:true,format:'iife',loader:{'.css':'text'},define:{'process.env.NODE_ENV':'"production"'},outfile:'probe/assets/original-activity.js',minify:true,legalComments:'inline'}).then(()=>console.log('Built original ActivityShell, Summary and motion with existing desktop dependencies')).catch(e=>{console.error(e);process.exitCode=1});

@@ -1,0 +1,78 @@
+[
+  {
+    "evidence_id": "ev_d4f29b71c6a5b58ea869c31d914c226238d24c028a33605f0d370f7fc0d565fe",
+    "subject": {
+      "name": "app.asar",
+      "digest": {
+        "sha256": "0c951258b7ab381ec601045ffb02159e53f424548dda18e6a4dcfd126557383b"
+      },
+      "local_path": "/Applications/ChatGPT.app/Contents/Resources/app.asar",
+      "format": "asar",
+      "architecture": null
+    },
+    "operation": "analyze_javascript_application",
+    "parameters": {
+      "format": "auto",
+      "integrity_policy": "record-and-continue",
+      "max_semantic_nodes": 1500,
+      "max_semantic_nodes_per_file": 750,
+      "max_semantic_unknowns": 500,
+      "max_semantic_unknowns_per_file": 250,
+      "source_paths": [
+        "webview/assets/async/899308.3f1db3f4cb.js",
+        "webview/assets/async/592985.cdef4a4347.js"
+      ],
+      "analysis_timeout_ms": 60000
+    },
+    "confidence": "derived",
+    "authority": "shipped-artifact",
+    "limitations": [
+      "Artifact integrity metadata contradicts observed bytes at node_modules/@worklouder/device-kit-oai/node_modules/@worklouder/wl-device-kit/dist/native/darwin/permissions.node; the observed bytes are untrusted.",
+      "Artifact integrity metadata contradicts observed bytes at node_modules/@worklouder/device-kit-oai/node_modules/@worklouder/wl-device-kit/node_modules/node-hid/prebuilds/HID-darwin-arm64/node-napi-v4.node; the observed bytes are untrusted.",
+      "Artifact integrity metadata contradicts observed bytes at node_modules/@worklouder/device-kit-oai/node_modules/@worklouder/wl-device-kit/node_modules/serialport/node_modules/@serialport/bindings-cpp/prebuilds/darwin-x64+arm64/node.napi.node; the observed bytes are untrusted.",
+      "Artifact integrity metadata contradicts observed bytes at node_modules/better-sqlite3/build/Release/better_sqlite3.node; the observed bytes are untrusted.",
+      "Artifact integrity metadata contradicts observed bytes at node_modules/node-pty/build/Release/pty.node; the observed bytes are untrusted.",
+      "Artifact integrity metadata contradicts observed bytes at node_modules/node-pty/build/Release/spawn-helper; the observed bytes are untrusted.",
+      "Artifact integrity metadata contradicts observed bytes at node_modules/objc-js/prebuilds/darwin-arm64/node.napi.armv8.node; the observed bytes are untrusted.",
+      "Caller-selected source analysis leaves 10510 inventoried files outside analysis scope. Inventory identity covers the complete artifact; relationships through unselected sources remain unknown.",
+      "CommonJS and ESM binding relationships were recovered from inert syntax and resolved only within the inventoried artifact container.",
+      "Graph coverage is incomplete; unavailable facts remain explicit and must not be read as absence.",
+      "JavaScript and HTML were parsed as inert text; bundle bootstrap code was never executed.",
+      "Static imports, entrypoints, workers, endpoints, and storage relationships do not prove runtime execution.",
+      "Static paths and relationships may remain unresolved when expressions are dynamic or obfuscated.",
+      "Webpack/Rspack factories were recovered from AST literals; REA did not invoke push handlers or bundle bootstrap code."
+    ],
+    "full_evidence_local_path": "artifacts/diagnosis-20261105/codex-rea-flow-style.json",
+    "full_evidence_sha256": "0a2b90240eb586ed737dc9050d4aec641c1bdb681e93e0c5360699022fbdf584"
+  },
+  {
+    "evidence_id": "ev_f4bed593ccb0cf17903aebc5e4c321abb4318908e28da838c86be3806d94218f",
+    "subject": {
+      "name": "flow-observed",
+      "digest": {
+        "sha256": "fe9d86ed3c535624db786d89d9cb52bdd0fcaba02986e9ac16ad21a53bcf6aa5"
+      },
+      "local_path": "/Users/jevin/Documents/Codex/Eva-Android/artifacts/diagnosis-20261105/flow-observed",
+      "format": "directory",
+      "architecture": null
+    },
+    "operation": "analyze_javascript_application",
+    "parameters": {
+      "format": "auto",
+      "integrity_policy": "fail",
+      "max_semantic_nodes": 300,
+      "analysis_timeout_ms": 30000
+    },
+    "confidence": "derived",
+    "authority": "shipped-artifact",
+    "limitations": [
+      "CommonJS and ESM binding relationships were recovered from inert syntax and resolved only within the inventoried artifact container.",
+      "JavaScript and HTML were parsed as inert text; bundle bootstrap code was never executed.",
+      "Static imports, entrypoints, workers, endpoints, and storage relationships do not prove runtime execution.",
+      "Static paths and relationships may remain unresolved when expressions are dynamic or obfuscated.",
+      "Webpack/Rspack factories were recovered from AST literals; REA did not invoke push handlers or bundle bootstrap code."
+    ],
+    "full_evidence_local_path": "artifacts/diagnosis-20261105/codex-rea-work-status.json",
+    "full_evidence_sha256": "01b1c481282ff5e8c93835a92d385cb6fe0e7d9cc20c1cf00e8880ea149a6fd5"
+  }
+]

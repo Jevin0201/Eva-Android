@@ -1,0 +1,89 @@
+{
+  "asarSHA256": "0c951258b7ab381ec601045ffb02159e53f424548dda18e6a4dcfd126557383b",
+  "observations": [
+    {
+      "name": "et",
+      "member": "webview/assets/async/366297.f0d89078fe.js",
+      "sourceSha256": "e0db3a8d2e7c859ccfa4352d886830cd6ab7167550b0a66d4030ac976952522a",
+      "byteStart": 482901,
+      "byteEnd": 483718,
+      "sha256": "c95d883d92d250006674f256a0ec36011631320be7e8813806c31b4fa28110e9",
+      "output": "artifacts/diagnosis-20261105/final-answer-functions/et.js",
+      "meaning": "Uploaded gallery original index state and src mapping (BW export)."
+    },
+    {
+      "name": "ee",
+      "member": "webview/assets/async/366297.f0d89078fe.js",
+      "sourceSha256": "e0db3a8d2e7c859ccfa4352d886830cd6ab7167550b0a66d4030ac976952522a",
+      "byteStart": 475372,
+      "byteEnd": 482901,
+      "sha256": "5f36b6343d28249bf48a00f2e25187611019863ff3e133385b57db06f6f5bb70",
+      "output": "artifacts/diagnosis-20261105/final-answer-functions/ee.js",
+      "meaning": "Uploaded/generic thumbnail and full preview controller; original services required."
+    },
+    {
+      "member": "webview/assets/async/366297.f0d89078fe.js",
+      "sourceSha256": "e0db3a8d2e7c859ccfa4352d886830cd6ab7167550b0a66d4030ac976952522a",
+      "term": "hide-scrollbar flex max-w-full flex-row-reverse",
+      "byteStart": 401682,
+      "byteEnd": 402782,
+      "excerpt": "|O[138]!==J||O[139]!==et||O[140]!==$||O[141]!==V.appshotContexts?(P=et&&(0,s.jsx)(\"div\",{className:\"hide-scrollbar flex max-w-full flex-row-reverse self-end overflow-x-auto\",children:(0,s.jsxs)(\"div\",{className:\"flex min-w-max items-end gap-2\",children:[J&&(0,s.jsx)(t9.BW,{srcs:$,conversationId:en,imageSource:\"uploaded\"}),K&&V.appshotContexts?.map((e,t)=>(0,s.jsx)(t9.J5,{appshotContext:e,conversationId:en},`${e.bundleIdentifier}-${e.imageName??t}`))]})}),O[136]=en,O[137]=K,O[138]=J,O[139]=et,O[140]=$,O[141]=V.appshotContexts,O[142]=P):P=O[142],D=H.length>0&&(0,s.jsx)(\"div\",{className:\"flex max-w-full flex-col items-end gap-2\",children:H.map((e,t)=>(0,s.jsx)(t9.cA,{attachment:e,cwd:eh,hostId:ef,isUploadedFileViewerEnabled:!0},\"upload\"in e?e.upload.fileId:`${e.fsPath}-${e.startLine??0}-${t}`))}),L=es&&(0,s.jsx)(\"div\",{className:\"hide-scrollbar flex max-w-full flex-row-reverse self-end overflow-x-auto p-px\",children:(0,s.jsxs)(\"div\",{className:\"flex min-w-max items-center gap-2\",children:[e1&&(0,s.jsx)(t3,{sourceConversationId:e1.sourceConversationId,kind:\"parent-context\"}),V.references"
+    },
+    {
+      "member": "webview/assets/async/361a1f04b890.css",
+      "sourceSha256": "00ce623384e50a3d3ba0c851ba838cfcb3726bf45ef15544ad8447941f4bef58",
+      "term": ".size-20{",
+      "byteStart": 208650,
+      "byteEnd": 208930,
+      "excerpt": ".size-20{width:calc(var(--spacing) * 20);height:calc(var(--spacing) * 20)}.size-22\\.5{width:calc(var(--spacing) * 22.5);height:calc(var(--spacing) * 22.5)}.size-24{width:calc(var(--spacing) * 24);height:calc(var(--spacing) * 24)}.size-27{width:calc(var(--spacing) * 27);height:cal"
+    },
+    {
+      "member": "webview/assets/async/361a1f04b890.css",
+      "sourceSha256": "00ce623384e50a3d3ba0c851ba838cfcb3726bf45ef15544ad8447941f4bef58",
+      "term": ".size-16{",
+      "byteStart": 208421,
+      "byteEnd": 208701,
+      "excerpt": ".size-16{width:calc(var(--spacing) * 16);height:calc(var(--spacing) * 16)}.size-18{width:calc(var(--spacing) * 18);height:calc(var(--spacing) * 18)}.size-18\\.5{width:calc(var(--spacing) * 18.5);height:calc(var(--spacing) * 18.5)}.size-20{width:calc(var(--spacing) * 20);height:cal"
+    },
+    {
+      "member": "webview/assets/async/361a1f04b890.css",
+      "sourceSha256": "00ce623384e50a3d3ba0c851ba838cfcb3726bf45ef15544ad8447941f4bef58",
+      "term": ".rounded-lg{",
+      "byteStart": 311988,
+      "byteEnd": 312268,
+      "excerpt": ".rounded-lg{border-radius:var(--radius-lg)}.rounded-lg\\!{border-radius:var(--radius-lg)!important}.rounded-md{border-radius:var(--radius-md)}.rounded-md\\!{border-radius:var(--radius-md)!important}.rounded-none{border-radius:0}.rounded-none\\!{border-radius:0!important}.rounded-sm{"
+    },
+    {
+      "member": "webview/assets/async/361a1f04b890.css",
+      "sourceSha256": "00ce623384e50a3d3ba0c851ba838cfcb3726bf45ef15544ad8447941f4bef58",
+      "term": ".rounded-md{",
+      "byteStart": 312086,
+      "byteEnd": 312366,
+      "excerpt": ".rounded-md{border-radius:var(--radius-md)}.rounded-md\\!{border-radius:var(--radius-md)!important}.rounded-none{border-radius:0}.rounded-none\\!{border-radius:0!important}.rounded-sm{border-radius:var(--radius-sm)}.rounded-token-composer-single-line{border-radius:var(--radius-toke"
+    },
+    {
+      "member": "webview/assets/async/361a1f04b890.css",
+      "sourceSha256": "00ce623384e50a3d3ba0c851ba838cfcb3726bf45ef15544ad8447941f4bef58",
+      "term": "--corner-radius-scale:",
+      "byteStart": 10465,
+      "byteEnd": 10745,
+      "excerpt": "--corner-radius-scale:1;--radius-2xs-base:.125rem;--radius-xs-base:.25rem;--radius-sm-base:.375rem;--radius-md-base:.5rem;--radius-lg-base:.625rem;--radius-xl-base:.75rem;--radius-2xl-base:1rem;--radius-3xl-base:1.25rem;--radius-4xl-base:1.5rem;--radius-form-dialog:calc(var(--spa"
+    },
+    {
+      "member": "webview/assets/async/361a1f04b890.css",
+      "sourceSha256": "00ce623384e50a3d3ba0c851ba838cfcb3726bf45ef15544ad8447941f4bef58",
+      "term": "--radius-lg-base:",
+      "byteStart": 10587,
+      "byteEnd": 10867,
+      "excerpt": "--radius-lg-base:.625rem;--radius-xl-base:.75rem;--radius-2xl-base:1rem;--radius-3xl-base:1.25rem;--radius-4xl-base:1.5rem;--radius-form-dialog:calc(var(--spacing) * 6 * var(--corner-radius-scale));--border-width-hairline:.5px;--shadow-hairline:0px 0px 0px .5px #0000001a;--shadow"
+    },
+    {
+      "member": "webview/assets/async/361a1f04b890.css",
+      "sourceSha256": "00ce623384e50a3d3ba0c851ba838cfcb3726bf45ef15544ad8447941f4bef58",
+      "term": "--radius-md-base:",
+      "byteStart": 10564,
+      "byteEnd": 10844,
+      "excerpt": "--radius-md-base:.5rem;--radius-lg-base:.625rem;--radius-xl-base:.75rem;--radius-2xl-base:1rem;--radius-3xl-base:1.25rem;--radius-4xl-base:1.5rem;--radius-form-dialog:calc(var(--spacing) * 6 * var(--corner-radius-scale));--border-width-hairline:.5px;--shadow-hairline:0px 0px 0px "
+    }
+  ]
+}

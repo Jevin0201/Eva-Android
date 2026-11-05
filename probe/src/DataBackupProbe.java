@@ -21,6 +21,39 @@ final class DataBackupProbe {
    JSONObject keptChat=new JSONObject().put("id","keep").put("title","fixture original").put("messages",new JSONArray().put("preserve this fixture")).put("running",false);
    JSONObject current=new JSONObject().put("chats",new JSONArray().put(keptChat)).put("drafts",new JSONArray()).put("projects",new JSONArray().put(new JSONObject().put("id","keep-project").put("name","fixture project"))).put("active","keep").put("draft","current draft").put("apiKey","EXCLUDED_FIXTURE_VALUE").put("agentQuestionDrafts",new JSONObject().put("test","EXCLUDED_DRAFT"));
    String original=current.toString();require(fixture.getSharedPreferences("eva-ui",0).edit().putString("state",original).commit(),"fixture initialized");
+   require(UiStateStore.load(fixture).equals(original),"legacy state read without mutation");
+   char[] payload=new char[2100000];java.util.Arrays.fill(payload,'中');
+   JSONObject large=new JSONObject(original);large.getJSONArray("chats").getJSONObject(0).put("draft",new String(payload));
+   UiStateStore.save(fixture,large.toString());
+   require(new JSONObject(UiStateStore.load(fixture)).getJSONArray("chats").getJSONObject(0).getString("draft").equals(new String(payload)),"snapshot above former 2M limit roundtrips across UTF8 chunk boundaries");
+   try(android.database.sqlite.SQLiteDatabase db=UiStateStore.open(fixture);android.database.Cursor cur=db.rawQuery("SELECT MAX(length(body)),COUNT(*) FROM chunks",null)){
+    require(cur.moveToFirst()&&cur.getInt(0)<=UiStateStore.CHUNK_BYTES&&cur.getInt(1)>90,"large history stored in bounded CursorWindow-safe chunks");
+   }
+   JSONObject largeMetadata=new JSONObject(large.toString()).put("draft",new String(payload)+"😀");UiStateStore.save(fixture,largeMetadata.toString());
+   require(new JSONObject(UiStateStore.load(fixture)).getString("draft").equals(new String(payload)+"😀"),"metadata above 2M also roundtrips with emoji");
+   UiStateStore.save(fixture,large.toString());
+   require(fixture.getSharedPreferences("eva-ui",0).getString("state","").equals(original),"legacy recovery source retained");
+   String valid=UiStateStore.load(fixture);boolean malformed=false;try{UiStateStore.save(fixture,"{");}catch(Exception expected){malformed=true;}
+   require(malformed&&UiStateStore.load(fixture).equals(valid),"malformed write preserves committed snapshot");
+   JSONObject twoChats=new JSONObject(valid);twoChats.getJSONArray("chats").put(new JSONObject().put("id","second").put("title","second chat").put("draft","second draft"));
+   UiStateStore.save(fixture,twoChats.toString());valid=UiStateStore.load(fixture);
+   try(android.database.sqlite.SQLiteDatabase db=UiStateStore.open(fixture)){
+    db.execSQL("CREATE TRIGGER reject_chat BEFORE INSERT ON snapshots WHEN NEW.key LIKE 'chats:%' BEGIN SELECT RAISE(ABORT, 'fixture write failure'); END");
+   }
+   JSONObject metadataOnly=new JSONObject(valid).put("draft","metadata update");UiStateStore.save(fixture,metadataOnly.toString());
+   require(new JSONObject(UiStateStore.load(fixture)).getString("draft").equals("metadata update"),"unchanged chat snapshot is not rewritten");
+   JSONObject reordered=new JSONObject(UiStateStore.load(fixture));JSONArray prior=reordered.getJSONArray("chats");
+   reordered.put("chats",new JSONArray().put(prior.getJSONObject(1)).put(prior.getJSONObject(0)));
+   UiStateStore.save(fixture,reordered.toString());
+   require(new JSONObject(UiStateStore.load(fixture)).getJSONArray("chats").getJSONObject(0).getString("id").equals("second"),"reorder changes metadata without rewriting chat rows");
+   String committed=UiStateStore.load(fixture);JSONObject changed=new JSONObject(committed);changed.getJSONArray("chats").getJSONObject(0).put("title","must rollback");
+   boolean rolledBack=false;try{UiStateStore.save(fixture,changed.toString());}catch(Exception expected){rolledBack=true;}
+   require(rolledBack&&UiStateStore.load(fixture).equals(committed),"failed row write rolls back entire transaction");
+   try(android.database.sqlite.SQLiteDatabase db=UiStateStore.open(fixture)){db.execSQL("DROP TRIGGER reject_chat");}
+   JSONObject duplicates=new JSONObject(original);duplicates.getJSONArray("chats").put(new JSONObject(keptChat.toString()).put("title","same id different history"));
+   UiStateStore.save(fixture,duplicates.toString());
+   require(new JSONObject(UiStateStore.load(fixture)).getJSONArray("chats").getJSONObject(1).getString("title").equals("same id different history"),"legacy duplicate IDs retain independent records");
+   UiStateStore.save(fixture,original);
    JSONObject turn=new JSONObject().put("id","old-turn").put("status","inProgress").put("items",new JSONArray().put(new JSONObject().put("id","item").put("type","agentMessage").put("text","验收历史 😀")));
    JSONObject importedChat=new JSONObject().put("id","old-local-id").put("title","验收对话").put("messages",new JSONArray()).put("running",true).put("projectId","old-project").put("attachments",new JSONArray().put(new JSONObject().put("name","not-included.txt"))).put("kernelThread",new JSONObject().put("id","old-thread").put("turns",new JSONArray().put(turn)));
    JSONObject incoming=new JSONObject().put("chats",new JSONArray().put(importedChat)).put("drafts",new JSONArray()).put("projects",new JSONArray().put(new JSONObject().put("id","old-project").put("name","验收项目"))).put("draft","未发送的验收草稿");
@@ -40,7 +73,7 @@ final class DataBackupProbe {
     final String stable=DataBackupStore.current(fixture);final long now=ShellActivity.saveRevision.get();
     rejects(()->DataBackupStore.restore(fixture,preview,stable,now-1),"stale revision rejected");require(DataBackupStore.current(fixture).equals(stable),"revision rejection writes nothing");
     rejects(()->DataBackupStore.restore(fixture,preview,original,ShellActivity.saveRevision.get()),"changed content rejected");require(DataBackupStore.current(fixture).equals(stable),"content rejection writes nothing");
-    JSONObject busy=new JSONObject(stable);busy.getJSONArray("chats").getJSONObject(0).put("running",true);String busyRaw=busy.toString();fixture.getSharedPreferences("eva-ui",0).edit().putString("state",busyRaw).commit();rejects(()->DataBackupStore.restore(fixture,preview,busyRaw,ShellActivity.saveRevision.get()),"running fixture task rejected");require(DataBackupStore.current(fixture).equals(busyRaw),"running rejection writes nothing");
+    JSONObject busy=new JSONObject(stable);busy.getJSONArray("chats").getJSONObject(0).put("running",true);String busyRaw=busy.toString();UiStateStore.save(fixture,busyRaw);rejects(()->DataBackupStore.restore(fixture,preview,busyRaw,ShellActivity.saveRevision.get()),"running fixture task rejected");require(DataBackupStore.current(fixture).equals(busyRaw),"running rejection writes nothing");
     require(DataBackupStore.current(activity).equals(realBefore),"real user state unchanged");
    }
    report.put("result","PASS").put("assertions",checks).put("isolated",true).put("userStateUnchanged",true).put("safTested",false);

@@ -1,0 +1,44 @@
+{
+  "date": "2026-11-05",
+  "formalArtifact": "/Applications/ChatGPT.app/Contents/Resources/app.asar",
+  "asarSHA256": "0c951258b7ab381ec601045ffb02159e53f424548dda18e6a4dcfd126557383b",
+  "originalCSSMembers": [
+    "webview/assets/async/11e93e921fb1.css",
+    "webview/assets/async/242c17f27016.css"
+  ],
+  "research": "research/codex-20261105/MESSAGE_LAYOUT_FINDINGS.md",
+  "desktopFirst": [
+    "src/renderer/native-steering/history-original.mjs",
+    "src/renderer/native-steering/adapter.jsx",
+    "src/renderer/composer.js",
+    "src/renderer/codex-chat-layout.css"
+  ],
+  "hostAdapter": "Maps escaped Markdown-it DOM to original semantic classes, preserves standalone compaction, binds Android theme/clipboard/local previews. Original Bubble and current Mac activity/copy factories execute via shared React bundle.",
+  "limits": [
+    "Not the complete FormattedText controller, tooltip/overflow controller or code editor.",
+    "Original app UI is unavailable through CUA; no pixel equivalence claim.",
+    "Code pre formatting and tool detail text use documented desktop/Android host adapters."
+  ],
+  "files": [
+    {
+      "path": "probe/assets/codex-message-original.css",
+      "sha256": "318daea5460a2ee8716ad1457cce3cd19c62397aaa341122301d2f3efaee92ae",
+      "bytes": 78273
+    },
+    {
+      "path": "probe/assets/codex-user-original.css",
+      "sha256": "8f8861948625a49e724712550208b88f4945ce1630497afedf691156a5a97cf4",
+      "bytes": 65928
+    },
+    {
+      "path": "probe/assets/codex-message-adapter.js",
+      "sha256": "85a162037dccfc8091853e7ceccb8bde29f676f748e09acb6400933f8f87b56c",
+      "bytes": 8581
+    },
+    {
+      "path": "probe/assets/codex-message-adapter.css",
+      "sha256": "6633286b0c29ade61226547d4853b8bb0f17e4fe3c37493b043840e20b80c068",
+      "bytes": 4090
+    }
+  ]
+}

@@ -1,0 +1,156 @@
+[
+  {
+    "file": "/webview/assets/async/24191.589dcc9878.js",
+    "sha256": "bd23d61085fcad60b8f582112d4ca0695b34204510cff900ba0f87c9c61228d0",
+    "bytes": 7999929,
+    "hits": [
+      {
+        "term": "thread/compact/start",
+        "characterOffset": 575178,
+        "byteStart": 574890,
+        "byteEnd": 575990,
+        "excerpt": "ailableOwner:s,workspaceRoots:[u??\"/\"],collaborationMode:l?.latestCollaborationMode??null,reasoningEffort:l?.latestReasoningEffort??null,sendRequest:e=>o(e,\"thread-follower-compact-thread\",{conversationId:t})}))return;let i=e.getStreamRole(t);if(i?.role!==\"owner\")throw Error(r);await e.sendRequest(\"thread/compact/start\",{threadId:t})}catch(e){throw a(t),e}}class n7{params;openFilesByConversationId=new Map;watchesByKey=new Map;watchesByWatchId=new Map;ignoreChangesUntilMsByKey=new Map;constructor(e){this.params=e}dispose(){this.openFilesByConversationId.clear(),this.ignoreChangesUntilMsByKey.clear(),this.sync()}setOpenReviewFileSourceFiles(e,t,n){let r=this.openFilesByConversationId.get(e)??n9();0===t.length?r.reviewFiles.delete(n):r.reviewFiles.set(n,t),this.setOpenFilesBySource(e,r)}setOpenFileTabFiles(e,t,n){let r=this.openFilesByConversationId.get(e)??n9();0===t.length?r.openFiles.delete(n):r.openFiles.set(n,t),this.setOpenFilesBySource(e,r)}async setOpenMcpResources(e,t,n){let r=this.openFilesByConversationId.get(e)??n9(),i=r.mcpResourcesByMcpAppId.get(t);0===n.length?r.mcpResour"
+      },
+      {
+        "term": "thread/compact/start",
+        "characterOffset": 1503380,
+        "byteStart": 1503252,
+        "byteEnd": 1504352,
+        "excerpt": "moteControl/status/read\":\"remote_control\",\"review/start\":\"review\",\"rollout/compress\":\"features\",\"skills/config/write\":\"skills\",\"skills/extraRoots/set\":\"skills\",\"skills/list\":\"skills\",\"thread/approveGuardianDeniedAction\":\"thread\",\"thread/archive\":\"thread\",\"thread/backgroundTerminals/clean\":\"thread\",\"thread/compact/start\":\"thread\",\"thread/delete\":\"thread\",\"thread/fork\":\"thread\",\"thread/sample\":\"thread\",\"thread/sample/cancel\":\"thread\",\"thread/goal/clear\":\"thread\",\"thread/goal/get\":\"thread\",\"thread/goal/set\":\"thread\",\"thread/inject_items\":\"thread\",\"thread/items/list\":\"thread\",\"thread/list\":\"thread\",\"thread/loaded/list\":\"thread\",\"thread/memoryMode/set\":\"thread\",\"thread/metadata/update\":\"thread\",\"thread/attachment/add\":\"thread\",\"thread/attachment/list\":\"thread\",\"thread/attachmentOwner/list\":\"thread\",\"thread/attachment/remove\":\"thread\",\"thread/name/set\":\"thread\",\"thread/queue/add\":\"thread\",\"thread/queue/delete\":\"thread\",\"thread/queue/list\":\"thread\",\"thread/queue/reorder\":\"thread\",\"thread/queue/start\":\"thread\",\"thread/queue/update\":\"thread\",\"thread/read\":\"thread\",\"thread/readState/update\":\"t"
+      },
+      {
+        "term": "thread/compact/start",
+        "characterOffset": 1513886,
+        "byteStart": 1513758,
+        "byteEnd": 1514858,
+        "excerpt": "\"thread/list\"===e?(m=\"desktop.thread_list\",g=\"thread.list\"):\"thread/search\"===e?(m=\"desktop.thread_search\",g=\"thread.search\"):\"thread/archive\"===e||\"thread/unarchive\"===e||\"thread/delete\"===e||\"thread/name/set\"===e||\"thread/metadata/update\"===e||\"thread/settings/update\"===e||\"thread/rollback\"===e||\"thread/compact/start\"===e?(m=\"desktop.thread_action\",g=\"thread.action\"):\"mcpServer/tool/call\"===e||\"mcpServer/resource/read\"===e?(m=\"desktop.tool_request\",g=\"app_server.tool_request\"):\"command/exec\"===e||\"process/spawn\"===e||\"process/kill\"===e||\"thread/shellCommand\"===e||\"thread/backgroundTerminals/clean\"===e?(m=\"desktop.terminal_operation\",g=\"terminal.operation\"):\"filesystem\"===h||\"windows_sandbox\"===h?(m=\"desktop.workspace_operation\",g=\"workspace.operation\"):\"fuzzy_file_search\"===h&&\"fuzzyFileSearch/sessionStop\"!==e?(m=\"desktop.file_search\",g=\"file.search\"):\"remote_control\"===h&&(m=\"desktop.remote_control\",g=\"app_server.remote_control\");let _=null==f&&n?.trace===void 0?(0,O.Tz)({attributes:{\"app_server.method\":e,\"app_server.priority\":p,\"app_server.source\":h},childName:g,rootName:m}):null"
+      },
+      {
+        "term": "thread/tokenUsage/updated",
+        "characterOffset": 439804,
+        "byteStart": 439512,
+        "byteEnd": 440612,
+        "excerpt": "mRole(e);return t?.role===\"owner\"||t?.role===\"follower\"&&this.params.isCloudHost}shouldIgnoreThreadMutationAsFollower(e,t,n){if(!(e.startsWith(\"turn/\")||e.startsWith(\"item/\")||\"thread/started\"===e||\"thread/realtime/itemAdded\"===e||e.startsWith(\"thread/realtime/item/\")||\"thread/status/changed\"===e||\"thread/tokenUsage/updated\"===e||\"error\"===e))return!1;let r=eU(t);if(!r)return!1;let i=(0,_.J)(r);return this.getStreamRole(i)?.role===\"follower\"&&(\"request\"===n||!this.params.isCloudHost)}shouldHandleDynamicToolCall(e){if(null==e)return!1;let t=this.getStreamRole((0,_.J)(e));return t?.role===\"owner\"||null==t&&this.params.canHandleOwnerlessDynamicTool()}hasConversation(e){return this.streamRoles.has(e)}setConversationStreamRole(e,t){if(null==t)return void this.deleteConversationStreamRole(e);let n=this.getStreamRole(e);!eL(n,t)&&(n?.role===\"follower\"&&(\"follower\"!==t.role||t.ownerClientId!==n.ownerClientId)&&this.rejectStreamRevisionWaiters(e,n.ownerClientId,\"no-client-found: thread stream owner changed\"),this.streamRoles.set(e,t),this.params.logger.info(\"thread_stream_role_changed\",{safe:"
+      },
+      {
+        "term": "thread/tokenUsage/updated",
+        "characterOffset": 970619,
+        "byteStart": 970331,
+        "byteEnd": 971431,
+        "excerpt": "se\"thread/started\":case\"thread/environment/connected\":case\"thread/environment/disconnected\":case\"thread/name/updated\":case\"thread/settings/updated\":case\"thread/status/changed\":case\"thread/goal/updated\":case\"thread/goal/cleared\":case\"thread/archived\":case\"thread/deleted\":case\"thread/unarchived\":case\"thread/tokenUsage/updated\":!function({manager:e,notificationContext:t},n){switch(n.method){case\"thread/environment/connected\":case\"thread/environment/disconnected\":{let{threadId:t,environmentId:r}=n.params,i=e.getConversation((0,_.J)(t));if(e.logger.info(\"VM lifecycle\",{safe:{vmEvent:\"thread/environment/connected\"===n.method?\"environment_connected\":\"environment_disconnected\",vmProduct:(0,eF.N1)(i?.threadStartKind,i?.threadSource)?\"orbit\":\"unknown\",threadId:t,environmentId:r},sensitive:{hostId:e.getHostId()}}),\"managed\"===r)return;e.updateConversationState((0,_.J)(t),e=>{\"thread/environment/connected\"===n.method?e.connectedEnvironmentIds?.includes(r)||(e.connectedEnvironmentIds=[...e.connectedEnvironmentIds??[],r]):e.connectedEnvironmentIds=e.connectedEnvironmentIds?.filter(e=>e!==r)});retu"
+      },
+      {
+        "term": "thread/tokenUsage/updated",
+        "characterOffset": 973840,
+        "byteStart": 973552,
+        "byteEnd": 974652,
+        "excerpt": "readGoal=null,e.threadGoalResumeConfirmation=null});return}case\"thread/archived\":return t.handleThreadArchived((0,_.J)(n.params.threadId));case\"thread/deleted\":return t.handleThreadDeletion([n.params.threadId]);case\"thread/unarchived\":return t.handleThreadUnarchived((0,_.J)(n.params.threadId));case\"thread/tokenUsage/updated\":{let{threadId:t,tokenUsage:r}=n.params;e.updateConversationState((0,_.J)(t),e=>{e.latestTokenUsageInfo=r});return}}}(e,l);break;case\"turn/started\":case\"turn/completed\":case\"turn/diff/updated\":case\"turn/plan/updated\":case\"model/safetyBuffering/updated\":case\"model/rerouted\":case\"hook/started\":case\"hook/completed\":case\"error\":if(\"deferred\"===function(e,t,n,r,i){let{manager:a,notificationContext:s,createId:o}=e,{threadId:l}=t.params,u=(0,_.J)(l),d=s.threadStore.conversations.get(u);if(null==d)return\"turn/completed\"===t.method&&s.unread.discardTurn(u,t.params.turn.id),\"handled\";switch(t.method){case\"turn/started\":{let e,{turn:i}=t.params;a.updateConversationState(u,t=>{let s=(0,e3.HF)(t,e=>e.turnId===i.id)??(0,e3.fN)(t,e=>null==e.turnId&&\"inProgress\"===e.status&&!e.pe"
+      },
+      {
+        "term": "contextCompaction",
+        "characterOffset": 330157,
+        "byteStart": 329865,
+        "byteEnd": 330965,
+        "excerpt": "null!=e.params.clientUserMessageId)return n.clientId===e.params.clientUserMessageId;if(e.itemsPagination?.hasLoadedOldest===!1||!a()(n.content,e.params.input))return!1;let s=(0,r.Qx)(e.items)?(0,r.ss)(e.items):e.items;for(let e=0;e<t;e+=1){let t=s[e];if(null!=t&&\"automaticApprovalReview\"!==t.type&&\"contextCompaction\"!==t.type&&\"forkedFromConversation\"!==t.type&&\"modelChanged\"!==t.type&&\"modelRerouted\"!==t.type&&\"personalityChanged\"!==t.type&&\"remoteTaskCreated\"!==t.type&&\"steeringUserMessage\"!==t.type&&\"worktreeInit\"!==t.type)return!1}return!0}n.d(t,{p:()=>s})},ZmoP(e,t,n){function r(e,t,n,r){let i=new Map,a=[];for(let e of t){let t=r(e);if(null!=t&&n.has(t)){if(0===a.length)continue;let e=i.get(t);if(null==e)i.set(t,a);else for(let t of a)e.push(t);a=[];continue}a.push(e)}let s=[];for(let t of e){let e=r(t),n=null==e?void 0:i.get(e);if(null!=n&&null!=e){for(let e of n)s.push(e);i.delete(e)}s.push(t)}for(let e of a)s.push(e);return s}n.d(t,{H:()=>r})},uIwL(e,t,n){function r(e,t,n=\"append\",{preferIncomingItems:i=!1}={}){let s,o,l=\"object\"==typeof n,u=new Map(e.length<=t.length?e.map(e"
+      },
+      {
+        "term": "contextCompaction",
+        "characterOffset": 348053,
+        "byteStart": 347761,
+        "byteEnd": 348861,
+        "excerpt": "f=(await Promise.allSettled(Array.from({length:Math.min(4,e.data.length)},async()=>{for(let[e,t]of h)await p(t,e)}))).find(e=>\"rejected\"===e.status);if(null!=f)throw f.reason;return c(e.data.length)}async function X(e,t,n,r){let i=await K(e,t,n.id,null,r,2,\"asc\").catch(()=>null),a=i?.items.find(e=>\"contextCompaction\"!==e.type);if(null!=i&&(null!=a||null==i.nextCursor&&\"inProgress\"!==n.status))return{oldestUserInput:a?.type===\"userMessage\"?a.content:[],openingUserMessageId:a?.type===\"userMessage\"?a.id:null,openingUserMessageClientId:a?.type===\"userMessage\"?a.clientId:null}}function Q(e,t){let n=e.getConversation(t);if(null==n)return null;let r=P(n);return{title:n.title,cwd:e.getConversationCwd(t),serviceName:n.serviceName,ephemeral:n.ephemeral,sideConversation:n.sideConversation,streamRole:e.getStreamRole(t),loadedTurnCount:r.length,turns:r.slice(-2).map(e=>{let t=b()(e.items,e=>\"userMessage\"===e.type),n=b()(e.items,e=>\"agentMessage\"===e.type&&\"final_answer\"===e.phase&&e.text.trim().length>0)??b()(e.items,e=>\"agentMessage\"===e.type&&null==e.phase&&e.text.trim().length>0);return{turnId"
+      },
+      {
+        "term": "contextCompaction",
+        "characterOffset": 411325,
+        "byteStart": 411033,
+        "byteEnd": 412133,
+        "excerpt": "l!=c&&null!=_){let t=r?n:{priority:\"background\",source:\"tail_history\"};if(v=(await K(this.client.sendRequest.bind(this.client),a,s,null,null==i?t:{...t,trace:i},2,\"asc\")).items,!this.ownsLoad(e)||(o=this.client.getConversation(a),l=D(o,s,this.policy.turnMergePolicy),null==l))return}let E=v.find(e=>\"contextCompaction\"!==e.type),I=this.policy.mapThreadItems(null==f?h:Array.from(f.values()).reverse()),C=l.itemsPagination?.reconnect,T=\"prepend\",A=u.olderPageBeforeItemId;null!=C?T={beforeItemId:C.beforeItemId,source:\"snapshot\"}:null!=A&&(T={beforeItemId:g?null:A,source:\"page\"},A=I[0]?.id??A);let S=new Map(l.items.filter(e=>p.get(e.id)!==e).map(e=>[e.id,e])),b=(0,e5.Z)(null==c?l.items:l.items.filter(e=>!c.includes(e.id)||S.has(e.id)),I,T).map(e=>S.get(e.id)??e);if(this.client.updateConversationState(a,t=>{let n=(0,e3.HF)(t,e=>e.turnId===s);if(n?.itemsPagination==null||(0,eh.c2)(n.itemsPagination)!==e.pagination)return;if(n.items=(0,eh.h4)(b),\"inProgress\"===n.status){let e=n.completedItemIds??(n.completedItemIds={});for(let t of m)null==e[t]&&(e[t]=!0)}null!=c&&E?.type===\"userMessage\"&&(thi"
+      },
+      {
+        "term": "contextCompaction",
+        "characterOffset": 412364,
+        "byteStart": 412072,
+        "byteEnd": 413172,
+        "excerpt": ")null==e[t]&&(e[t]=!0)}null!=c&&E?.type===\"userMessage\"&&(this.policy.applyOldestUserInput(n,this.policy.mapThreadItems([E])[0]),n.itemsPagination.oldestUserInput=E.content,n.itemsPagination.openingUserMessageId=E.id,n.itemsPagination.openingUserMessageClientId=E.clientId);let r=b.find(e=>null!=e&&\"contextCompaction\"!==e.type);null==_&&r?.type===\"userMessage\"&&(null==n.itemsPagination.oldestUserInput||null!=c)&&this.policy.applyOldestUserInput(n,r),(0,eH.Lj)(n),n.itemsPagination={...n.itemsPagination,summaryItemIds:void 0,olderCursor:_,olderPageBeforeItemId:null==_?void 0:A,isLoadingOlder:!1,hasLoadedOldest:null==_,newestSnapshotItemId:n.itemsPagination.newestSnapshotItemId??I.at(-1)?.id,reconnect:null==_||null==C||y?void 0:{...C,beforeItemId:I[0]?.id??C.beforeItemId}}},!1),e.pagination=this.getTurnPagination(a,s),this.client.broadcastConversationSnapshot(a),!t||null==_)return}catch(t){if(!this.ownsLoad(e))return;throw this.client.logger.warning(\"Failed to load older thread items\",{safe:{conversationId:a,turnId:s},sensitive:{error:t}}),t}finally{if(h){let e=this.queuedPreviews.entrie"
+      },
+      {
+        "term": "model_auto_compact_token_limit",
+        "characterOffset": 6283556,
+        "byteStart": 6283661,
+        "byteEnd": 6284761,
+        "excerpt": "t,{},{K:[\"config\",\"user\"],_:[\"custom-agents\",\"list\"]})},uppa(e,t,n){var r=n(\"y5DF\"),i=n(\"rWpV\"),a=n(\"GLfw\"),s=n(\"OWtl\"),o=n(\"WFY2\"),l=n(\"rvFo\");let u=[\"config\",\"effective\"],d=[\"config\",\"layered-response\"],c=[\"config\",\"read-response\"],p={config:{model:null,review_model:null,model_context_window:null,model_auto_compact_token_limit:null,model_auto_compact_token_limit_scope:null,model_provider:null,approval_policy:null,approvals_reviewer:null,sandbox_mode:null,sandbox_workspace_write:null,forced_chatgpt_workspace_id:null,forced_login_method:null,web_search:null,tools:null,profile:null,profiles:{},instructions:null,developer_instructions:null,compact_prompt:null,model_reasoning_effort:null,model_reasoning_summary:null,service_tier:null,model_verbosity:null,analytics:null,mcp_servers:{},apps:{_default:{enabled:!0,omit_tools_from:null,approvals_reviewer:null,destructive_enabled:!1,open_world_enabled:!1,default_tools_approval_mode:null,default_tools_enabled:null,tools:null,links:null}},browser_use:null,computer_use:null,desktop:null},origins:{},layers:null},h=(0,r.vU)(s.u,({cwd:e,hostId:t,fa"
+      },
+      {
+        "term": "model_auto_compact_token_limit",
+        "characterOffset": 6283592,
+        "byteStart": 6283697,
+        "byteEnd": 6284797,
+        "excerpt": "-agents\",\"list\"]})},uppa(e,t,n){var r=n(\"y5DF\"),i=n(\"rWpV\"),a=n(\"GLfw\"),s=n(\"OWtl\"),o=n(\"WFY2\"),l=n(\"rvFo\");let u=[\"config\",\"effective\"],d=[\"config\",\"layered-response\"],c=[\"config\",\"read-response\"],p={config:{model:null,review_model:null,model_context_window:null,model_auto_compact_token_limit:null,model_auto_compact_token_limit_scope:null,model_provider:null,approval_policy:null,approvals_reviewer:null,sandbox_mode:null,sandbox_workspace_write:null,forced_chatgpt_workspace_id:null,forced_login_method:null,web_search:null,tools:null,profile:null,profiles:{},instructions:null,developer_instructions:null,compact_prompt:null,model_reasoning_effort:null,model_reasoning_summary:null,service_tier:null,model_verbosity:null,analytics:null,mcp_servers:{},apps:{_default:{enabled:!0,omit_tools_from:null,approvals_reviewer:null,destructive_enabled:!1,open_world_enabled:!1,default_tools_approval_mode:null,default_tools_enabled:null,tools:null,links:null}},browser_use:null,computer_use:null,desktop:null},origins:{},layers:null},h=(0,r.vU)(s.u,({cwd:e,hostId:t,failClosed:n=!1},{queryClient:r,scope:"
+      },
+      {
+        "term": "model_context_window",
+        "characterOffset": 6283530,
+        "byteStart": 6283635,
+        "byteEnd": 6284735,
+        "excerpt": ":e}}),r}},jUmd(e,t,n){n.d(t,{},{K:[\"config\",\"user\"],_:[\"custom-agents\",\"list\"]})},uppa(e,t,n){var r=n(\"y5DF\"),i=n(\"rWpV\"),a=n(\"GLfw\"),s=n(\"OWtl\"),o=n(\"WFY2\"),l=n(\"rvFo\");let u=[\"config\",\"effective\"],d=[\"config\",\"layered-response\"],c=[\"config\",\"read-response\"],p={config:{model:null,review_model:null,model_context_window:null,model_auto_compact_token_limit:null,model_auto_compact_token_limit_scope:null,model_provider:null,approval_policy:null,approvals_reviewer:null,sandbox_mode:null,sandbox_workspace_write:null,forced_chatgpt_workspace_id:null,forced_login_method:null,web_search:null,tools:null,profile:null,profiles:{},instructions:null,developer_instructions:null,compact_prompt:null,model_reasoning_effort:null,model_reasoning_summary:null,service_tier:null,model_verbosity:null,analytics:null,mcp_servers:{},apps:{_default:{enabled:!0,omit_tools_from:null,approvals_reviewer:null,destructive_enabled:!1,open_world_enabled:!1,default_tools_approval_mode:null,default_tools_enabled:null,tools:null,links:null}},browser_use:null,computer_use:null,desktop:null},origins:{},layers:null},h=(0,r.v"
+      }
+    ]
+  },
+  {
+    "file": "/webview/assets/async/497066.b1696673f0.js",
+    "sha256": "83b7b5743a0dfe45ed3168baa6ec851b2fef174e308f6f70830fba0c6c34146c",
+    "bytes": 248126,
+    "hits": [
+      {
+        "term": "contextCompaction",
+        "characterOffset": 106328,
+        "byteStart": 106032,
+        "byteEnd": 107132,
+        "excerpt": "};case\"imageGeneration\":return{type:e.type,id:e.id,status:e.status,revisedPrompt:e.revisedPrompt,savedPath:e.savedPath??null};case\"enteredReviewMode\":case\"exitedReviewMode\":return{type:e.type,id:e.id,review:e.review};case\"hookPrompt\":return{type:e.type,id:e.id,fragmentCount:e.fragments.length};case\"contextCompaction\":return{type:e.type,id:e.id}}})(e,n,a,i))}:{}}})}}({thread:_,hostId:r,turns:m,turnLimit:h,nextCursor:g,hasMore:f,includeItems:i,includeOutputs:o,maxInputCharsPerItem:l,maxOutputCharsPerItem:d})}var nD=r(\"dbK8\");let nP={timeoutMs:3e4};async function nj({scope:e,cursor:t,hostId:r,includeTurns:n=!0,includeItems:a=!0,includeOutputs:i,materializeChatGptAttachments:o=!1,maxInputCharsPerItem:s,maxOutputCharsPerItem:l,threadId:d,turnLimit:c}){let u;try{u=await (0,eh.l)({scope:e,threadId:d,preferredHostId:r,requestOptions:nP})}catch(i){let r=await (0,ep.QL)({scope:e,cursor:t,includeTurns:n,includeItems:a,materializeAttachments:o,maxCharsPerItem:l,threadId:d,turnLimit:c});if(null!=r)return r;throw i}let{hostId:p,manager:h,thread:m}=u;return nx({getAppServerVersion:()=>e.get(eA.B0,p"
+      }
+    ]
+  },
+  {
+    "file": "/webview/assets/async/545104.c407c1f749.js",
+    "sha256": "d0ef4122e707a9ad9947c473cc457dd3f9324b2e7bd3e3eb2e21b5380d1fb46a",
+    "bytes": 78686,
+    "hits": [
+      {
+        "term": "thread/tokenUsage/updated",
+        "characterOffset": 30146,
+        "byteStart": 29848,
+        "byteEnd": 30948,
+        "excerpt": "rror:!0,\"thread/started\":!0,\"thread/readState/changed\":!0,\"thread/name/updated\":!0,\"thread/attachment/updated\":!0,\"thread/project/updated\":!1,\"thread/prediction/updated\":!1,\"thread/queue/changed\":!0,\"thread/environment/connected\":!0,\"thread/environment/disconnected\":!0,\"thread/settings/updated\":!0,\"thread/tokenUsage/updated\":!0,\"turn/started\":!0,\"hook/started\":!0,\"turn/completed\":!0,\"hook/completed\":!0,\"turn/diff/updated\":!0,\"turn/plan/updated\":!0,\"item/started\":!0,\"item/autoApprovalReview/started\":!0,\"item/autoApprovalReview/completed\":!0,\"autoApprovalReview/strictReviewRequired\":!0,\"item/completed\":!0,\"rawResponseItem/completed\":!1,\"item/agentMessage/delta\":!0,\"item/plan/delta\":!0,\"command/exec/outputDelta\":!1,\"process/outputDelta\":!1,\"process/exited\":!1,\"project/changed\":!1,\"item/commandExecution/outputDelta\":!0,\"item/commandExecution/terminalInteraction\":!0,\"item/fileChange/outputDelta\":!0,\"item/fileChange/patchUpdated\":!0,\"serverRequest/resolved\":!0,\"item/mcpToolCall/progress\":!0,\"mcpServer/oauthLogin/completed\":!0,\"mcpServer/startupStatus/updated\":!0,\"mcpServer/event/stream/not"
+      }
+    ]
+  },
+  {
+    "file": "/webview/assets/async/769854.ff771a05e4.js",
+    "sha256": "fa6792c693f2f47644b65080d63f9c7536b34fbae79e8bc36ee7581e7e3d360d",
+    "bytes": 1543424,
+    "hits": [
+      {
+        "term": "contextCompaction",
+        "characterOffset": 829323,
+        "byteStart": 829175,
+        "byteEnd": 830275,
+        "excerpt": "the web\",description:\"Inline Page generation status while using web sources\"});case\"commandExecution\":return n.formatMessage({id:\"pageEditor.generate.runningCommand\",defaultMessage:\"Running command\",description:\"Inline Page generation status while running a command\"});case\"collabAgentToolCall\":case\"contextCompaction\":case\"enteredReviewMode\":case\"exitedReviewMode\":case\"fileChange\":case\"functionCallOutput\":case\"hookPrompt\":case\"imageGeneration\":case\"imageView\":case\"plan\":case\"sleep\":case\"subAgentActivity\":case\"userMessage\":return null}}let hc=\"gpt-5.6-luna\";async function hu({scope:e,hostId:t=ez.fI,pageId:n,output:a,instructions:o,prompt:i,signal:r,onText:l,onStatus:s,turnTrigger:c=\"page_generate\",validateBeforeStart:u,commentaryOnly:p=!1,onTask:g,onTaskStopped:f,onAttention:h,modelSelection:v,beforeFirstTurn:b,modelContextAttachments:y,observation:x}){let w;if(r.throwIfAborted(),e.get(m.Nk))throw new Z.cS(\"unavailable\");let k=(0,O.V)(e,t),S=new AbortController,I=AbortSignal.any([r,S.signal]),M=setTimeout(()=>S.abort(new Z.cS(\"timed-out\")),9e5),A=null,C=!1,_=!1,j=!1,P=!1,E=!1,T=!1,D=()"
+      }
+    ]
+  },
+  {
+    "file": "/webview/assets/async/976185.27b60f4296.js",
+    "sha256": "b27268723c450ede3bea11948705bd52def390f0c5eb4895ef9dcb4d103df0b9",
+    "bytes": 226293,
+    "hits": [
+      {
+        "term": "thread/tokenUsage/updated",
+        "characterOffset": 7371,
+        "byteStart": 7071,
+        "byteEnd": 8171,
+        "excerpt": "rror:!0,\"thread/started\":!0,\"thread/readState/changed\":!0,\"thread/name/updated\":!0,\"thread/attachment/updated\":!0,\"thread/project/updated\":!1,\"thread/prediction/updated\":!1,\"thread/queue/changed\":!0,\"thread/environment/connected\":!0,\"thread/environment/disconnected\":!0,\"thread/settings/updated\":!0,\"thread/tokenUsage/updated\":!0,\"turn/started\":!0,\"hook/started\":!0,\"turn/completed\":!0,\"hook/completed\":!0,\"turn/diff/updated\":!0,\"turn/plan/updated\":!0,\"item/started\":!0,\"item/autoApprovalReview/started\":!0,\"item/autoApprovalReview/completed\":!0,\"autoApprovalReview/strictReviewRequired\":!0,\"item/completed\":!0,\"rawResponseItem/completed\":!1,\"item/agentMessage/delta\":!0,\"item/plan/delta\":!0,\"command/exec/outputDelta\":!1,\"process/outputDelta\":!1,\"process/exited\":!1,\"project/changed\":!1,\"item/commandExecution/outputDelta\":!0,\"item/commandExecution/terminalInteraction\":!0,\"item/fileChange/outputDelta\":!0,\"item/fileChange/patchUpdated\":!0,\"serverRequest/resolved\":!0,\"item/mcpToolCall/progress\":!0,\"mcpServer/oauthLogin/completed\":!0,\"mcpServer/startupStatus/updated\":!0,\"mcpServer/event/stream/not"
+      }
+    ]
+  }
+]

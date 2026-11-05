@@ -1,0 +1,6 @@
+.reference-picker .reference-logo{width:32px;height:32px;flex:none;position:relative;display:grid;place-items:center;border-radius:8px;background:var(--soft);overflow:hidden;color:var(--muted)}
+.reference-picker .reference-logo>svg{width:20px;height:20px}
+.reference-picker .reference-logo>img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.reference-picker .reference-logo>img[hidden]{display:none}
+.reference-picker .reference-logo.has-logo>svg{visibility:hidden}
+.reference-picker .reference-copy{flex:1;min-width:0;text-align:left}

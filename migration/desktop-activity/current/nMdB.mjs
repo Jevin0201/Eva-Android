@@ -1,0 +1,4 @@
+// Inert original factory; not executed.
+const nMdB = function(e,t,n){var i=n("ekLq"),a=n("wD9O");function l(e,t=1){let n=e.closest(i.IX.timelineScroll);if(null==n)return;let o=e.getBoundingClientRect().top,r=null,s=()=>{e.isConnected&&(n.scrollTop+=(0,a.Ud)(e.getBoundingClientRect().top-o,t))},d=()=>{null==r&&(r=window.requestAnimationFrame(()=>{r=null,s()}))},c=e.closest("[data-turn-key]"),u=null;null!=c&&"u">typeof ResizeObserver&&(u=new ResizeObserver(()=>{null!=r&&(window.cancelAnimationFrame(r),r=null),s(),d()})).observe(c),d();let f=new AbortController,h=()=>{null!=r&&window.cancelAnimationFrame(r),u?.disconnect(),window.clearTimeout(p),f.abort()},p=window.setTimeout(h,350);for(let e of["wheel","touchmove","pointerdown","keydown"])n.addEventListener(e,h,{passive:!0,signal:f.signal})}n("V8uZ"),n.d(t,{I:()=>l})};
+
+export default nMdB;

@@ -8,7 +8,9 @@ for(const c of data.chats.slice())if(!c.kernelThread?.id&&!c.messages?.length&&!
 for(const c of data.drafts)if(c.running&&!c.kernelThread?.id){c.draft=[c.pending,c.draft].filter(Boolean).join('\n');c.pending='';c.running=false;}
 let route='home';const active=()=>data.chats.find(c=>c.id===data.active)||data.drafts.find(c=>c.id===data.active);
 function acceptConversation(c){if(!data.chats.some(x=>x.id===c.id)){data.drafts=data.drafts.filter(x=>x.id!==c.id);data.chats.push(c);sidebar()}}
-let persistTimer;function persist(){clearTimeout(persistTimer);EvaHost.save(JSON.stringify(data))}function persistDraft(){clearTimeout(persistTimer);persistTimer=setTimeout(()=>{if(EvaHost.saveLater)EvaHost.saveLater(JSON.stringify(data));else persist()},350)}
+// Native UiStateStore persists complete snapshots transactionally, per conversation.
+function serializeUiState(state){return JSON.stringify(state);}
+let persistTimer;function persist(){clearTimeout(persistTimer);EvaHost.save(serializeUiState(data))}function persistDraft(){clearTimeout(persistTimer);persistTimer=setTimeout(()=>{if(EvaHost.saveLater)EvaHost.saveLater(serializeUiState(data));else persist()},350)}
 function control(i,label,action){return `<button class="icon-btn" aria-label="${label}" data-action="${action}">${icon(i)}</button>`}
 function row(i,title,sub,action){return `<button class="row" data-action="${esc(action)}">${icon(i)}<span class="copy"><b>${esc(title)}</b><small>${esc(sub)}</small></span>${icon('arrow')}</button>`}
 function sidebar(){const host=$('#sidebar');host.innerHTML=`<div class="side-heading"><strong class="side-brand">Eva</strong>${control('sidebar','收起侧栏','close')}</div>${row('compose','新聊天','','new')}<div class="side-scroll"><div class="side-section">最近会话</div>${data.chats.slice().reverse().map(c=>row('chat',c.title,'本机保存','chat:'+c.id)).join('')||'<p class="preview-label">还没有会话</p>'}${row('tasks','任务记录','本机执行结果','tasks')}</div><div class="side-footer">${row('pc','Eva 浏览器','','browser')}${row('folder','工作区','','files')}${row('settings','设置','','settings')}<p class="preview-label">在此手机上运行</p></div>`}

@@ -1,0 +1,2 @@
+export function createOriginalActivitySummaryLayout({Compiler:ub,JSX:db,Inline:e_}){function sb(e){let t=(0,ub.c)(7),{children:n,icon:r}=e;if(r==null){let e;return t[0]===n?e=t[1]:(e=(0,db.jsx)(db.Fragment,{children:n}),t[0]=n,t[1]=e),e}let i;t[2]===n?i=t[3]:(i=(0,db.jsx)(`span`,{className:`min-w-0 flex-1 truncate`,children:n}),t[2]=n,t[3]=i);let a;return t[4]!==r||t[5]!==i?(a=(0,db.jsxs)(e_,{className:`max-w-full overflow-hidden`,children:[r,i]}),t[4]=r,t[5]=i,t[6]=a):a=t[6],a}
+return sb;}

@@ -1,0 +1,41 @@
+{
+  "scope": "Matching upstream source; not REA binary equivalence. Apache-2.0 already retained at research/codex-0.166.0/LICENSE.",
+  "files": [
+    {
+      "url": "https://raw.githubusercontent.com/openai/codex/6ff1e1ca3b30fc8b914720681fcf5fe62e95f856/codex-rs/protocol/src/models.rs",
+      "sha256": "753498bc730ba21ded710d9aa2b2f9163e6bbe4eaa18f1c25d998c36138a54f7",
+      "bytes": 167602,
+      "path": "research/codex-20261105/attachment-transport/models.rs"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/openai/codex/6ff1e1ca3b30fc8b914720681fcf5fe62e95f856/codex-rs/core/src/client_common.rs",
+      "sha256": "43a540ecd99856644ec01c57708838779b118c3b583e218c9ef307e0dcefcb4b",
+      "bytes": 4908,
+      "path": "research/codex-20261105/attachment-transport/client_common.rs"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/openai/codex/6ff1e1ca3b30fc8b914720681fcf5fe62e95f856/codex-rs/core/src/client.rs",
+      "sha256": "6a2e95e2b7014c480f5c543b95f112d79c23551c281050cffaad85d32a9847db",
+      "bytes": 133039,
+      "path": "research/codex-20261105/attachment-transport/client.rs"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/openai/codex/6ff1e1ca3b30fc8b914720681fcf5fe62e95f856/codex-rs/core/src/context_manager/history.rs",
+      "sha256": "8551719410d5fd4452cba29e169ffe3c16c2dc42816e90ca307cfdf955116040",
+      "bytes": 60053,
+      "path": "research/codex-20261105/attachment-transport/history.rs"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/openai/codex/6ff1e1ca3b30fc8b914720681fcf5fe62e95f856/codex-rs/core/src/context_manager/normalize.rs",
+      "sha256": "a7b0aadc44591fa8bc550ef9cef22671076270d77e401fd0546173a86eab96a2",
+      "bytes": 17075,
+      "path": "research/codex-20261105/attachment-transport/normalize.rs"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/openai/codex/6ff1e1ca3b30fc8b914720681fcf5fe62e95f856/codex-rs/thread-store/src/local/paginated_fork.rs",
+      "sha256": "6572812524bec5016382926e3608bb4dfbe10cf6faa2ea20616dad3b9ce89e9e",
+      "bytes": 7782,
+      "path": "research/codex-20261105/attachment-transport/paginated_fork.rs"
+    }
+  ]
+}

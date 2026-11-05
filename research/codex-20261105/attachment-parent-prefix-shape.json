@@ -1,0 +1,127 @@
+{
+  "scope": "Only parent prefix referenced by the private fork; no content text or image/encrypted bytes retained. Not an outbound request capture.",
+  "parentPrefixBytes": 45181,
+  "parentPrefixSha256": "6f88e81d0bb60834addb83a18d2fb06d5db8126763a34c2257c1b31c11928413",
+  "endOrdinalExclusive": 16,
+  "shape": [
+    {
+      "recordType": "session_meta",
+      "ordinal": 0,
+      "itemType": null,
+      "provider": "e72eb277-311e-4a76-be21-33e54b55ab28",
+      "hasParent": false
+    },
+    {
+      "recordType": "event_msg",
+      "ordinal": 1,
+      "itemType": "task_started"
+    },
+    {
+      "recordType": "response_item",
+      "ordinal": 2,
+      "itemType": "message",
+      "role": "developer",
+      "contentCount": 3,
+      "contentTypes": [
+        "input_text",
+        "input_text",
+        "input_text"
+      ],
+      "summaryCount": 0,
+      "encryptedLength": 0
+    },
+    {
+      "recordType": "response_item",
+      "ordinal": 3,
+      "itemType": "message",
+      "role": "user",
+      "contentCount": 1,
+      "contentTypes": [
+        "input_text"
+      ],
+      "summaryCount": 0,
+      "encryptedLength": 0
+    },
+    {
+      "recordType": "world_state",
+      "ordinal": 4,
+      "itemType": null
+    },
+    {
+      "recordType": "turn_context",
+      "ordinal": 5,
+      "itemType": null
+    },
+    {
+      "recordType": "event_msg",
+      "ordinal": 6,
+      "itemType": "thread_settings_applied"
+    },
+    {
+      "recordType": "response_item",
+      "ordinal": 7,
+      "itemType": "message",
+      "role": "user",
+      "contentCount": 1,
+      "contentTypes": [
+        "input_text"
+      ],
+      "summaryCount": 0,
+      "encryptedLength": 0
+    },
+    {
+      "recordType": "event_msg",
+      "ordinal": 8,
+      "itemType": "item_completed"
+    },
+    {
+      "recordType": "event_msg",
+      "ordinal": 9,
+      "itemType": "item_completed"
+    },
+    {
+      "recordType": "response_item",
+      "ordinal": 10,
+      "itemType": "reasoning",
+      "role": null,
+      "contentCount": 1,
+      "contentTypes": [
+        "reasoning_text"
+      ],
+      "summaryCount": 0,
+      "encryptedLength": 38
+    },
+    {
+      "recordType": "event_msg",
+      "ordinal": 11,
+      "itemType": "item_completed"
+    },
+    {
+      "recordType": "response_item",
+      "ordinal": 12,
+      "itemType": "message",
+      "role": "assistant",
+      "contentCount": 1,
+      "contentTypes": [
+        "output_text"
+      ],
+      "summaryCount": 0,
+      "encryptedLength": 0
+    },
+    {
+      "recordType": "token_usage_record",
+      "ordinal": 13,
+      "itemType": null
+    },
+    {
+      "recordType": "event_msg",
+      "ordinal": 14,
+      "itemType": "token_count"
+    },
+    {
+      "recordType": "event_msg",
+      "ordinal": 15,
+      "itemType": "task_complete"
+    }
+  ]
+}

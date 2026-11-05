@@ -1,0 +1,8 @@
+{
+  "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-delivery/scanner.js",
+  "sha256": "c8e6857f7035f80569d7b17c3948e15f6741774d178805779338a648bc093874",
+  "copiedUnchanged": true,
+  "destination": "probe/assets/eva-desktop-delivery-scanner.js",
+  "authorization": "User explicitly requested reuse of local Eva desktop source; private source, no public redistribution license inferred.",
+  "adapter": "Android keeps workspace canonicalization/native bridge; scanLinks reused; only syntax link becomes file row."
+}

@@ -1,0 +1,24 @@
+'use strict';
+const assert=require('node:assert/strict'),{createContextCompaction,presentation}=require('./context-compaction');
+let time=1000,changes=[],scheduled=new Map(),seq=0;
+const state=createContextCompaction({now:()=>time,onChange:id=>changes.push(id),setTimer:(fn,delay)=>{scheduled.set(++seq,{fn,delay});return seq;},clearTimer:id=>scheduled.delete(id)});
+const item={type:'contextCompaction',id:'c'},turn=(status,items=[item])=>[{id:'t',status,items}];
+assert.equal(presentation(item,{status:'inProgress'},time).label,'上下文已自动压缩','Raw historical items have the official default completed state');
+state.observe('item/started',{threadId:'a',turnId:'t',item});let projected=state.overlay('a',turn('inProgress'));
+assert.equal(presentation(projected[0].items[0],projected[0],time).label,'正在压缩上下文');assert(!Object.hasOwn(item,'completed'),'Never mutate native history');
+time=10999;assert(!presentation(projected[0].items[0],projected[0],time).slow);time=11000;assert(presentation(projected[0].items[0],projected[0],time).label.includes('可能需要几分钟'));assert.equal(scheduled.size,1);
+for(const [id,timer]of scheduled){scheduled.delete(id);timer.fn();}assert(changes.includes('a'));
+state.observe('item/completed',{threadId:'a',turnId:'t',item});projected=state.overlay('a',turn('inProgress'));assert.equal(presentation(projected[0].items[0],projected[0],time).label,'上下文已自动压缩');
+state.observe('item/started',{threadId:'a',turnId:'t',item});assert.equal(state.overlay('a',turn('inProgress'))[0].items[0].completed,true,'Late start cannot revive completed compaction');
+assert.equal(presentation({...item,completed:false},{status:'interrupted'},time).label,'压缩已中断');assert.equal(presentation({...item,completed:false},{status:'failed'},time).status,'interrupted');assert.equal(presentation({...item,completed:false},{status:'completed'},time).status,'completed');
+const manual=state.beginManual('b');let rows=state.overlay('b',turn('completed'));assert.equal(rows.length,2);assert.equal(rows[1].items[0].source,'manual');assert.equal(rows[1].items[0].completed,false);assert.equal(state.overlay('other',[]).length,0);
+// RPC acknowledgement has no completion transition; only native events do.
+assert.equal(presentation(rows[1].items[0],rows[1],time).status,'inProgress');
+state.observe('item/started',{threadId:'b',turnId:'real',item:{...item,id:'manual-real'}});rows=state.overlay('b',[{id:'real',status:'inProgress',items:[{...item,id:'manual-real'}]}]);assert.equal(rows[0].items.length,1);assert.equal(rows[0].items[0].source,'manual');
+state.failManual('b',manual);assert.equal(state.overlay('b',rows)[0].items[0].source,'manual','Late request error cannot remove a real native compaction');
+state.observe('item/completed',{threadId:'b',turnId:'real',item:{...item,id:'manual-real'}});rows=state.overlay('b',rows);assert.equal(presentation(rows[0].items[0],rows[0],time).label,'上下文已压缩');
+const denied=state.beginManual('c');state.failManual('c',denied);assert.deepEqual(state.overlay('c',[]),[],'Rejected request removes its pending placeholder');
+const waiting=state.beginManual('late');state.observe('item/completed',{threadId:'late',turnId:'old',item:{...item,id:'older'}});assert.equal(state.overlay('late',[])[0].items[0].source,'manual','An older completion cannot consume a new manual request');state.failManual('late',waiting);
+const first=state.beginManual('d'),second=state.beginManual('d');assert.equal(state.overlay('d',[])[0].items.length,1,'Repeated manual requests never duplicate the synthetic row');state.failManual('d',first);assert.equal(state.overlay('d',[]).length,1);state.failManual('d',second);assert.deepEqual(state.overlay('d',[]),[]);
+assert.equal(presentation({...item,completed:true,source:'manual'},null,time,'en').label,'Context compacted');state.dispose();assert.equal(scheduled.size,0);
+console.log('PASS compaction lifecycle, exact delay boundary, manual/automatic source, native replacement, rejection, late events, interrupted/history mapping and thread isolation');

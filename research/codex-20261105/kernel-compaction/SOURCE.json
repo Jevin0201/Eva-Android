@@ -1,0 +1,26 @@
+{
+  "scope": "Matching version-tag upstream companion source; not a binary equivalence proof or REA decompilation. Research-only, not linked into Android application.",
+  "license": "Apache-2.0; repository copy at research/codex-0.166.0/LICENSE",
+  "files": [
+    {
+      "file": "compact.rs",
+      "url": "https://raw.githubusercontent.com/openai/codex/rust-v0.166.0/codex-rs/core/src/compact.rs",
+      "sha256": "abc5cd5d1f2e9e8a415a04f27974dc39809939706ca413059a38dd56571a128f",
+      "bytes": 33766
+    },
+    {
+      "file": "context_window.rs",
+      "url": "https://raw.githubusercontent.com/openai/codex/rust-v0.166.0/codex-rs/core/src/session/context_window.rs",
+      "sha256": "9692f442771c63308cfc36954810cb2490d84c28b681972ea13b93afbd30050a",
+      "bytes": 5307
+    },
+    {
+      "file": "turn.rs",
+      "url": "https://raw.githubusercontent.com/openai/codex/rust-v0.166.0/codex-rs/core/src/session/turn.rs",
+      "sha256": "5c0ec0a968de15cabbb7bd0af66edf1dd42313a1d9aac861af9d8a549b7b2335",
+      "bytes": 141236
+    }
+  ],
+  "tagObject": "593389380740f7b4762771573c447ccfdc59742f",
+  "peeledCommit": "6ff1e1ca3b30fc8b914720681fcf5fe62e95f856"
+}

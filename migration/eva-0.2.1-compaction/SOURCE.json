@@ -1,0 +1,61 @@
+{
+  "source": "User-owned Eva desktop source, package version 0.2.1",
+  "permission": "User explicitly requests reuse; private package, no root redistribution license found. Preserve provenance; not a claim of public redistribution rights.",
+  "files": [
+    {
+      "path": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/context-compaction.js",
+      "sha256": "d633a934ba95defaaf52f8f9b2fa8858e46982e359cc51450772f576f7236ffa",
+      "bytes": 4861
+    },
+    {
+      "path": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/actions.js",
+      "sha256": "09d846f42bb8ed1d11a676195bfa3a5c4e03bd51628307baaebb8af2893d2311",
+      "bytes": 93385
+    },
+    {
+      "path": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/render.js",
+      "sha256": "606eacdbeeddb3dcadd332e675a02944c359d483704d304cad0057f3683fc579",
+      "bytes": 82004
+    },
+    {
+      "path": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/composer.js",
+      "sha256": "1a70a8e17fa3d66bb161eb1b70769ac0ed86766c54835543ad5237a3727b1b41",
+      "bytes": 28255
+    },
+    {
+      "path": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/codex-chat-layout.css",
+      "sha256": "e351a6c53928584e7b83b83edbe70e720f9eda221f9257f0edc2300500922c6f",
+      "bytes": 17247
+    },
+    {
+      "path": "/Users/jevin/Documents/Codex/Eva-Source/tools/test-context-compaction.js",
+      "sha256": "77e783e11dcae5f5ce6af9c3c931a34a880a8aba31589a801df002ced915ecd5",
+      "bytes": 4107
+    },
+    {
+      "path": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/icons.js",
+      "sha256": "d6238ce49325a66e038544b420543c02d4e6be98a59cfb669058d4a7149819da",
+      "bytes": 37369
+    }
+  ],
+  "copied": [
+    "src/renderer/context-compaction.js",
+    "tools/test-context-compaction.js"
+  ],
+  "productionIntegration": "Installed in v41 and retained in v42; manual compaction + continuation verified on device; automatic threshold stress test pending",
+  "androidFiles": [
+    {
+      "path": "probe/assets/context-compaction-core.js",
+      "sha256": "99613de11221d03c013eee08a0454ffc7673dd159db49f3402c8db3baa8ebee6"
+    },
+    {
+      "path": "probe/assets/context-compaction.js",
+      "sha256": "f404713d483cd1d58497817421143d6d7fe6a9be8b943dc8c8ebcbf9754654fb"
+    },
+    {
+      "path": "probe/assets/context-compaction.css",
+      "sha256": "13c282b6cf3b8ae31fca214b0af64ce2243809cf0c65a37c3238e8a27c0e9b0a"
+    }
+  ],
+  "adaptation": "context-compaction-core.js changes only browser bootstrap to expose EvaContextCompaction factory; factory body and lifecycle/presentation remain byte-identical. Android adapter maps kernelCall/events, footer and existing flow rows. CSS copies desktop compaction row with mobile selector/color-token names. contextCompact SVG copied from desktop icons.js."
+}

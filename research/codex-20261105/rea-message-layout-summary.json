@@ -1,0 +1,31 @@
+{
+  "evidence_id": "ev_f117b12433a00b9d113d914d17108d465787ff771e07f2cdd3349c95eefb2fdc",
+  "subject": {
+    "name": "message-layout-factories",
+    "digest": {
+      "sha256": "be826db55dd12d356ccc4bd422c80eda6f0c35ee5defee25d680e8ba6ab520ea"
+    },
+    "local_path": "/Users/jevin/Documents/Codex/Eva-Android/artifacts/diagnosis-20261105/message-layout-factories",
+    "format": "directory",
+    "architecture": null
+  },
+  "operation": "analyze_javascript_application",
+  "parameters": {
+    "format": "auto",
+    "integrity_policy": "fail",
+    "max_semantic_nodes": 1200,
+    "max_semantic_nodes_per_file": 150,
+    "analysis_timeout_ms": 30000
+  },
+  "confidence": "derived",
+  "authority": "shipped-artifact",
+  "limitations": [
+    "CommonJS and ESM binding relationships were recovered from inert syntax and resolved only within the inventoried artifact container.",
+    "JavaScript and HTML were parsed as inert text; bundle bootstrap code was never executed.",
+    "Static imports, entrypoints, workers, endpoints, and storage relationships do not prove runtime execution.",
+    "Static paths and relationships may remain unresolved when expressions are dynamic or obfuscated.",
+    "Webpack/Rspack factories were recovered from AST literals; REA did not invoke push handlers or bundle bootstrap code."
+  ],
+  "fullEvidencePath": "artifacts/diagnosis-20261105/codex-rea-message-layout-verified.json",
+  "fullEvidenceSha256": "5936f1ba4f4bfb7036578959c54033e4255d5e308674dac8fe0bca65ae8d1864"
+}

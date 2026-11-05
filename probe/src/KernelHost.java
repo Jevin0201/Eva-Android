@@ -116,8 +116,27 @@ public final class KernelHost {
   JSONArray edits=new JSONArray().put(new JSONObject().put("keyPath","model_providers").put("value",definitions).put("mergeStrategy","replace")).put(new JSONObject().put("keyPath","model_provider").put("value",provider).put("mergeStrategy","replace"));
   rpc("config/batchWrite",new JSONObject().put("edits",edits));currentProvider=provider;if(process==child)providerConfigCache.accepted(child,selection,providerConfigFingerprint());KernelTrace.mark("provider-config:written");
  }
- JSONObject providerRequest(String method,JSONObject prepared,String provider)throws Exception{return ProviderSwitch.execute(method,prepared,provider,this::rpc);}
+ JSONObject providerRequest(String method,JSONObject prepared,String provider)throws Exception{
+  if(method.equals("thread/resume")){
+   JSONObject projection=ProviderHistoryProjection.project(context,prepared.getString("threadId"),provider,false);
+   if(projection.optBoolean("needed"))return projectedProviderFork(prepared,provider,projection);
+  }
+  return ProviderSwitch.execute(method,prepared,provider,(name,params)->{
+   if(name.equals("thread/fork")){
+    JSONObject projection=ProviderHistoryProjection.project(context,params.getString("threadId"),provider,true);
+    if(projection.optBoolean("needed")){JSONObject copy=new JSONObject(params.toString()).put("path",projection.getString("path")).put("excludeTurns",true);return rpc(name,copy);}
+   }
+   return rpc(name,params);
+  });
+ }
+ JSONObject projectedProviderFork(JSONObject prepared,String provider,JSONObject projection)throws Exception{
+  JSONObject result=ProviderSwitch.forkProvider(new JSONObject(prepared.toString()).put("path",projection.getString("path")).put("excludeTurns",true),provider,this::rpc);
+  result.put("androidContextProjection",new JSONObject().put("preservedOriginal",true).put("removedProviderPrivateReasoning",projection.optInt("removedReasoningItems")+projection.optInt("removedCheckpointReasoningItems")).put("auditPath",projection.getString("auditPath")));
+  KernelTrace.mark("provider-history:projected");return result;
+ }
  JSONObject dispatch(String method,JSONObject request)throws Exception{
+  if(method.equals("android/threadRecovery"))return ThreadRecovery.read(context,request);
+  if(method.equals("android/threadActivity"))return ThreadActivitySummary.read(request,this::rpc);
   if(method.equals("android/extensions"))return ExtensionAuthoring.call(this,request);
   if(method.startsWith("android/memories/"))return MemoryStore.execute(context,method.substring("android/memories/".length()),request);
   if(method.equals("android/hooks"))return HookStore.call(this,request);
@@ -173,6 +192,6 @@ public final class KernelHost {
   JSONObject result=rpc(method,params);
   return result;
  }
- void call(String ticket,String method,String json){if(!apiOnly){try{JSONObject request=new JSONObject(json);boolean useApi=(method.equals("thread/start")||method.equals("thread/resume"))?!request.optString("modelProvider","openai").equals("openai"):request.has("threadId")&&forThread(context,request.getString("threadId")).apiOnly;if(useApi){api(context).call(ticket,method,json);return;}}catch(JSONException ignored){}}KernelTrace.mark("bridge:"+method);work.execute(()->{try{if(!Arrays.asList("account/read","account/rateLimits/read","account/login/start","account/login/cancel","account/logout","model/list","thread/start","thread/resume","thread/read","thread/archive","thread/list","turn/start","turn/interrupt","turn/steer","skills/list","skills/config/write","android/mcp","android/hooks","plugin/installed","plugin/list","plugin/read","plugin/skill/read","app/list","android/extensions","plugin/install","plugin/uninstall","marketplace/add","marketplace/upgrade","config/value/write","config/batchWrite","hooks/list","android/memories/list","android/memories/read","android/memories/create","android/memories/save","android/memories/delete").contains(method))throw new IOException("不支持的内核请求");synchronized(startup){try{ensureStarted();}catch(Exception startError){synchronized(this){ready=false;if(process!=null)process.destroy();input=null;}throw startError;}}JSONObject result=dispatch(method,new JSONObject(json));emit(new JSONObject().put("ticket",ticket).put("result",result));}catch(Exception e){try{emit(new JSONObject().put("ticket",ticket).put("error",redact(e instanceof IOException?e.getMessage():"内核请求失败或超时；请恢复会话后检查，勿重复提交")));}catch(Exception ignored){}}});}
+ void call(String ticket,String method,String json){if(method.equals("android/threadRecovery")){work.execute(()->{try{emit(new JSONObject().put("ticket",ticket).put("result",ThreadRecovery.read(context,new JSONObject(json))));}catch(Exception error){try{emit(new JSONObject().put("ticket",ticket).put("error",error instanceof IOException?error.getMessage():"本地会话状态读取失败"));}catch(Exception ignored){}}});return;}if(!apiOnly){try{JSONObject request=new JSONObject(json);boolean useApi=(method.equals("thread/start")||method.equals("thread/resume"))?!request.optString("modelProvider","openai").equals("openai"):request.has("threadId")&&forThread(context,request.getString("threadId")).apiOnly;if(useApi){api(context).call(ticket,method,json);return;}}catch(JSONException ignored){}}KernelTrace.mark("bridge:"+method);work.execute(()->{try{if(!Arrays.asList("account/read","account/rateLimits/read","account/login/start","account/login/cancel","account/logout","model/list","thread/start","thread/resume","thread/read","thread/compact/start","thread/turns/list","thread/items/list","android/threadActivity","thread/archive","thread/list","turn/start","turn/interrupt","turn/steer","skills/list","skills/config/write","android/mcp","android/hooks","plugin/installed","plugin/list","plugin/read","plugin/skill/read","app/list","android/extensions","plugin/install","plugin/uninstall","marketplace/add","marketplace/upgrade","config/value/write","config/batchWrite","hooks/list","android/memories/list","android/memories/read","android/memories/create","android/memories/save","android/memories/delete").contains(method))throw new IOException("不支持的内核请求");synchronized(startup){try{ensureStarted();}catch(Exception startError){synchronized(this){ready=false;if(process!=null)process.destroy();input=null;}throw startError;}}JSONObject result=dispatch(method,new JSONObject(json));emit(new JSONObject().put("ticket",ticket).put("result",result));}catch(Exception e){try{emit(new JSONObject().put("ticket",ticket).put("error",redact(e instanceof IOException?e.getMessage():"内核请求失败或超时；请恢复会话后检查，勿重复提交")));}catch(Exception ignored){}}});}
  void respond(String idJson,String resultJson){try{synchronized(eventLock){questions.remove(String.valueOf(new JSONArray("["+idJson+"]").get(0)));}}catch(Exception ignored){}if(!apiOnly){try{Object id=new JSONArray("["+idJson+"]").get(0);if(id instanceof String&&((String)id).startsWith("api:")){String encoded=((String)id).substring(4);api(context).respond(encoded.substring(1,encoded.length()-1),resultJson);return;}}catch(Exception ignored){}}work.execute(()->{try{Object id=new JSONArray("["+idJson+"]").get(0);JSONObject result=new JSONObject(resultJson);write(new JSONObject().put("id",id).put(result.has("error")?"error":"result",result.has("error")?result.get("error"):result));}catch(Exception ignored){}});}
 }

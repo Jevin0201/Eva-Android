@@ -1,0 +1,6 @@
+{
+  "parent_evidence_id": "ev_93d7d26ba6ebe4885cd90dfe3728bfb4fafdc4c5fd64fd69de434083b076032e",
+  "artifact": "/Applications/ChatGPT.app/Contents/Resources/app.asar",
+  "coverage": "partial",
+  "execution": "static only"
+}

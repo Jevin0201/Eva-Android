@@ -1,0 +1,561 @@
+{
+  "method": "Reuse existing desktop Eva original factories before host adaptation; no modification to original declarations",
+  "records": [
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-steering/activity-shell-original.mjs",
+      "copied": "migration/desktop-activity/original/activity-shell-original.mjs",
+      "sha256": "42100f600c33c771b6c3066e6c55a08720f3fef99cc8ba203013e436049f74ee"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-steering/activity-summary-original.mjs",
+      "copied": "migration/desktop-activity/original/activity-summary-original.mjs",
+      "sha256": "d2d292924f797a2b882eff099dbdc82dfda26506d8354c4a386adbebea3f51d5"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-steering/activity-shell-provenance.json",
+      "copied": "migration/desktop-activity/original/activity-shell-provenance.json",
+      "sha256": "e72dfc47f594d0e60a567db48e2697d1f306da9035bd62c0b9e348c8fb99ebc2"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-steering/activity-current.css",
+      "copied": "migration/desktop-activity/original/activity-current.css",
+      "sha256": "e811c96ff77cc16a7643ebeea772dc34221fa99744db04798c608fa9959666e3"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-steering/activity-glyphs-original.json",
+      "copied": "migration/desktop-activity/original/activity-glyphs-original.json",
+      "sha256": "ac4d275d3071756a8e8a4bde4531b0ec8393cef223aa795cc4ce80b6b4bc85f3"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-user-input/original-motion.mjs",
+      "copied": "migration/desktop-activity/original/original-motion.mjs",
+      "sha256": "d488b9fb5d0b2fd2877f80bd20086c9937805b416bc8bfd3dc1289c98be9756b"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-user-input/original-rolldown-runtime.mjs",
+      "copied": "migration/desktop-activity/original/original-rolldown-runtime.mjs",
+      "sha256": "e0a79ad36c6ca1ffbc796c80aa5661803a9d1bc684e29d1587f48b4ba9a82714"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-workspace/original.css",
+      "copied": "migration/desktop-activity/original/original.css",
+      "sha256": "d74b11fb2d3c3048c28085abe50ce7fd67ddc1cd066c6d2f62f78bc21c24974c"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-workspace/reference.css",
+      "copied": "migration/desktop-activity/original/reference.css",
+      "sha256": "1133b36be162dbcc47fb682e3194ac81593fafce713addf55f4c5d427117a438"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-steering/history-original.mjs",
+      "copied": "migration/desktop-activity/original/history-original.mjs",
+      "sha256": "bdf05342135e19ad600e670198e83e97d5190d20d7be5d6ed70c40b34cb00215"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-steering/history-original.css",
+      "copied": "migration/desktop-activity/original/history-original.css",
+      "sha256": "1468899871edc6f3c972c52c9bb61fb5934af838410b4b189a3a08a24414c69e"
+    }
+  ],
+  "hostDesign": "Reference-keyed root updates, no whole-model JSON serialization; projected groups map into original components, summary activity lazy loads through existing pager",
+  "limits": [
+    "not complete Codex renderer parity",
+    "command/tool detail body remains a host adapter, as desktop Eva renderCommand does"
+  ],
+  "vendors": [
+    {
+      "name": "react",
+      "version": "19.2.7",
+      "licenseFile": "migration/desktop-activity/licenses/react-LICENSE"
+    },
+    {
+      "name": "react-dom",
+      "version": "19.2.7",
+      "licenseFile": "migration/desktop-activity/licenses/react-dom-LICENSE"
+    }
+  ],
+  "activeActivity": "Current Mac r9ev factory with exact imported module bodies; obsolete Windows by is not imported by active entry",
+  "currentSourceRecords": [
+    {
+      "id": "r9ev",
+      "file": "webview/assets/async/899308.3f1db3f4cb.js",
+      "sourceSha256": "92e800f7ab2f6e6209c05417a155ac9213273b0ea255ecb70e2e08e5bebdaee0",
+      "byteStart": 41384,
+      "byteEnd": 42825,
+      "rawSha256": "e03c1b0e0b5f4d1026f73867b35d16a25832ac1b6fb630f38f43ab085f8c49da",
+      "path": "artifacts/diagnosis-20261105/message-layout-factories/r9ev.js",
+      "derivedSha256": "25c635e056e1c6700b835ceb04de399d395b5341507ee87bba933148659f1da8",
+      "syntaxVerified": true
+    },
+    {
+      "id": "tHoD",
+      "file": "webview/assets/async/899308.3f1db3f4cb.js",
+      "sourceSha256": "92e800f7ab2f6e6209c05417a155ac9213273b0ea255ecb70e2e08e5bebdaee0",
+      "byteStart": 40666,
+      "byteEnd": 41383,
+      "rawSha256": "439884fc8eab107bfb75f5bfecfdd8564f3cc3fe86905f2dc793101c8b5ddc77",
+      "path": "artifacts/diagnosis-20261105/message-layout-factories/tHoD.js",
+      "derivedSha256": "c86ecc602c2e989a8f53a3cb5c09013d910350048b72fb7d9fb53531f08ca0e6",
+      "syntaxVerified": true
+    },
+    {
+      "id": "ltPT",
+      "file": "webview/assets/async/899308.3f1db3f4cb.js",
+      "sourceSha256": "92e800f7ab2f6e6209c05417a155ac9213273b0ea255ecb70e2e08e5bebdaee0",
+      "byteStart": 45458,
+      "byteEnd": 46124,
+      "rawSha256": "73accb2d30f3771ca13f6600a59235f8dd85ea66581f0a879b3f69f3d18912fc",
+      "path": "artifacts/diagnosis-20261105/message-layout-factories/ltPT.js",
+      "derivedSha256": "b04d1c5227dace58ab6996269c602870fb54da8fc40aca1b18b1107eebe0e9e7",
+      "syntaxVerified": true
+    },
+    {
+      "id": "GRDa",
+      "file": "webview/assets/async/899308.3f1db3f4cb.js",
+      "sourceSha256": "92e800f7ab2f6e6209c05417a155ac9213273b0ea255ecb70e2e08e5bebdaee0",
+      "byteStart": 23296,
+      "byteEnd": 23905,
+      "rawSha256": "4edfef85b88227ea4e588a82b0ce8d8ee5a9c86de811a5bae3fea0321c7313e7",
+      "path": "artifacts/diagnosis-20261105/message-layout-factories/GRDa.js",
+      "derivedSha256": "015e29be6987954a138944ac25bdb7266d41212043eb57148d22fcd69cc300cb",
+      "syntaxVerified": true
+    },
+    {
+      "id": "BI7J",
+      "file": "webview/assets/async/298814.3fa7f076e4.js",
+      "sourceSha256": "c17b9f96226f1cd0552c4881e34359a57d544cc5c2739a4d0d09d3369376a92c",
+      "byteStart": 23374,
+      "byteEnd": 25143,
+      "rawSha256": "37a6c08a2b72373811583ea2ba561196d712b9fbe605048f6e8f12e3073f5c56",
+      "path": "artifacts/diagnosis-20261105/message-layout-factories/BI7J.js",
+      "derivedSha256": "36b24b480a6b87910d2ea77d434dc2ec758ff68945fd3444fc3ee94733f6db11",
+      "syntaxVerified": true
+    },
+    {
+      "id": "umSm",
+      "file": "webview/assets/async/298814.3fa7f076e4.js",
+      "sourceSha256": "c17b9f96226f1cd0552c4881e34359a57d544cc5c2739a4d0d09d3369376a92c",
+      "byteStart": 40326,
+      "byteEnd": 43186,
+      "rawSha256": "cb9fd8ac7656699cc5e9ef8065f8411603e0b1296774923aec40fc8f7c37c5f0",
+      "path": "artifacts/diagnosis-20261105/message-layout-factories/umSm.js",
+      "derivedSha256": "dae74aab738c6c70d72939211adf5ce17615faf89e7987b8fa12fbe5adfc8baf",
+      "syntaxVerified": true
+    },
+    {
+      "id": "hCjf",
+      "file": "webview/assets/async/298814.3fa7f076e4.js",
+      "sourceSha256": "c17b9f96226f1cd0552c4881e34359a57d544cc5c2739a4d0d09d3369376a92c",
+      "byteStart": 48251,
+      "byteEnd": 49911,
+      "rawSha256": "26d934c9f09d7b6752b23b58e05ee1dfef2e68a93b11fc220a7a7e85fa44f13d",
+      "path": "artifacts/diagnosis-20261105/message-layout-factories/hCjf.js",
+      "derivedSha256": "6a070ba68e3bab02d6f87d6db323c3ada84bc5d472eeca47f74c7498f548d33e",
+      "syntaxVerified": true
+    },
+    {
+      "id": "RznG",
+      "file": "webview/assets/async/298814.3fa7f076e4.js",
+      "sourceSha256": "c17b9f96226f1cd0552c4881e34359a57d544cc5c2739a4d0d09d3369376a92c",
+      "byteStart": 50479,
+      "byteEnd": 50979,
+      "rawSha256": "4b6f9af902768d2489656e7262a40e96afe8070485cdcb7f316dc185fdd6bcb7",
+      "path": "artifacts/diagnosis-20261105/message-layout-factories/RznG.js",
+      "derivedSha256": "e1397f4016756d26ef4e0716f5dcfea0b3ee4f0345262153a51f8d3d70f9e73f",
+      "syntaxVerified": true
+    },
+    {
+      "id": "h30a",
+      "file": "webview/assets/async/298814.3fa7f076e4.js",
+      "sourceSha256": "c17b9f96226f1cd0552c4881e34359a57d544cc5c2739a4d0d09d3369376a92c",
+      "byteStart": 40259,
+      "byteEnd": 40325,
+      "rawSha256": "8068105b6813463259694ecd3557c377ffc571c88bd66e4599f6f39428e33347",
+      "path": "artifacts/diagnosis-20261105/message-layout-factories/h30a.js",
+      "derivedSha256": "d50bf38f73614ab284163bbf5e7f758ad5b1a92bfe9082e758b8aaa282aee0f4",
+      "syntaxVerified": true
+    },
+    {
+      "id": "V8uZ",
+      "file": "webview/assets/async/265651.3442ea834c.js",
+      "sourceSha256": "87de1c6f11cef63c871488c645d0689ed1ba44655f512f274a694d8f9f2f5695",
+      "byteStart": 785542,
+      "byteEnd": 786963,
+      "rawSha256": "580ac4a077cf812530059f379f2df01b26effbe23de8a8e8fe7e22cc910c919c",
+      "path": "artifacts/diagnosis-20261105/message-layout-factories/V8uZ.js",
+      "derivedSha256": "60ee1f83d3c19a95ab6c29aec6fa7d77964fde4a8fecca353da037c485427936",
+      "syntaxVerified": true
+    },
+    {
+      "id": "wD9O",
+      "file": "webview/assets/async/24191.589dcc9878.js",
+      "sourceSha256": "bd23d61085fcad60b8f582112d4ca0695b34204510cff900ba0f87c9c61228d0",
+      "byteStart": 1882763,
+      "byteEnd": 1882920,
+      "rawSha256": "17dd032ee2f1ccfed5d5231951e8f1a59d7693b6c7bf3cee1438ca48ddc1412f",
+      "path": "artifacts/diagnosis-20261105/message-layout-factories/wD9O.js",
+      "derivedSha256": "dbb7e51732b36e07125d8af838fbdef5bde9ba1cdc1e4f8ad7470bf24a4b7dfd",
+      "syntaxVerified": true
+    },
+    {
+      "id": "h30a",
+      "file": "webview/assets/async/249458.ec21e7a077.js",
+      "sourceSha256": "150634f6370e3d1d4b79d101fbd7f05c70913a9dedf7fab381e88ac9a4c1dc63",
+      "byteStart": 124483,
+      "byteEnd": 124549,
+      "rawSha256": "d30b9149f603e0575aaa14bfa6f0d39cdb09ee8ef142c069ea5c100fc857b8b8",
+      "path": "artifacts/diagnosis-20261105/message-layout-factories/h30a.js",
+      "derivedSha256": "f813cf0df05091bb02caf6b349f13d0b5633e7ba9be098b9480cc703c23b54c3",
+      "syntaxVerified": true
+    },
+    {
+      "id": "nMdB",
+      "file": "webview/assets/async/253790.25bf4df4cb.js",
+      "sourceSha256": "76ad11722b8ed4468d17b85ada2143e78071e68e6d7c150ff808623aa34be546",
+      "byteStart": 65006,
+      "byteEnd": 65776,
+      "rawSha256": "52f99bf185c2576f7e19274d3f3532418e193e221421434bd64114ee8df87c66",
+      "path": "artifacts/diagnosis-20261105/message-layout-factories/nMdB.js",
+      "derivedSha256": "ea107490abcf795fbd3709877f968a7ff4d057809d2cad235a0c2e89d8e1c036",
+      "syntaxVerified": true
+    },
+    {
+      "id": "nsuH",
+      "file": "webview/assets/async/265651.3442ea834c.js",
+      "sourceSha256": "87de1c6f11cef63c871488c645d0689ed1ba44655f512f274a694d8f9f2f5695",
+      "byteStart": 775939,
+      "byteEnd": 777193,
+      "rawSha256": "5f1031cac09626b2e3a1560a13389b5eba2481c19dae3b7ab5096c8716c7f9eb",
+      "path": "artifacts/diagnosis-20261105/message-layout-factories/nsuH.js",
+      "derivedSha256": "9c3dc69eb8d305c79c6ebfbf3b3bad89c63cf13d3b0e67b11fb61a7cfae9a7c0",
+      "syntaxVerified": true
+    },
+    {
+      "id": "hCjf",
+      "file": "webview/assets/async/298814.3fa7f076e4.js",
+      "sourceSha256": "c17b9f96226f1cd0552c4881e34359a57d544cc5c2739a4d0d09d3369376a92c",
+      "byteStart": 48251,
+      "byteEnd": 49911,
+      "rawSha256": "26d934c9f09d7b6752b23b58e05ee1dfef2e68a93b11fc220a7a7e85fa44f13d",
+      "path": "artifacts/diagnosis-20261105/message-layout-factories/hCjf.js",
+      "derivedSha256": "6a070ba68e3bab02d6f87d6db323c3ada84bc5d472eeca47f74c7498f548d33e",
+      "syntaxVerified": true
+    },
+    {
+      "id": "RznG",
+      "file": "webview/assets/async/298814.3fa7f076e4.js",
+      "sourceSha256": "c17b9f96226f1cd0552c4881e34359a57d544cc5c2739a4d0d09d3369376a92c",
+      "byteStart": 50479,
+      "byteEnd": 50979,
+      "rawSha256": "4b6f9af902768d2489656e7262a40e96afe8070485cdcb7f316dc185fdd6bcb7",
+      "path": "artifacts/diagnosis-20261105/message-layout-factories/RznG.js",
+      "derivedSha256": "e1397f4016756d26ef4e0716f5dcfea0b3ee4f0345262153a51f8d3d70f9e73f",
+      "syntaxVerified": true
+    },
+    {
+      "id": "aqd9",
+      "file": "webview/assets/async/496175.cf5ad221c1.js",
+      "sourceSha256": "79cd497b3586afdb4edd6a50e9cab6e0c255ea60ee0e04808c1b5dd7cc649376",
+      "byteStart": 41574,
+      "byteEnd": 42190,
+      "rawSha256": "8888b0e7fc6457ec4cf30d70c5f718755a7ce01c21730d5bbc560ae3778cde98",
+      "path": "artifacts/diagnosis-20261105/message-layout-factories/aqd9.js",
+      "derivedSha256": "9379b7cab396952c3a0b2abb9e10a27ae5322e9197cc70b3f7bc2de24bd8f521",
+      "syntaxVerified": true
+    },
+    {
+      "id": "ZYy5",
+      "file": "webview/assets/async/24191.589dcc9878.js",
+      "sourceSha256": "bd23d61085fcad60b8f582112d4ca0695b34204510cff900ba0f87c9c61228d0",
+      "byteStart": 6355549,
+      "byteEnd": 6355617,
+      "rawSha256": "622380bfb04f4b2243fcbced30c499ce8eac9e1ccf2b59f43bca69d3764d1a8d",
+      "path": "artifacts/diagnosis-20261105/message-layout-factories/ZYy5.js",
+      "derivedSha256": "0d8b822ee003da4fb70f75168b34d6034ae9a45ed0387a66545923dde3227e9e",
+      "syntaxVerified": true
+    },
+    {
+      "id": "m8On",
+      "file": "webview/assets/async/24191.589dcc9878.js",
+      "sourceSha256": "bd23d61085fcad60b8f582112d4ca0695b34204510cff900ba0f87c9c61228d0",
+      "byteStart": 6355618,
+      "byteEnd": 6356194,
+      "rawSha256": "99155738b5a7427efdfa4c94d4d31b9c4f117518f976a50ff896a604e69e1a74",
+      "path": "artifacts/diagnosis-20261105/message-layout-factories/m8On.js",
+      "derivedSha256": "ac2b77138379255cb5842782ac86c41a59a5eafc14abca1862875c9076f016b9",
+      "syntaxVerified": true
+    },
+    {
+      "id": "bIvi",
+      "file": "webview/assets/async/24191.589dcc9878.js",
+      "sourceSha256": "bd23d61085fcad60b8f582112d4ca0695b34204510cff900ba0f87c9c61228d0",
+      "byteStart": 7189274,
+      "byteEnd": 7189935,
+      "rawSha256": "a059f00d6c487d762f7ca759e7e8210fa5f79914f6ac84b2ba9727ce85a72567",
+      "path": "artifacts/diagnosis-20261105/message-layout-factories/bIvi.js",
+      "derivedSha256": "017651015e88f3401e5687376b82a38de6d3bd27127fdb019a2ff3e145bb8e99",
+      "syntaxVerified": true
+    },
+    {
+      "id": "ekLq",
+      "file": "webview/assets/async/24191.589dcc9878.js",
+      "sourceSha256": "bd23d61085fcad60b8f582112d4ca0695b34204510cff900ba0f87c9c61228d0",
+      "byteStart": 1454557,
+      "byteEnd": 1458228,
+      "rawSha256": "995cd02fb3e6508843895820cbb1e8dbe26b0e5a052c68c49cfafcc8bf3559b3",
+      "path": "artifacts/diagnosis-20261105/message-layout-factories/ekLq.js",
+      "derivedSha256": "42d176aee5d362726f30690e27ba8cb00aeac501a3fbce12e3f0ecc19929f7f1",
+      "syntaxVerified": true
+    },
+    {
+      "id": "q5qu",
+      "file": "webview/assets/async/249458.ec21e7a077.js",
+      "sourceSha256": "150634f6370e3d1d4b79d101fbd7f05c70913a9dedf7fab381e88ac9a4c1dc63",
+      "byteStart": 127411,
+      "byteEnd": 128038,
+      "rawSha256": "d57a5b07474da121b48a6fa5e0e031dfcac342d574165e9a68ad279e6ce369b0",
+      "path": "artifacts/diagnosis-20261105/message-layout-factories/q5qu.js",
+      "derivedSha256": "81eb404cb5da7a2b117a5302ca8af350b015b42cc23a2103e05604da2f53106a",
+      "syntaxVerified": true
+    },
+    {
+      "id": "irtZ",
+      "file": "webview/assets/async/298814.3fa7f076e4.js",
+      "sourceSha256": "c17b9f96226f1cd0552c4881e34359a57d544cc5c2739a4d0d09d3369376a92c",
+      "byteStart": 28211,
+      "byteEnd": 28908,
+      "rawSha256": "6f4e58cc6fce58c56d2bc31cd1bd4eb4dc3a38dda4c3dbbeeca4785afeff3ed8",
+      "path": "artifacts/diagnosis-20261105/message-layout-factories/irtZ.js",
+      "derivedSha256": "5857bb6e56ea35818f169016a6b93f15ce766cf6968862e498b6024308deaad4",
+      "syntaxVerified": true
+    },
+    {
+      "id": "o6bI",
+      "file": "webview/assets/async/298814.3fa7f076e4.js",
+      "sourceSha256": "c17b9f96226f1cd0552c4881e34359a57d544cc5c2739a4d0d09d3369376a92c",
+      "byteStart": 49912,
+      "byteEnd": 50478,
+      "rawSha256": "6357fee795a2ba02dcd68c32da3e8ff2c177fe0306a28d3f2093a94c3dc2d450",
+      "path": "artifacts/diagnosis-20261105/message-layout-factories/o6bI.js",
+      "derivedSha256": "5c5b31cb853050ade205536d161d669783d48cf16e4b4e478bfb8626b4d78d6d",
+      "syntaxVerified": true
+    },
+    {
+      "id": "KqaT",
+      "file": "webview/assets/async/265651.3442ea834c.js",
+      "sourceSha256": "87de1c6f11cef63c871488c645d0689ed1ba44655f512f274a694d8f9f2f5695",
+      "byteStart": 64101,
+      "byteEnd": 64648,
+      "rawSha256": "d6b84c00d96f8a56be0a07076f956ff1756160249b3a35bc9d91b5185ec8e64b",
+      "path": "artifacts/diagnosis-20261105/message-layout-factories/KqaT.js",
+      "derivedSha256": "795e5952aa632240069ed05d4b0f2e562aa74ea6844fc8c30d0f3c0b0211ade2",
+      "syntaxVerified": true
+    },
+    {
+      "id": "GOUF",
+      "file": "webview/assets/async/298814.3fa7f076e4.js",
+      "sourceSha256": "c17b9f96226f1cd0552c4881e34359a57d544cc5c2739a4d0d09d3369376a92c",
+      "byteStart": 109,
+      "byteEnd": 191,
+      "rawSha256": "a36d0cff061dc54ff6529513775e6322ec540e1b08ae9ac9ddb817a2e5011635",
+      "path": "artifacts/diagnosis-20261105/message-layout-factories/GOUF.js",
+      "derivedSha256": "14d0e5d9cfee29bbc1684c8a56b6ddfe11d7abd7082b7d0336d0586fd59aa17e",
+      "syntaxVerified": true
+    },
+    {
+      "id": "uuN8",
+      "file": "webview/assets/async/162237.8727488e97.js",
+      "sourceSha256": "02e081c818fa8f55f753319390c93291b7f0c48ee0f6c909feb4c80bc7b67aa0",
+      "byteStart": 29672,
+      "byteEnd": 35135,
+      "rawSha256": "51e6550827cf2fabaa1030313f5d6a80ec0af8abc4c8ddec31b89a75ea7eb1dc",
+      "path": "artifacts/diagnosis-20261105/message-layout-factories/uuN8.js",
+      "derivedSha256": "79aa276047e5921189dcc532ce4f3f67a3f066d21df885aab48f744d02f6061f",
+      "syntaxVerified": true
+    },
+    {
+      "id": "on57",
+      "file": "webview/assets/async/384341.ecb24689d0.js",
+      "sourceSha256": "a3b13e13f556ea0e9c079bea68cf81fdea98ae19986ad890d0e246271a3b4995",
+      "byteStart": 109,
+      "byteEnd": 501,
+      "rawSha256": "6c732a4f35f28f97bd4cd0697756f5e974897114e063dbc361a4aa1a70aeec8b",
+      "path": "artifacts/diagnosis-20261105/message-layout-factories/on57.js",
+      "derivedSha256": "98e5d8a109f9a8e8280390136bb9dd52e102ef5068e5a8838381017c1387aa30",
+      "syntaxVerified": true
+    },
+    {
+      "id": "m0fb",
+      "file": "webview/assets/async/162237.8727488e97.js",
+      "sourceSha256": "02e081c818fa8f55f753319390c93291b7f0c48ee0f6c909feb4c80bc7b67aa0",
+      "byteStart": 862,
+      "byteEnd": 4941,
+      "rawSha256": "c16bbc1067f4ba0f16ccab3d7053e5c72131c6b3590ab703c0f7247289280726",
+      "path": "artifacts/diagnosis-20261105/message-layout-factories/m0fb.js",
+      "derivedSha256": "e9c1066892e1a5b24f8c399713cd6b3f08fb4dbd9364aaa410754fae9aef5e02",
+      "syntaxVerified": true
+    },
+    {
+      "id": "mmWO",
+      "file": "webview/assets/async/265651.3442ea834c.js",
+      "sourceSha256": "87de1c6f11cef63c871488c645d0689ed1ba44655f512f274a694d8f9f2f5695",
+      "byteStart": 63464,
+      "byteEnd": 64100,
+      "rawSha256": "632f6dc5cc72c188dbe3c8fce33538136a8ba33ec7d5aa5e99248db2e77bebed",
+      "path": "artifacts/diagnosis-20261105/message-layout-factories/mmWO.js",
+      "derivedSha256": "0e608f925fd9e1176fd30a26920e3fa909e5caca17119e59ab647e54ae2d32ba",
+      "syntaxVerified": true
+    }
+  ],
+  "currentCopiedModules": [
+    {
+      "path": "migration/desktop-activity/current/BI7J.mjs",
+      "sha256": "40a53eab4a4fee6652e808f43a458aa34597f88c82920a1b1e8031e070c4c8df",
+      "wrapper": "original extracted const factory plus export default alias"
+    },
+    {
+      "path": "migration/desktop-activity/current/GOUF.mjs",
+      "sha256": "f56234bc8407198d3cff97bffc11ead2203d0bb933ef2a5d6199d53a57b5a490",
+      "wrapper": "original extracted const factory plus export default alias"
+    },
+    {
+      "path": "migration/desktop-activity/current/GRDa.mjs",
+      "sha256": "ac48e5ad6a422e92af385dbb17842f1d58a45158fd8da331d922c0d360a2280d",
+      "wrapper": "original extracted const factory plus export default alias"
+    },
+    {
+      "path": "migration/desktop-activity/current/KqaT.mjs",
+      "sha256": "06632af82f72551f9fff789a4d1d2519e76ff4353c8279adafb72aeb7a344943",
+      "wrapper": "original extracted const factory plus export default alias"
+    },
+    {
+      "path": "migration/desktop-activity/current/RznG.mjs",
+      "sha256": "3c5b1e1497603bebb2608e081d115c83674a6f1684e38bb788067f3891e3dd60",
+      "wrapper": "original extracted const factory plus export default alias"
+    },
+    {
+      "path": "migration/desktop-activity/current/V8uZ.mjs",
+      "sha256": "371a0b2121519b8bf383e24dcd095fc73ac29b9d060ccc30d9a3d66c5d4e4f69",
+      "wrapper": "original extracted const factory plus export default alias"
+    },
+    {
+      "path": "migration/desktop-activity/current/ZYy5.mjs",
+      "sha256": "a209a792462c2fae5f5e2b4c0d67ff73daf798f314e735887a7e5bc289b87e45",
+      "wrapper": "original extracted const factory plus export default alias"
+    },
+    {
+      "path": "migration/desktop-activity/current/aqd9.mjs",
+      "sha256": "a73bfa148a32f2870b6dc2c7ab2f0583a661362072caacb6c14bd3244c521de0",
+      "wrapper": "original extracted const factory plus export default alias"
+    },
+    {
+      "path": "migration/desktop-activity/current/bIvi.mjs",
+      "sha256": "23ecdbc0d74222d54473dff0710626bf9282c33b95b4dab8204445b9459ab725",
+      "wrapper": "original extracted const factory plus export default alias"
+    },
+    {
+      "path": "migration/desktop-activity/current/ekLq.mjs",
+      "sha256": "a124a077f3019c07cacb892fe74148efc7acdf696e3fd07e5a1ce05fb806279d",
+      "wrapper": "original extracted const factory plus export default alias"
+    },
+    {
+      "path": "migration/desktop-activity/current/h30a.mjs",
+      "sha256": "fa9c9fe366daaac14bbd6457cdc9c20c676990c4ef251e1cd76c582320d0948d",
+      "wrapper": "original extracted const factory plus export default alias"
+    },
+    {
+      "path": "migration/desktop-activity/current/hCjf.mjs",
+      "sha256": "0b4f4762107d295f5b74a96f29cf8e27d5ed791d7bf16e3b91505392215b9c97",
+      "wrapper": "original extracted const factory plus export default alias"
+    },
+    {
+      "path": "migration/desktop-activity/current/irtZ.mjs",
+      "sha256": "3efa1c30028d4128fe7392d8fde343414bdc6e0f6cc740b3d133b91d304b25a0",
+      "wrapper": "original extracted const factory plus export default alias"
+    },
+    {
+      "path": "migration/desktop-activity/current/ltPT.mjs",
+      "sha256": "28c30c872d5ae3d36695e75817be265b5778a1894052b8bd65f67304c562a25c",
+      "wrapper": "original extracted const factory plus export default alias"
+    },
+    {
+      "path": "migration/desktop-activity/current/m0fb.mjs",
+      "sha256": "367be36390191df3d54c62c6f1929405050be7fbf814aed3d1ab02e0190a059a",
+      "wrapper": "original extracted const factory plus export default alias"
+    },
+    {
+      "path": "migration/desktop-activity/current/m8On.mjs",
+      "sha256": "7240aabcc311a46ffbe60c9694e56966d07732779463f7d43eaaf35a37bcffa7",
+      "wrapper": "original extracted const factory plus export default alias"
+    },
+    {
+      "path": "migration/desktop-activity/current/mmWO.mjs",
+      "sha256": "5111761ea939ab1612829434def010f60b25a0849691a62018ce7772ddbbf35c",
+      "wrapper": "original extracted const factory plus export default alias"
+    },
+    {
+      "path": "migration/desktop-activity/current/nMdB.mjs",
+      "sha256": "ba59f08a3c657eae6a740d74d71cd546250b7fbac6f82de9f5266e4376679d90",
+      "wrapper": "original extracted const factory plus export default alias"
+    },
+    {
+      "path": "migration/desktop-activity/current/nsuH.mjs",
+      "sha256": "6b9af2cad8fa3072a6306fbcf18588a0d318ce0c722c9092c118346d96916eba",
+      "wrapper": "original extracted const factory plus export default alias"
+    },
+    {
+      "path": "migration/desktop-activity/current/o6bI.mjs",
+      "sha256": "34d2282b2a75cc2c020f809a6e1987db47ecc63993546c857dd066870062e8ad",
+      "wrapper": "original extracted const factory plus export default alias"
+    },
+    {
+      "path": "migration/desktop-activity/current/on57.mjs",
+      "sha256": "233ecd9553982d05cd9a85b58861452b4bb3e7458fab4a4207b1f9058ae39ab7",
+      "wrapper": "original extracted const factory plus export default alias"
+    },
+    {
+      "path": "migration/desktop-activity/current/q5qu.mjs",
+      "sha256": "0f8cb00424c4e4bd5dbfe9297f6684dbd3be4ad7ea040a66e6d7e2da356c3569",
+      "wrapper": "original extracted const factory plus export default alias"
+    },
+    {
+      "path": "migration/desktop-activity/current/r9ev.mjs",
+      "sha256": "70e57826de9c29dbb2479269c4e8fd60306894e73cdb8e30de25ba35fbbdb52a",
+      "wrapper": "original extracted const factory plus export default alias"
+    },
+    {
+      "path": "migration/desktop-activity/current/tHoD.mjs",
+      "sha256": "43415d49bdc7930a63125f87a208806c65086112ea136e573f49b1a545fea3b2",
+      "wrapper": "original extracted const factory plus export default alias"
+    },
+    {
+      "path": "migration/desktop-activity/current/umSm.mjs",
+      "sha256": "5dd36588b9d1bc8447f70595f520d2ef75442d46d47da02334d8582548616051",
+      "wrapper": "original extracted const factory plus export default alias"
+    },
+    {
+      "path": "migration/desktop-activity/current/uuN8.mjs",
+      "sha256": "33d1bb3fd0acde046437cfbd03c1518890fb0dd5fb7299f7ecdef7e5cbb29737",
+      "wrapper": "original extracted const factory plus export default alias"
+    },
+    {
+      "path": "migration/desktop-activity/current/wD9O.mjs",
+      "sha256": "ad85f664a374d61cd2bad0ce61b02760fc86b8ff0a46b3e86a391ba2ce921e86",
+      "wrapper": "original extracted const factory plus export default alias"
+    }
+  ],
+  "hostBindings": [
+    "ABep/QosV/zd8w -> existing React JSX/compiler/React19.2.7",
+    "LIss.P -> desktop Eva original-motion.mjs, not a new extraction of current Mac LIss",
+    "Webpack n.d getter/constant export binding; chunk899308 selection avoids unused nsuH.uc branch",
+    "original m8On ResizeObserver factory + ZYy5 original context provider",
+    "copy uuN8 uses explicit renderButton+icons props and showTooltip:false, exact core copy state retained",
+    "copy-related static Chinese messages from existing desktop locale; general Intl and tooltip/controller ni not migrated"
+  ],
+  "limitations": [
+    "Not a complete renderer equivalence claim",
+    "Original current activity shell owns disclosure and running/completed/shimmer state; detail payload formatting remains an Android host adapter",
+    "User Bubble/MessageLayout/BodyLayout reuse existing desktop Windows factories; long-text Collapsible/FormattedText not included here",
+    "Visible desktop snapshots and mobile dimensions still require parent visual comparison"
+  ]
+}

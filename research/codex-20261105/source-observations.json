@@ -1,0 +1,74 @@
+[
+  {
+    "file": "webview/assets/async/205130.6d1551cb75.js",
+    "term": "thread/read",
+    "offset": 38418,
+    "excerpt": "ences:[],capabilityGaps:[],models:t,workspace:null,threads:{},historical:F(),implementation:F(),review:F(),preparation:F(),evaluation:F(),comparison:null,artifacts:[],error:null}}async function $(e,t){try{let{thread:i}=await e.sendRequest(\"thread/read\",{threadId:t,includeTurns:!0});if(null==i)return null;return{id:i.id,finalResponse:function(e){let t=u(e)??e.turns;for(let e=t.length-1;e>=0;e--){let i=t[e].items;for(let e=i.length-1;e>=0;e--){let t=i[e];if(\"agentMessage\"===t.type){let e=function(e){let t;if(/^\\s*\\[external tool (?:call:|result\\]|result:)/.test(e))return\"\";if(!e.includes(\"[external_agent_tool_\"))return e;let i=!1,n=[];for(let a of e.split(/\\r?\\n/)){let e=a.trim();if(null!=t){e===`[/external_agent_tool_${t}]`&&(t=void 0);continue}let r=/^\\[external_agent_tool_(call|result)(?::[^\\]]*)?\\]$/.exec(e);null!=r?(t=r[1],i="
+  },
+  {
+    "file": "webview/assets/async/205130.6d1551cb75.js",
+    "term": "readFile",
+    "offset": 11072,
+    "excerpt": "((\"commondir\"===s||\"alternates\"===s)&&r.toLowerCase().split(a.sep).includes(\".git\"))throw Error(\"The prepared Git repository shares storage with another workspace.\");else if(\"config\"===s&&\".git\"===a.basename(e).toLowerCase()){let e=await t.readFile(r);if(/^\\s*\\[include(?:if)?(?:\\s|\\])/im.test(e)||/^\\s*worktree\\s*=/im.test(e))throw Error(\"The prepared Git configuration redirects to another workspace.\")}}}async function p({prepared:e,host:t,signal:i}){i?.throwIfAborted();let a=await t.platformPath(),r=(0,l.$)(e.initialCwd);await c(e.beginningDirectory,t,!0,i);let{cwd:o}=await (0,n.VNn)({createSplitDirectories:!1,directoryName:`codex-replay-${crypto.randomUUID()}`,fileSystem:{createDirectory:({path:e,recursive:i})=>t.mkdir(e,i),getMetadata:e=>t.stat(e)},homeDirectory:(0,n.V7u)({codexHome:await t.codexHome(),path:a}),path:a});try{le"
+  },
+  {
+    "file": "webview/assets/async/290502.58c9de2e72.js",
+    "term": "thread/read",
+    "offset": 62247,
+    "excerpt": "anaged\")}catch(e){if(e instanceof ec)throw e;throw new ec(\"save\")}}async function ep(e,t){let a=(0,eo.V)(e,t),n=null;do{let e=await a.sendRequest(\"thread/loaded/list\",{cursor:n,limit:100});if((await Promise.all(e.data.map(e=>a.sendRequest(\"thread/read\",{threadId:e,includeTurns:!1})))).some(({thread:e})=>\"active\"===e.status.type))throw new ec(\"busy\");n=e.nextCursor}while(null!=n)}async function eh(e,t,a,n,s){let i,r=(0,eo.V)(e,t),l=\"custom\"!==n.type&&(\"apiKey\"===n.auth||\"accessKeys\"===n.auth),d=\"custom\"!==n.type&&\"environment\"===n.auth&&(\"bedrockApiKey\"===s||\"bedrockAccessKeys\"===s);(l||d)&&await ep(e,t);let c=await (0,ed.W9)(e,e.queryClient,t,null,!0),u=a??function(e,t){let a=t.trim().toLowerCase().replace(/[^a-z0-9]+/g,\"-\").replace(/^-+|-+$/g,\"\")||\"gateway\",n=new Set([...E,...e]),s=a,i=2;for(;n.has(s);)s=`${a}-${i++}`;return s}"
+  },
+  {
+    "file": "webview/assets/async/290502.58c9de2e72.js",
+    "term": "turn/completed",
+    "offset": 65594,
+    "excerpt": "ull,2)}async function eA(e,t,a){let n,s,i=ev.appServices?.executionPaths;if(null==i)throw new ec(\"test\");let r=(0,eo.V)(e,t),l=await i.readCodexHome(t),o=(0,el.udX)(),d=null,c=null,u=r.subscribe({type:\"notification\",key:{hostId:t},methods:\"turn/completed\",listener:({params:e})=>{e.threadId===d&&o.resolve(\"completed\"===e.turn.status?null:ej(e.turn.error))}});try{let e;s=await u;let t=Object.fromEntries(Object.keys(T(a.mcp_servers)).map(e=>[e,{enabled:!1}])),i=null;do{let t=await r.sendRequest(\"model/list\",{cursor:i},{timeoutMs:3e4});e=t.data.find(e=>e.isDefault),i=t.nextCursor}while(null==e&&null!=i)d=(await r.sendRequest(\"thread/start\",{ephemeral:!0,model:e?.model??(0,ef.Y$)(a).model,cwd:l,approvalPolicy:\"never\",sandbox:\"read-only\",environments:[],baseInstructions:\"This is a connection test. Reply with exactly gateway-ok. Do not"
+  },
+  {
+    "file": "webview/assets/async/230093.4cfa2f1788.js",
+    "term": "file-preview",
+    "offset": 6414,
+    "excerpt": "){return\"fulfilled\"===e.status?e.value:null}function p({accountId:e,source:t,userId:n}){return{enabled:null!=e,queryFn:({signal:r})=>{if(null==e)throw Error(\"Cannot fetch file info without an account\");return l(t,e,n,r)},queryKey:[\"chatgpt-file-preview-file-info\",e,n,t],refetchOnWindowFocus:!1,retry:!1,staleTime:3e4}}},UBr4(e,t,n){n.d(t,{h:()=>G});var r=n(\"ABep\"),a=n(\"QosV\"),i=n(\"bqtn\"),l=n(\"KUum\"),o=n(\"IhMz\"),s=n(\"qsUv\"),u=n(\"Pq1H\"),d=n(\"y5DF\"),c=n(\"oyxz\"),p=n(\"SPnB\"),f=n(\"UxN3\"),g=n(\"OWtl\"),m=n(\"Vc45\"),h=n(\"wxDG\");function y(e){let t,n,l,u,p,h,y=(0,a.c)(12),{ownerId:v,source:b}=e,w=(0,d.gh)(g.u);return y[0]!==b?(t=(0,r.jsx)(I,{source:b}),y[0]=b,y[1]=t):t=y[1],y[2]!==v||y[3]!==w?(n=()=>{(0,m.hj)(w,v,\"file-info\")},y[2]=v,y[3]=w,y[4]=n):n=y[4],y[5]===Symbol.for(\"react.memo_cache_sentinel\")?(l=(0,r.jsx)(i.ms.ItemIcon,{children:(0,"
+  },
+  {
+    "file": "webview/assets/async/133664.6b8e9fcaeb.js",
+    "term": "overscan",
+    "offset": 36034,
+    "excerpt": ":n}),n+1024>=t)break}return r}):eM,[eM,u]),eT=(0,i.useMemo)(()=>eI.map((e,t)=>({key:e.surfaceId,index:t,top:e.top,height:e.height})),[eI]),eN=(0,i.useMemo)(()=>(function(e,t){if(0===e.length||t.viewportHeight<=0)return[];let r=Math.max(0,t.overscanPx??0),n=t.scrollTop-r,a=t.scrollTop+t.viewportHeight+r;return e.filter(e=>e.top+e.height>=n&&e.top<=a)})(eT,{scrollTop:$,viewportHeight:ea,overscanPx:1600}),[$,eT,ea]),eF=(0,i.useMemo)(()=>{let e=new Map(eI.map(e=>[e.surfaceId,e]));return eN.map(t=>e.get(t.key)).filter(e=>!!e)},[eI,eN]),eR=(0,i.useMemo)(()=>{let e=[];for(let r of t.chartHoverTargets){let t=eE.get(r.pageIndex);t&&e.push(function(e,t){let r=t.scale,n={...e,anchorX:t.left+e.anchorX*r,anchorY:t.top+e.anchorY*r};return void 0!==e.x&&(n.x=t.left+e.x*r),void 0!==e.y&&(n.y=t.top+e.y*r),void 0!==e.width&&(n.width=e.width*r),vo"
+  },
+  {
+    "file": ".vite/build/early-bootstrap-339-a1c76730c29ac8b1.js",
+    "term": "thread/read",
+    "offset": 711681,
+    "excerpt": "app/list\",\"collaborationMode/list\",\"config/read\",\"configRequirements/read\",\"experimentalFeature/list\",\"hooks/list\",\"mcpServerStatus/list\",\"model/list\",\"permissionProfile/list\",\"plugin/list\",\"skills/list\",\"thread/list\",\"thread/loaded/list\",\"thread/read\",\"thread/turns/list\"]),n1=new Set([\"collab_hydration\",\"recent_threads\",\"tail_history\",\"thread_catalog\",\"thread_hydration\",\"thread_list\"]),n2=new Set([\"recent_threads\",\"thread_catalog\",\"thread_list\"]);class n3{queuedRequests=[];inFlightRequests=new Map;coalescedRequestIds=new Map;enqueue(e){let t=n5(e.method,e.scheduling),n=e.scheduling?.source,r=Date.now(),i=function(e,t,n,r){let i=null;if(\"background\"===e&&(i=null!=t&&n1.has(t)&&!n2.has(t)?6e4:3e4),null==r&&(null==n||n<=0))return i;let a=null!=r?Math.max(0,r-Date.now()):n??0;return null==i?a:Math.min(i,a)}(t,n,e.scheduling?.timeou"
+  },
+  {
+    "file": ".vite/build/early-bootstrap-339-a1c76730c29ac8b1.js",
+    "term": "thread/resume",
+    "offset": 690308,
+    "excerpt": "t\"===a.destination.type&&a.destination.reject(nh(a,\"App server request timed out after dispatch\")));if(this.requestScheduler.dropUnsentRequest(i)||null==a.startedAtMs){this.handleRequestTimedOut(a),this.pendingRequests.delete(i);return}if(\"thread/resume\"===a.method){this.complete(i),this.handleRequestTimedOut(a);return}\"host\"===a.destination.type&&a.destination.reject(nh(a,\"App server request timed out after dispatch\"))}}complete(e){this.pendingRequests.delete(e);let t=(this.coalescedRequestIdsByLeader.get(e)??[]).flatMap(e=>{let t=this.pendingRequests.get(e);return null==t?[]:(this.pendingRequests.delete(e),[t])});return this.coalescedRequestIdsByLeader.delete(e),this.requestScheduler.complete(e),t}failAll(e){for(let t of this.pendingRequests.values())this.handleRequestFailure(t),this.sendErrorResponse(t,e,-32e3,\"failed\");this."
+  },
+  {
+    "file": ".vite/build/early-bootstrap-339-a1c76730c29ac8b1.js",
+    "term": "turn/completed",
+    "offset": 609703,
+    "excerpt": "n;y=`${y??\"\"}${e.delta}`,d?.(y);return}case\"item/completed\":{let e=i.params;if(e.threadId!==r)return;if(null==e.turnId){if(null!=g)return}else if(null!=g&&e.turnId!==g)return;\"agentMessage\"===e.item.type&&(y=e.item.text,d?.(y));return}case\"turn/completed\":{let o=i.params;if(o.threadId!==r||null!=g&&o.turn.id!==g)return;if(g=o.turn.id,\"completed\"!==o.turn.status){var a,s;let e;T(),n(Error((a=o.turn.status,s=o.turn.error??_,e=[s?.message,s?.additionalDetails].filter(e=>null!=e&&e.length>0).join(\" \"),\"failed\"===a?e.length>0?`Structured turn failed: ${e}`:\"Structured turn failed.\":\"interrupted\"===a?e.length>0?`Structured turn was interrupted: ${e}`:\"Structured turn was interrupted.\":e.length>0?`Structured turn ended with status ${a}: ${e}`:`Structured turn ended with status ${a}.`)));return}T(),h?.({turnId:o.turn.id}),t(function(e,t"
+  },
+  {
+    "file": ".vite/build/early-bootstrap-339-a1c76730c29ac8b1.js",
+    "term": "journal_mode",
+    "offset": 1116126,
+    "excerpt": "nProvenance))):null}function ee(e,t){(0,r.mkdirSync)((0,i.dirname)(e),{recursive:!0});let a=new(function(){try{return n(87550)}catch(e){throw Error(\"better-sqlite3 is only bundled with the Electron app\")}}())(e);try{let e=a.prepare(\"PRAGMA journal_mode = WAL\").get()?.journal_mode;return a.exec(\"wal\"===e?\"PRAGMA synchronous = NORMAL\":\"PRAGMA synchronous = FULL\"),t(a),a}catch(e){throw a.close(),e}}function et(){null!=X&&(X.close(),X=null)}},75238(e,t,n){\"use strict\";n.d(t,{i:()=>s,A:()=>u,m:()=>d});var r=n(41549),i=n(57172);class a{onFlush;flushIntervalMs;maxBatchSize;maxBatchBytes;buffer=[];bufferBytes=0;flushTimeout=null;constructor(e){this.onFlush=e.onFlush,this.flushIntervalMs=e.flushIntervalMs??5e3,this.maxBatchSize=e.maxBatchSize??50,this.maxBatchBytes=e.maxBatchBytes??64e3}enqueue(e){(this.buffer.push(e),this.bufferBytes+=e"
+  },
+  {
+    "file": ".vite/build/early-bootstrap-339-a1c76730c29ac8b1.js",
+    "term": "CREATE TABLE",
+    "offset": 1094376,
+    "excerpt": "tions,n.d(t,{E:()=>i})},15684(e,t,n){\"use strict\";n.d(t,{J4:()=>et,z9:()=>J,X9:()=>Z,Go:()=>ee});var r=n(89477),i=n(86697),a=n(34338),s=n(78335);let o={id:\"20260902130908_create_live_visualization_suggestions\",operations:[{kind:\"exec\",sql:`CREATE TABLE IF NOT EXISTS live_visualization_suggestions (\n          account_id TEXT NOT NULL,\n          user_id TEXT NOT NULL,\n          host_id TEXT NOT NULL,\n          thread_id TEXT NOT NULL,\n          id TEXT NOT NULL,\n          title TEXT NOT NULL,\n          description TEXT NOT NULL,\n          status TEXT NOT NULL CHECK (status IN ('pending', 'accepted', 'dismissed')),\n          submission TEXT CHECK (submission IN ('submitted', 'accepted')),\n          PRIMARY KEY (account_id, user_id, host_id, thread_id)\n        ) WITHOUT ROWID`}]};function l(e,t,n){return{kind:\"addColumnIfMissing\",ta"
+  },
+  {
+    "file": ".vite/build/early-bootstrap-339-a1c76730c29ac8b1.js",
+    "term": "readFile",
+    "offset": 55679,
+    "excerpt": "ime\"}checkForUpdates=async()=>{if(!this.hasUpdater()||this.isUpdateReady)return;let e=function({buildFlavor:e,executablePath:t}){let n=i().join(i().dirname(t),\"resources\",\"linux-package-metadata.json\");try{let t=g.safeParse(JSON.parse((0,d.readFileSync)(n,\"utf8\")));if(!t.success||m.x.parse(t.data.codexBuildFlavor)!==e)return null;return t.data.version}catch{return null}}({buildFlavor:this.options.buildFlavor,executablePath:this.options.executablePath});null!=e&&function(e,t){let n,r;try{n=(0,s.n5)(e),r=(0,s.n5)(t)}catch{return!1}if((0,s.v6O)(n)!==e||(0,s.v6O)(r)!==t)return!1;for(let e of[\"major\",\"minor\",\"patch\"])if(n[e]!==r[e])return n[e]>r[e];return!1}(e,this.options.runningVersion)&&(this.isUpdateReady=!0,this.options.onUpdateReadyChanged(!0))};async checkForUpdateInformation(){return await this.checkForUpdates(),this.isUpdate"
+  }
+]

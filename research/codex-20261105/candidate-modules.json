@@ -1,0 +1,754 @@
+[
+  {
+    "file": "/.vite/build/early-bootstrap-339-a1c76730c29ac8b1.js",
+    "bytes": 1345507,
+    "hits": [
+      "thread/read",
+      "thread/resume",
+      "turn/completed",
+      "better-sqlite3"
+    ]
+  },
+  {
+    "file": "/.vite/build/early-bootstrap-45-628adb74a9c47df1.js",
+    "bytes": 5273474,
+    "hits": [
+      "thread/read",
+      "thread/resume",
+      "turn/completed",
+      "file-preview",
+      "better-sqlite3"
+    ]
+  },
+  {
+    "file": "/.vite/build/early-bootstrap.js",
+    "bytes": 605718,
+    "hits": [
+      "thread/read",
+      "thread/resume",
+      "turn/completed",
+      "better-sqlite3"
+    ]
+  },
+  {
+    "file": "/.vite/build/worker.js",
+    "bytes": 2159541,
+    "hits": [
+      "thread/read",
+      "turn/completed",
+      "better-sqlite3"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/110776.2edb299643.js",
+    "bytes": 51716,
+    "hits": [
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/113401.0a0821e1f0.js",
+    "bytes": 88034,
+    "hits": [
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/118787.fc5350fd0c.js",
+    "bytes": 156312,
+    "hits": [
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/133664.6b8e9fcaeb.js",
+    "bytes": 101751,
+    "hits": [
+      "overscan"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/136553.0c17d2925a.js",
+    "bytes": 102670,
+    "hits": [
+      "artifact-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/140362.c2b62628d4.js",
+    "bytes": 35463,
+    "hits": [
+      "artifact-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/154935.1463ed25c5.js",
+    "bytes": 52826,
+    "hits": [
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/15858.4c86564bcc.js",
+    "bytes": 55531,
+    "hits": [
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/16126.9bd1526c7c.js",
+    "bytes": 167002,
+    "hits": [
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/165583.26a809a572.js",
+    "bytes": 23263,
+    "hits": [
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/177360.4da2be0b3b.js",
+    "bytes": 14669,
+    "hits": [
+      "turn/completed"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/178420.f801cb8303.js",
+    "bytes": 44166,
+    "hits": [
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/191387.85c2a6dd67.js",
+    "bytes": 41941,
+    "hits": [
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/192799.705ee9a924.js",
+    "bytes": 92801,
+    "hits": [
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/205130.6d1551cb75.js",
+    "bytes": 40062,
+    "hits": [
+      "thread/read"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/230093.4cfa2f1788.js",
+    "bytes": 64493,
+    "hits": [
+      "file-preview",
+      "preview-file"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/233637.f799c11aa5.js",
+    "bytes": 139584,
+    "hits": [
+      "artifact-preview",
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/24191.589dcc9878.js",
+    "bytes": 7999080,
+    "hits": [
+      "thread/read",
+      "thread/resume",
+      "turn/completed",
+      "overscan",
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/249274.a65ac92cbe.js",
+    "bytes": 40761,
+    "hits": [
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/249458.ec21e7a077.js",
+    "bytes": 243566,
+    "hits": [
+      "artifact-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/25209.700742e829.js",
+    "bytes": 58716,
+    "hits": [
+      "thread/read"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/25541.5f7d5eda10.js",
+    "bytes": 39739,
+    "hits": [
+      "file-preview",
+      "preview-file"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/26685.17f43312ef.js",
+    "bytes": 42593,
+    "hits": [
+      "file-preview",
+      "preview-file"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/267663.1131d78fbc.js",
+    "bytes": 15786,
+    "hits": [
+      "turn/completed"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/269237.e2ba62bd49.js",
+    "bytes": 49449,
+    "hits": [
+      "file-preview",
+      "preview-file"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/270393.adf2633467.js",
+    "bytes": 29538,
+    "hits": [
+      "file-preview",
+      "preview-file"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/286887.7916de914b.js",
+    "bytes": 59656,
+    "hits": [
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/290502.58c9de2e72.js",
+    "bytes": 117380,
+    "hits": [
+      "thread/read",
+      "turn/completed"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/290541.694eee02e3.js",
+    "bytes": 98845,
+    "hits": [
+      "virtualizer"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/299429.0893d2ed39.js",
+    "bytes": 226638,
+    "hits": [
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/300888.d6e3e3d75b.js",
+    "bytes": 62890,
+    "hits": [
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/321209.ff8e6436e9.js",
+    "bytes": 54953,
+    "hits": [
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/32563.8ae5b19419.js",
+    "bytes": 122869,
+    "hits": [
+      "artifact-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/334357.51a93a80f2.js",
+    "bytes": 288274,
+    "hits": [
+      "file-preview",
+      "preview-file"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/35032.067e4f14be.js",
+    "bytes": 178046,
+    "hits": [
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/377718.9c159e2642.js",
+    "bytes": 200635,
+    "hits": [
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/383401.d87113ab2a.js",
+    "bytes": 120598,
+    "hits": [
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/385719.f7725421c5.js",
+    "bytes": 27973,
+    "hits": [
+      "artifact-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/392339.b83001f0bf.js",
+    "bytes": 285305,
+    "hits": [
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/401836.3d2e1150cc.js",
+    "bytes": 47012,
+    "hits": [
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/410335.1b8ebdd9cf.js",
+    "bytes": 208622,
+    "hits": [
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/446170.49cd93a178.js",
+    "bytes": 44611,
+    "hits": [
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/449899.f10ed047fb.js",
+    "bytes": 84768,
+    "hits": [
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/451667.e339b3058c.js",
+    "bytes": 894966,
+    "hits": [
+      "virtualizer"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/455349.297d85adf8.js",
+    "bytes": 91941,
+    "hits": [
+      "artifact-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/457410.ba747a68b7.js",
+    "bytes": 176394,
+    "hits": [
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/497066.b1696673f0.js",
+    "bytes": 248114,
+    "hits": [
+      "turn/completed"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/498529.cdb596997c.js",
+    "bytes": 38878,
+    "hits": [
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/500230.66dd94625d.js",
+    "bytes": 46586,
+    "hits": [
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/516335.844d323256.js",
+    "bytes": 42208,
+    "hits": [
+      "turn/completed"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/519040.c2f2ffcd61.js",
+    "bytes": 44658,
+    "hits": [
+      "file-preview",
+      "preview-file"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/522862.e83348284c.js",
+    "bytes": 13943,
+    "hits": [
+      "turn/completed"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/536218.608ad5d85a.js",
+    "bytes": 41948,
+    "hits": [
+      "file-preview",
+      "preview-file"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/545104.c407c1f749.js",
+    "bytes": 78684,
+    "hits": [
+      "thread/read",
+      "turn/completed"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/579291.805189ad5d.js",
+    "bytes": 137594,
+    "hits": [
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/580165.fdf9562852.js",
+    "bytes": 284537,
+    "hits": [
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/590692.ccb64f6996.js",
+    "bytes": 8494,
+    "hits": [
+      "turn/completed"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/59463.67f7ac1a99.js",
+    "bytes": 77794,
+    "hits": [
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/606758.728bada183.js",
+    "bytes": 98488,
+    "hits": [
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/640651.09057f7a53.js",
+    "bytes": 79079,
+    "hits": [
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/642006.2d4774aed5.js",
+    "bytes": 60004,
+    "hits": [
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/642184.17d4ba7f8a.js",
+    "bytes": 45721,
+    "hits": [
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/645475.7d249b91dd.js",
+    "bytes": 70155,
+    "hits": [
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/668163.905cdae709.js",
+    "bytes": 50921,
+    "hits": [
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/679531.cdb3a174fe.js",
+    "bytes": 19347,
+    "hits": [
+      "artifact-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/683860.78f046cdde.js",
+    "bytes": 147018,
+    "hits": [
+      "file-preview",
+      "preview-file"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/684190.b57b0d8a80.js",
+    "bytes": 43562,
+    "hits": [
+      "file-preview",
+      "preview-file"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/686081.b544bbb91e.js",
+    "bytes": 15447,
+    "hits": [
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/708862.eb2007d715.js",
+    "bytes": 130399,
+    "hits": [
+      "virtualizer"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/71470.da52badc2c.js",
+    "bytes": 45269,
+    "hits": [
+      "turn/completed"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/715612.46ee353f60.js",
+    "bytes": 15940,
+    "hits": [
+      "file-preview",
+      "preview-file"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/738076.468ac196fe.js",
+    "bytes": 18179,
+    "hits": [
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/757458.d5e970c4ef.js",
+    "bytes": 160187,
+    "hits": [
+      "artifact-preview",
+      "file-preview",
+      "preview-file"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/769854.ff771a05e4.js",
+    "bytes": 1543129,
+    "hits": [
+      "turn/completed",
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/773202.c445852fce.js",
+    "bytes": 81451,
+    "hits": [
+      "thread/read"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/787326.cbbbd74e39.js",
+    "bytes": 780007,
+    "hits": [
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/788101.fdcbfd052d.js",
+    "bytes": 46067,
+    "hits": [
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/799367.2db9651860.js",
+    "bytes": 153728,
+    "hits": [
+      "turn/completed"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/802605.bf0accdec1.js",
+    "bytes": 27850,
+    "hits": [
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/805703.cc83856282.js",
+    "bytes": 57998,
+    "hits": [
+      "virtualizer"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/811302.f5f5170c98.js",
+    "bytes": 42207,
+    "hits": [
+      "file-preview",
+      "preview-file"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/814244.1ec291dd17.js",
+    "bytes": 59414,
+    "hits": [
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/819949.c395eaed0d.js",
+    "bytes": 53216,
+    "hits": [
+      "artifact-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/851266.c028d917e9.js",
+    "bytes": 35355,
+    "hits": [
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/855047.832683be0d.js",
+    "bytes": 617002,
+    "hits": [
+      "turn/completed"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/886488.29e203554a.js",
+    "bytes": 237707,
+    "hits": [
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/887317.a693865519.js",
+    "bytes": 43084,
+    "hits": [
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/890009.c7d8eb51d2.js",
+    "bytes": 126928,
+    "hits": [
+      "file-preview",
+      "preview-file"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/890462.545eef1993.js",
+    "bytes": 132489,
+    "hits": [
+      "file-preview",
+      "preview-file"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/890544.b981002f7f.js",
+    "bytes": 30149,
+    "hits": [
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/903192.00d970c268.js",
+    "bytes": 51222,
+    "hits": [
+      "file-preview",
+      "preview-file"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/917981.8a48dbf108.js",
+    "bytes": 35747,
+    "hits": [
+      "artifact-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/918632.073807422c.js",
+    "bytes": 69716,
+    "hits": [
+      "overscan"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/940437.f0e238e817.js",
+    "bytes": 74250,
+    "hits": [
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/948934.6286e0386b.js",
+    "bytes": 73530,
+    "hits": [
+      "file-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/976185.27b60f4296.js",
+    "bytes": 226271,
+    "hits": [
+      "thread/read",
+      "turn/completed"
+    ]
+  },
+  {
+    "file": "/webview/assets/async/992710.6f91bac5fb.js",
+    "bytes": 51520,
+    "hits": [
+      "artifact-preview"
+    ]
+  },
+  {
+    "file": "/webview/assets/workers/worker.cadc9555.js",
+    "bytes": 10375253,
+    "hits": [
+      "file-preview"
+    ]
+  }
+]

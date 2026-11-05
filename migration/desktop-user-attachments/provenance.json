@@ -1,0 +1,39 @@
+{
+  "source": "desktop Eva source, read-only reuse before custom adaptation",
+  "files": [
+    {
+      "path": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/composer-input.js",
+      "sha256": "c461e342e98ac36f4809bd5d48ccda45b0f1768dafc748b431f78c403bfde0f5"
+    },
+    {
+      "path": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/render.js",
+      "sha256": "606eacdbeeddb3dcadd332e675a02944c359d483704d304cad0057f3683fc579"
+    },
+    {
+      "path": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/styles.css",
+      "sha256": "9a55abdaf13ac8a05fbaf67e23964422942c3f800a0f5ceecc09b7307872dbb2"
+    },
+    {
+      "path": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/composer.js",
+      "sha256": "1a70a8e17fa3d66bb161eb1b70769ac0ed86766c54835543ad5237a3727b1b41"
+    }
+  ],
+  "reuse": [
+    "composer-input.js parseAttachedMessage function retained verbatim",
+    "render.js renderUserMessage: content normalization, images/files separate from text bubble",
+    "styles.css user-attachments flex layout",
+    "composer.js renderComposer: thumbnail/file icon + filename + independent remove button"
+  ],
+  "androidAdaptation": [
+    "strict terminal JSON attachment suffix adapter for existing Android histories, malformed and mixed prose retained",
+    "workspace-only local paths; existing native image serving and preview navigation",
+    "pending send display snapshot and pending steer display only; request input unchanged",
+    "independent module and CSS, no network/provider or upload serializer change",
+    "composer repaints after native picker result using shared renderComposer helper; no upload progress claimed before native callback",
+    "legacy JSON suffix only accepted with exact known marker, name/path-only objects, and native attachments/UUID filename path; arbitrary/mixed prose retained"
+  ],
+  "limits": [
+    "browser integrated layout tests do not prove provider accepts uploaded image",
+    "400 from incompatible model history requires separate request/history diagnosis"
+  ]
+}

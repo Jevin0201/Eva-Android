@@ -56,7 +56,7 @@
  const user=i=>['userMessage','steeringUserMessage'].includes(i.type);
  const failed=i=>i.status==='failed'||i.status==='declined'||i.success===false||!!(i.error||i.failure)||i.result?.isError===true||(i.exitCode!=null&&i.exitCode!==0);
  function safeItem(i,text){
-  if(i.type==='reasoning')return {id:i.id,type:i.type,status:i.status,summary:(Array.isArray(i.summary)?i.summary:[]).map(s=>typeof s==='string'?s:s?.text||'')};
+  if(i.type==='reasoning')return {id:i.id,type:i.type,status:i.status,summary:(Array.isArray(i.summary)?i.summary:[]).map(s=>typeof s==='string'?s:s?.text||'').filter(s=>s.trim())};
   if(i.type==='agentMessage')return {...i,text:text(i)};
   if(i.type==='dynamicToolCall'&&['eva_phone','eva_browser'].includes(i.tool))return {...i,command:(i.tool==='eva_browser'?'浏览器操作 · ':'手机操作 · ')+(i.arguments?.action||''),output:(i.contentItems||[]).filter(x=>x.type==='inputText').map(x=>x.text).join('\n')||i.error||i.output};
   return i;
@@ -72,14 +72,16 @@
  function duration(turn){if(Number.isFinite(turn.durationMs)&&turn.durationMs>=0)return turn.durationMs;const ms=value=>typeof value==='number'?(value<1e12?value*1000:value):Date.parse(value);const start=turn.startedAtMs??turn.turnStartedAtMs??(turn.startedAt!=null?ms(turn.startedAt):null),end=turn.completedAtMs??(turn.completedAt!=null?ms(turn.completedAt):null);return Number.isFinite(start)&&Number.isFinite(end)&&end>=start?end-start:null;}
  function durationLabel(value){if(value==null)return '处理过程';const seconds=Math.floor(value/1000);return '用时 '+(seconds>=60?Math.floor(seconds/60)+'m '+seconds%60+'s':seconds+'s');}
  function projectTurn(input,text=i=>i.text??(i.content||[]).map(x=>x.text||'').join('\n'),options={}){
-  const turn={...input,items:(input.items||[]).filter(Boolean).map(i=>safeItem(i,text))},scope=String(turn.id||'turn'),blocks=[],backgroundAgents=options.backgroundAgents||agentRows(turn.items,turn.id),hasActiveAgents=backgroundAgents.some(a=>a.status!=='done');
+  const sourceItems=(input.items||[]).filter(Boolean);
+  // Codex drops completed empty public reasoning; only a live tail can be a thinking indicator.
+  const turn={...input,items:sourceItems.map(i=>safeItem(i,text)).filter((item,index)=>item.type!=='reasoning'||item.summary.length>0||input.status==='inProgress'&&index===sourceItems.length-1)},scope=String(turn.id||'turn'),blocks=[],backgroundAgents=options.backgroundAgents||agentRows(turn.items,turn.id),hasActiveAgents=backgroundAgents.some(a=>a.status!=='done');
   let segment=[],index=0;
   function groups(items,part,closeTail){
    const result=nativeTranscript.renderGroups(items,activityDisposition,{scope,turn,backgroundAgents});
    return result.map((g,n)=>{
     if(g.type!=='agent-activity')return {kind:g.type,key:g.key,items:g.items,item:g.item};
     const view=nativeTranscript.summarize(g.items,turn,g.collapseWhenPossible||closeTail,n===result.length-1),labels=nativeActivityLabels(view);
-    return {kind:'activity',key:g.key,items:g.items,state:view.state.kind,label:labels.join('，')||(view.state.kind==='thinking'?'正在思考':'已思考'),open:false,failed:g.items.some(failed),failureCount:g.items.filter(failed).length,view};
+    return {kind:'activity',key:g.key,items:g.items,state:view.state.kind,label:labels.join('，')||(view.state.kind==='thinking'?'正在思考':'已思考'),open:['active','thinking'].includes(view.state.kind),failed:g.items.some(failed),failureCount:g.items.filter(failed).length,view};
    });
   }
   function flush(){

@@ -1,0 +1,23 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert/strict'),streamState=require('../probe/assets/eva-stream-state.js');
+const deferred=()=>{let resolve;const promise=new Promise(r=>resolve=r);return {promise,resolve}};
+const turn=(id,text='开头',status='inProgress')=>({id,status,items:[{id:'a'+id,type:'agentMessage',text,status}]});
+(async()=>{
+ const c={id:'chat',kernelThread:{id:'t',turns:[turn('old'),turn('outside','旧缓存','completed')]}},calls=[],queue=[];
+ const ctx={console,Promise,Map,Set,WeakMap,Error,streamState,data:{chats:[c],drafts:[]},active:()=>c,esc:x=>x,scheduleKernelSave:()=>{},refreshKernelControls:()=>{},updateKernelFlow:()=>{},navigate:()=>{},document:{querySelector:()=>null},mobileFlow:{turn:()=>''}};ctx.window=ctx;
+ ctx.kernelEvent=e=>{const p=e.params,t=c.kernelThread.turns.find(t=>t.id===(p.turnId||p.turn?.id));if(e.method==='turn/completed'){if(t)Object.assign(t,p.turn);else c.kernelThread.turns.push(p.turn);}if(e.method==='item/agentMessage/delta')t.items.find(i=>i.id===p.itemId).text+=p.delta;};
+ ctx.kernelCall=async(method,params)=>{calls.push({method,params});const response=queue.shift();if(!response)throw Error('Unexpected '+method);return response.promise||response;};vm.createContext(ctx);vm.runInContext(fs.readFileSync('probe/assets/kernel-paged-history.js','utf8'),ctx);
+ const page=deferred();queue.push({thread:{id:'t'}},page);const pending=ctx.kernelCall('thread/read',{threadId:'t',includeTurns:true});await new Promise(setImmediate);
+ ctx.kernelEvent({method:'item/agentMessage/delta',params:{threadId:'t',turnId:'old',itemId:'aold',delta:'，实时增量'}});
+ ctx.kernelEvent({method:'turn/completed',params:{threadId:'t',turn:turn('old','开头，实时增量','completed')}});
+ ctx.kernelEvent({method:'turn/completed',params:{threadId:'t',turn:turn('new','新回合已完成','completed')}});
+ page.resolve({data:[turn('old')],nextCursor:'older'});const result=await pending;c.kernelThread=ctx.evaKernelHistory.mergeThread(c,result.thread);
+ assert.equal(c.kernelThread.turns.find(t=>t.id==='old').status,'completed');assert.equal(c.kernelThread.turns.find(t=>t.id==='old').items[0].text,'开头，实时增量');assert(c.kernelThread.turns.some(t=>t.id==='new'));assert(!c.kernelThread.turns.some(t=>t.id==='outside'),'do not hydrate unrelated cached turns');
+ const first=deferred();queue.push(first);const oldRequest=ctx.kernelCall('thread/read',{threadId:'t',includeTurns:true});const rejected=assert.rejects(oldRequest,e=>e.staleHistory===true);
+ queue.push({thread:{id:'t'}},{data:[turn('new','最新分页','completed')],nextCursor:null});const newer=await ctx.kernelCall('thread/read',{threadId:'t',includeTurns:true});assert.equal(newer.thread.turns[0].id,'new');first.resolve({thread:{id:'t'}});await rejected;
+ c.kernelThread={id:'t',turns:[{...turn('detail'),androidSummary:true}]};const details=deferred();queue.push(details);const detailRequest=ctx.evaKernelHistory.loadItems(c,'detail');await new Promise(setImmediate);
+ ctx.kernelEvent({method:'item/agentMessage/delta',params:{threadId:'t',turnId:'detail',itemId:'adetail',delta:'，详情请求中的增量'}});ctx.kernelEvent({method:'turn/completed',params:{threadId:'t',turn:turn('detail','开头，详情请求中的增量','completed')}});
+ details.resolve({data:[{turnId:'detail',item:{id:'adetail',type:'agentMessage',text:'开头',status:'inProgress'}}],nextCursor:null});await detailRequest;
+ assert.equal(c.kernelThread.turns[0].status,'completed');assert.equal(c.kernelThread.turns[0].items[0].text,'开头，详情请求中的增量');
+ assert(calls.every(c=>c.method!=='thread/read'||c.params.includeTurns===false));assert(calls.filter(c=>c.method==='thread/turns/list').every(c=>c.params.limit===5&&c.params.itemsView==='summary'));assert(calls.filter(c=>c.method==='thread/items/list').every(c=>c.params.limit===10));assert(!calls.some(c=>c.method==='turn/start'));
+ console.log('PASS actual history races: metadata/page delay + deltas/completion/new turn, late old read rejected, item-detail overlap preserves live text/terminal, summary5/items10 boundaries and no replay');
+})().catch(e=>{console.error(e);process.exitCode=1});

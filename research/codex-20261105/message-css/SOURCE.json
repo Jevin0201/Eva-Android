@@ -1,0 +1,474 @@
+{
+  "asarSHA256": "0c951258b7ab381ec601045ffb02159e53f424548dda18e6a4dcfd126557383b",
+  "records": [
+    {
+      "member": "webview/assets/async/11e93e921fb1.css",
+      "sha256": "318daea5460a2ee8716ad1457cce3cd19c62397aaa341122301d2f3efaee92ae",
+      "bytes": 78273,
+      "byteStart": 0,
+      "byteEnd": 78273,
+      "output": "research/codex-20261105/message-css/11e93e921fb1.css",
+      "unchanged": true
+    },
+    {
+      "member": "webview/assets/async/242c17f27016.css",
+      "sha256": "8f8861948625a49e724712550208b88f4945ce1630497afedf691156a5a97cf4",
+      "bytes": 65928,
+      "byteStart": 0,
+      "byteEnd": 65928,
+      "output": "research/codex-20261105/message-css/242c17f27016.css",
+      "unchanged": true
+    }
+  ],
+  "tokensSource": {
+    "member": "webview/assets/async/361a1f04b890.css",
+    "sha256": "00ce623384e50a3d3ba0c851ba838cfcb3726bf45ef15544ad8447941f4bef58"
+  },
+  "tokens": [
+    {
+      "token": "--spacing",
+      "declarations": [
+        {
+          "value": ".25rem",
+          "byteStart": 4694,
+          "context": "0);--color-gray-800:var(--gray-800);--color-black:var(--black);--color-white:var(--white);"
+        }
+      ]
+    },
+    {
+      "token": "--leading-relaxed",
+      "declarations": [
+        {
+          "value": "1.625",
+          "byteStart": 5985,
+          "context": "0em;--tracking-wide:.025em;--leading-tight:1.25;--leading-snug:1.375;--leading-normal:1.5;"
+        }
+      ]
+    },
+    {
+      "token": "--codex-chat-font-size",
+      "declarations": [
+        {
+          "value": "var(--comment-editor-font-size)",
+          "byteStart": 455389,
+          "context": ";--text-base:var(--comment-font-size);--text-base--line-height:var(--comment-line-height);"
+        },
+        {
+          "value": "var(--comment-editor-font-size)",
+          "byteStart": 455780,
+          "context": ";--text-base:var(--comment-font-size);--text-base--line-height:var(--comment-line-height);"
+        },
+        {
+          "value": "16px",
+          "byteStart": 569461,
+          "context": "-offset:0px}.\\[--button-size\\:64px\\]{--button-size:64px}.\\[--codex-chat-font-size\\:16px\\]{"
+        },
+        {
+          "value": "var(--font-text-sm-size)",
+          "byteStart": 569545,
+          "context": "6px\\]{--codex-chat-font-size:16px}.\\[--codex-chat-font-size\\:var\\(--font-text-sm-size\\)\\]{"
+        },
+        {
+          "value": "var(--text-xl)",
+          "byteStart": 569639,
+          "context": "dex-chat-font-size:var(--font-text-sm-size)}.\\[--codex-chat-font-size\\:var\\(--text-xl\\)\\]{"
+        },
+        {
+          "value": "var(--codex-chat-font-size-override)",
+          "byteStart": 1206526,
+          "context": "e-override:var(--font-ui-size);--codex-chat-code-font-size-override:var(--font-code-size);"
+        },
+        {
+          "value": "var(--codex-chat-font-size-override,var(--font-ui-size,13px))",
+          "byteStart": 1218818,
+          "context": "-inset));--inset-toolbar:var(--height-toolbar);--safe-area-left:0px;--safe-area-right:0px;"
+        }
+      ]
+    },
+    {
+      "token": "--codex-chat-code-font-size",
+      "declarations": [
+        {
+          "value": "var(--codex-chat-code-font-size-override)",
+          "byteStart": 1206586,
+          "context": "verride:var(--font-code-size);--codex-chat-font-size:var(--codex-chat-font-size-override);"
+        },
+        {
+          "value": "var(--codex-chat-code-font-size-override,var(--font-code-size,12px))",
+          "byteStart": 1218903,
+          "context": ":0px;--codex-chat-font-size:var(--codex-chat-font-size-override,var(--font-ui-size,13px));"
+        }
+      ]
+    },
+    {
+      "token": "--font-ui-size",
+      "declarations": [
+        {
+          "value": "var(--vscode-font-size)",
+          "byteStart": 105157,
+          "context": "rent)}}:root[data-codex-window-type=extension]{--font-ui-family:var(--vscode-font-family);"
+        },
+        {
+          "value": "var(--text-base)",
+          "byteStart": 1206351,
+          "context": ":var(--app-color-background-elevated-secondary)}[data-codex-window-type=chrome-extension]{"
+        },
+        {
+          "value": "var(--text-base)",
+          "byteStart": 1207235,
+          "context": "black);--app-color-background-surface-under:var(--black)}[data-codex-window-type=browser]{"
+        },
+        {
+          "value": "var(--text-base)",
+          "byteStart": 1211376,
+          "context": ":ui-monospace, \"SFMono-Regular\", \"SF Mono\", Menlo, Consolas, \"Liberation Mono\", monospace;"
+        }
+      ]
+    },
+    {
+      "token": "--font-code-size",
+      "declarations": [
+        {
+          "value": "var(--vscode-editor-font-size)",
+          "byteStart": 105342,
+          "context": "amily:var(--vscode-editor-font-family,var(--font-mono-default)), var(--font-mono-default);"
+        },
+        {
+          "value": "var(--text-sm)",
+          "byteStart": 1206383,
+          "context": "ated-secondary)}[data-codex-window-type=chrome-extension]{--font-ui-size:var(--text-base);"
+        },
+        {
+          "value": "var(--text-sm)",
+          "byteStart": 1211408,
+          "context": " \"SF Mono\", Menlo, Consolas, \"Liberation Mono\", monospace;--font-ui-size:var(--text-base);"
+        }
+      ]
+    },
+    {
+      "token": "--font-sans",
+      "declarations": [
+        {
+          "value": "var(--font-ui-family,var(--font-sans-default))",
+          "byteStart": 3284,
+          "context": "-slider-max-fill-mask-position:0%;--top-fade:0;--bottom-fade:0}}}@layer theme{:root,:host{"
+        }
+      ]
+    },
+    {
+      "token": "--font-content",
+      "declarations": [
+        {
+          "value": "var(--codex-content-font-family,var(--font-sans))",
+          "byteStart": 8820,
+          "context": "calc(7 / 6);--font-sans-default:-apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif;"
+        },
+        {
+          "value": "var(--font-openai-sans)",
+          "byteStart": 575750,
+          "context": "--flashcard-gap:calc(var(--spacing) * 2.5)}.\\[--font-content\\:var\\(--font-openai-sans\\)\\]{"
+        }
+      ]
+    },
+    {
+      "token": "--font-mono",
+      "declarations": [
+        {
+          "value": "var(--font-code-family,var(--font-mono-default))",
+          "byteStart": 3416,
+          "context": "t-sans-default));--font-serif:ui-serif, Georgia, Cambria, \"Times New Roman\", Times, serif;"
+        }
+      ]
+    },
+    {
+      "token": "--color-text",
+      "declarations": [
+        {
+          "value": "light-dark(var(--gray-750),var(--gray-850))",
+          "byteStart": 29831,
+          "context": "-3:var(--blue-400);--color-chart-sequential-4:light-dark(var(--blue-600),var(--blue-200));"
+        },
+        {
+          "value": "var(--gray-950)",
+          "byteStart": 51709,
+          "context": "e])):where(:root[data-codex-window-type=browser],:root[data-codex-window-type=browser] *){"
+        },
+        {
+          "value": "var(--app-color-text-foreground)",
+          "byteStart": 80530,
+          "context": "menu-rail-full-rows) + .5) * var(--app-menu-rail-item-height))}:where(:root,[data-theme]){"
+        },
+        {
+          "value": "var(--vscode-foreground)",
+          "byteStart": 131775,
+          "context": "codex-window-type=extension],:root[data-codex-window-type=extension] :where([data-theme]){"
+        },
+        {
+          "value": "var(--gray-1000)",
+          "byteStart": 572760,
+          "context": "t\\)\\]{--color-text-toolbar-action:var(--color-text)}.\\[--color-text\\:var\\(--gray-1000\\)\\]{"
+        }
+      ]
+    },
+    {
+      "token": "--color-border-strong",
+      "declarations": [
+        {
+          "value": "light-dark(var(--alpha-15),var(--alpha-20))",
+          "byteStart": 45311,
+          "context": "r(--alpha-05),var(--alpha-06));--color-border:light-dark(var(--alpha-10),var(--alpha-12));"
+        },
+        {
+          "value": "var(--app-color-border-heavy,var(--app-color-text-foreground))",
+          "byteStart": 95216,
+          "context": "-md);--color-border-subtle:var(--app-color-border-light,var(--app-color-text-foreground));"
+        },
+        {
+          "value": "var(--app-color-border-heavy,color-mix(in oklab, var(--app-color-text-foreground) 12%, transparent))",
+          "byteStart": 102551,
+          "context": "color-border-light,color-mix(in oklab, var(--app-color-text-foreground) 5%, transparent));"
+        },
+        {
+          "value": "var(--app-color-border-heavy,var(--vscode-foreground))",
+          "byteStart": 134977,
+          "context": "foreground));--color-border-subtle:var(--app-color-border-light,var(--vscode-foreground));"
+        },
+        {
+          "value": "var(--app-color-border-heavy,color-mix(in oklab, var(--vscode-foreground) 12%, transparent))",
+          "byteStart": 135635,
+          "context": "r(--app-color-border-light,color-mix(in oklab, var(--vscode-foreground) 5%, transparent));"
+        }
+      ]
+    },
+    {
+      "token": "--color-border-subtle",
+      "declarations": [
+        {
+          "value": "light-dark(var(--alpha-05),var(--alpha-06))",
+          "byteStart": 45186,
+          "context": "isabled:var(--alpha-06);--color-text-disabled:light-dark(var(--gray-400),var(--gray-500));"
+        },
+        {
+          "value": "var(--app-color-border-light,var(--app-color-text-foreground))",
+          "byteStart": 95131,
+          "context": "ar(--color-background-primary-ghost-hover);--shadow-mode-toggle-selected:var(--shadow-md);"
+        },
+        {
+          "value": "var(--app-color-border-light,color-mix(in oklab, var(--app-color-text-foreground) 5%, transparent))",
+          "byteStart": 102429,
+          "context": "--app-color-border,color-mix(in oklab, var(--app-color-text-foreground) 8%, transparent));"
+        },
+        {
+          "value": "var(--app-color-border-light,var(--vscode-foreground))",
+          "byteStart": 134900,
+          "context": "tor-selectionBackground));--color-border:var(--app-color-border,var(--vscode-foreground));"
+        },
+        {
+          "value": "var(--app-color-border-light,color-mix(in oklab, var(--vscode-foreground) 5%, transparent))",
+          "byteStart": 135521,
+          "context": "der:var(--app-color-border,color-mix(in oklab, var(--vscode-foreground) 8%, transparent));"
+        }
+      ]
+    },
+    {
+      "token": "--color-surface-secondary",
+      "declarations": [
+        {
+          "value": "light-dark(var(--gray-50),var(--gray-100))",
+          "byteStart": 51095,
+          "context": "var(--shadow-alpha-400) * 1.6));--color-surface:light-dark(var(--gray-0),var(--gray-200));"
+        },
+        {
+          "value": "var(--app-color-background-surface-under)",
+          "byteStart": 90144,
+          "context": "round-surface);--color-surface-card:var(--app-color-background-card,var(--color-surface));"
+        },
+        {
+          "value": "var(--vscode-sideBar-background)",
+          "byteStart": 133466,
+          "context": "-red);--color-yellow:var(--vscode-charts-yellow);--color-chart-yellow:var(--color-yellow);"
+        }
+      ]
+    },
+    {
+      "token": "--color-surface",
+      "declarations": [
+        {
+          "value": "light-dark(var(--gray-0),var(--gray-200))",
+          "byteStart": 51037,
+          "context": "r:var(--elevation-400-geo) rgb(var(--shadow-color) / calc(var(--shadow-alpha-400) * 1.6));"
+        },
+        {
+          "value": "var(--app-color-background-surface)",
+          "byteStart": 90017,
+          "context": "powerpoint-surface:light-dark(var(--red-600),var(--red-300));--color-dialog-overlay:#0002;"
+        },
+        {
+          "value": "var(--color-surface-tertiary)",
+          "byteStart": 139161,
+          "context": "e-list-hoverBackground);--color-background-secondary-solid:var(--vscode-badge-background);"
+        },
+        {
+          "value": "light-dark(var(--gray-25),var(--black))",
+          "byteStart": 572176,
+          "context": "y) 92%,transparent)}}.\\[--color-surface\\:light-dark\\(var\\(--gray-25\\)\\,var\\(--black\\)\\)\\]{"
+        }
+      ]
+    },
+    {
+      "token": "--color-background-primary-ghost-hover",
+      "declarations": [
+        {
+          "value": "light-dark(var(--alpha-08),var(--alpha-12))",
+          "byteStart": 32219,
+          "context": ":var(--color-text-emphasis);--color-text-primary-outline-hover:var(--color-text-emphasis);"
+        },
+        {
+          "value": "var(--app-color-background-button-secondary-hover)",
+          "byteStart": 92054,
+          "context": "ound);--color-background-primary-soft-active:var(--app-color-background-button-secondary);"
+        },
+        {
+          "value": "var(--vscode-list-hoverBackground)",
+          "byteStart": 133996,
+          "context": "ound);--color-background-primary-soft-active:var(--vscode-list-activeSelectionBackground);"
+        }
+      ]
+    },
+    {
+      "token": "--color-background-secondary-soft-alpha",
+      "declarations": [
+        {
+          "value": "light-dark(var(--alpha-08),var(--alpha-12))",
+          "byteStart": 32981,
+          "context": "50));--color-background-secondary-soft-active:light-dark(var(--gray-200),var(--gray-400));"
+        },
+        {
+          "value": "var(--color-background-secondary-ghost-hover)",
+          "byteStart": 93077,
+          "context": "condary));--color-background-callout-surface:var(--app-color-background-elevated-primary);"
+        },
+        {
+          "value": "var(--vscode-textCodeBlock-background)",
+          "byteStart": 134266,
+          "context": "adge-background);--color-background-callout-surface:var(--vscode-editorWidget-background);"
+        }
+      ]
+    },
+    {
+      "token": "--radius-3xl-base",
+      "declarations": [
+        {
+          "value": "1.25rem",
+          "byteStart": 10659,
+          "context": "ius-md-base:.5rem;--radius-lg-base:.625rem;--radius-xl-base:.75rem;--radius-2xl-base:1rem;"
+        },
+        {
+          "value": "1.5rem",
+          "byteStart": 1210352,
+          "context": "s-xs-base:.125rem;--radius-sm-base:.25rem;--radius-md-base:.375rem;--radius-lg-base:.5rem;"
+        }
+      ]
+    },
+    {
+      "token": "--font-weight-semibold",
+      "declarations": [
+        {
+          "value": "600",
+          "byteStart": 5802,
+          "context": "xl-line-height);--font-weight-light:300;--font-weight-normal:400;--font-weight-medium:500;"
+        }
+      ]
+    },
+    {
+      "token": "--thread-content-max-width",
+      "declarations": [
+        {
+          "value": "none",
+          "byteStart": 13190,
+          "context": ".9976, .9985, 1);--animate-token-pulsing-dot:token-pulsing-dot 1.25s infinite ease-in-out;"
+        },
+        {
+          "value": "42rem",
+          "byteStart": 583601,
+          "context": "\\]{--thread-composer-disclaimer-visibility:initial}.\\[--thread-content-max-width\\:42rem\\]{"
+        },
+        {
+          "value": "48rem",
+          "byteStart": 583673,
+          "context": "ax-width\\:42rem\\]{--thread-content-max-width:42rem}.\\[--thread-content-max-width\\:48rem\\]{"
+        },
+        {
+          "value": "100%",
+          "byteStart": 583745,
+          "context": "ax-width\\:48rem\\]{--thread-content-max-width:48rem}.\\[--thread-content-max-width\\:100\\%\\]{"
+        },
+        {
+          "value": "480px",
+          "byteStart": 583816,
+          "context": "max-width\\:100\\%\\]{--thread-content-max-width:100%}.\\[--thread-content-max-width\\:480px\\]{"
+        },
+        {
+          "value": "500px",
+          "byteStart": 583888,
+          "context": "ax-width\\:480px\\]{--thread-content-max-width:480px}.\\[--thread-content-max-width\\:500px\\]{"
+        },
+        {
+          "value": "var(--thread-content-responsive-max-width,inherit)",
+          "byteStart": 584008,
+          "context": "px}.\\[--thread-content-max-width\\:var\\(--thread-content-responsive-max-width\\,inherit\\)\\]{"
+        },
+        {
+          "value": "48rem",
+          "byteStart": 1210904,
+          "context": ");--padding-panel-base:calc(var(--spacing) * 5);--padding-panel:var(--padding-panel-base);"
+        }
+      ]
+    },
+    {
+      "token": "--thread-content-responsive-max-width",
+      "declarations": [
+        {
+          "value": "var(--thread-content-expanded-max-width,inherit)",
+          "byteStart": 584182,
+          "context": "hread-content-responsive-max-width\\:var\\(--thread-content-expanded-max-width\\,inherit\\)\\]{"
+        },
+        {
+          "value": "var(--thread-content-compact-max-width,inherit)",
+          "byteStart": 932240,
+          "context": "thread-content-responsive-max-width\\:var\\(--thread-content-compact-max-width\\,inherit\\)\\]{"
+        }
+      ]
+    },
+    {
+      "token": "--thread-content-expanded-max-width",
+      "declarations": [
+        {
+          "value": "var(--thread-content-max-width)",
+          "byteStart": 1211828,
+          "context": "ll-rows:13}[data-codex-window-type=browser] body{--thread-content-compact-max-width:40rem;"
+        }
+      ]
+    },
+    {
+      "token": "--padding-toolbar",
+      "declarations": [
+        {
+          "value": "var(--padding-toolbar)",
+          "byteStart": 11324,
+          "context": "gs-row:4rem;--height-token-empty-state-page:26.25rem;--padding-panel:var(--padding-panel);"
+        },
+        {
+          "value": "calc(var(--spacing) * 2)",
+          "byteStart": 578860,
+          "context": "ding-row-x\\:8px\\]{--padding-row-x:8px}.\\[--padding-toolbar\\:calc\\(var\\(--spacing\\)\\*2\\)\\]{"
+        },
+        {
+          "value": "calc(var(--spacing) * 4)",
+          "byteStart": 1217838,
+          "context": "x;--padding-panel-base:calc(var(--spacing) * 3);--padding-panel:var(--padding-panel-base);"
+        }
+      ]
+    }
+  ]
+}

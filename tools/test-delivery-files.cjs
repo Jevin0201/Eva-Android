@@ -1,0 +1,12 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert/strict');
+const md=require('../probe/assets/eva-markdown.js')({html:false,linkify:false});
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const context={navigate:()=>{},URL,markdown:md,esc,itemText:i=>i.text||'',mobileFlow:{turn:()=>'<div>正文</div>'},active:()=>({kernelThread:{cwd:'/root/eva-workspace/projects/p'}})};context.window=context;vm.createContext(context);vm.runInContext(fs.readFileSync('probe/assets/eva-desktop-delivery-scanner.js','utf8'),context);vm.runInContext(fs.readFileSync('probe/assets/delivery-files.js','utf8'),context);
+const api=context.evaDeliveryFiles;
+assert.equal(api.path('/root/eva-workspace/a.pdf'),'/root/eva-workspace/a.pdf');assert.equal(api.path('../report.pdf','/root/eva-workspace/projects/p'),'/root/eva-workspace/projects/report.pdf');
+for(const bad of ['https://evil/a.pdf','//evil/a.pdf','file:///etc/passwd','javascript:alert(1)','/etc/passwd','/root/eva-workspace/../../secret','/root/eva-workspace/%2e%2e/secret','/root/eva-workspace/a%5cb.pdf'])assert.equal(api.path(bad),null,bad);
+const turn={items:[{type:'agentMessage',text:'[课程](./%E8%AF%BE%E7%A8%8B.pptx) 和 [重复](./%E8%AF%BE%E7%A8%8B.pptx)\n[网页](https://example.com/a.pdf)\n[文件](/root/eva-workspace/a.pdf)'},{type:'agentMessage',phase:'commentary',text:'[内部](/root/eva-workspace/plan.md)'}]};
+const html=context.mobileFlow.turn(turn);assert.equal((html.match(/class="delivery-file"/g)||[]).length,2);assert(html.includes('课程.pptx'));assert(!html.includes('plan.md'));assert(html.includes('/root/eva-workspace/projects/p/%E8%AF%BE%E7%A8%8B.pptx'));assert(!html.includes('https://example.com'));assert(html.includes('aria-label="下载 '));
+assert.equal(context.mobileFlow.turn({items:[]}),'<div>正文</div>');
+assert.equal(api.links('```md\n[代码](/root/eva-workspace/example.pdf)\n```\n`[行内](/root/eva-workspace/inline.pdf)`').length,0);
+console.log('PASS delivery file cards: dedupe, project paths, Chinese filenames, native preview links, commentary filtering and path confinement');
