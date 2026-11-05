@@ -25,3 +25,15 @@ Android 界面为 `GitActivity`；`WorkspaceGit` 通过既有 PRoot/Python/Git �
 首次原生 Probe 暴露：手机运行环境已在 `/root/eva-workspace` 初始化 umbrella 仓库，隔离临时测试没有这个结构，祖先仓库检查错误地拒绝了所有新项目。现将工作区根作为仓库发现边界，且给 Git 设置 `GIT_CEILING_DIRECTORIES`；项目内部的祖先仓库仍拒绝误初始化。新增含工作区根 `.git` 的回归通过；在真实手机 `projects/` 下创建唯一项目、初始化/暂存/提交均通过，根仓库 HEAD/index 摘要未改变，fixture 已清理。证据：`artifacts/git/workspace-boundary-phone.json`。修复后原生 UI Probe 仍需最终 APK 重跑。
 
 最终 APK 真机原生验收：`artifacts/git/native-ui.json` 为 PASS，覆盖原生封装及 GitActivity 真实状态显示，fixture 已清理。
+
+## 2026-11-06 remote Git host increment
+
+The version management menu now exposes clone, remote configuration, fetch, fast-forward pull, confirmed non-force push, branch create/switch, explicit merge, ours/theirs conflict resolution, merge abort and paged commit history. Dirty worktrees block branch switching and automatic integration. State tokens include HEAD, index, config and refs.
+
+Desktop source provenance is fixed in migration/eva-0.2.7-desktop/git/SOURCE.json. The implementation retains the managed-worktrees.js argument-array execution, cleaned Git environment, 120-second timeout and repository/ref boundaries, while extending the existing Android Python/Git host.
+
+HTTPS credentials reuse ModelStore Android Keystore AES-GCM encryption. A credential is bound to its full HTTPS repository URL. The temporary askpass script contains no secret, reads transient environment values and rejects a different host or repository path. The script is deleted after each operation. Credentials stay out of argv, remote URLs, WebView and error messages. Local URL rewrites, HTTP/credential overrides, content filters and external merge drivers are rejected. SSH uses preconfigured Linux keys and trusted known_hosts in batch mode.
+
+Host validation passes 23 isolated bare-remote checks and the existing 21 local checks. The phone runtime also passes all 23 remote checks. Android Java compilation passes. The parent task can run artifacts/git/remote-runtime-check.py through tools/runtime-device.py. This fixture embeds the current helper and writes only task-owned temporary repositories. Device installation, UI lifecycle and real-account authorization remain for the parent to verify. Actual bare-remote tests cover missing repositories, rejected non-fast-forward pushes and merge conflicts. Authentication, host-key and DNS message classification uses deterministic stderr fixtures without account credentials.
+
+LFS, submodules, worktrees, interactive rebase and initial SSH host registration continue through the terminal. The remote increment does not mark those UI domains complete. PRoot object writes use core.createObject=rename, clone disables hard links, and task-owned local remotes receive a fixed receive-pack object-rename option. Merge preparation stops before a commit and uses a process-only identity, while the final commit form supplies the real author.

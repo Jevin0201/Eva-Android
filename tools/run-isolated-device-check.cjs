@@ -8,7 +8,7 @@ async function main() {
  const adb = process.env.EVA_ADB;
  if (!adb) throw Error('Set EVA_ADB');
  const [check, ...args] = process.argv.slice(2);
- if (!['DesktopStreamCheck', 'ScheduledTaskCheck', 'AttachmentImportCheck'].includes(check)) throw Error('Unknown isolated check');
+ if (!['DesktopStreamCheck', 'ScheduledTaskCheck', 'AttachmentImportCheck', 'McpOAuthCheck','ApkInstallCheck'].includes(check)) throw Error('Unknown isolated check');
  const pkg = 'ai.eva.android.probe';
  const run = args => cp.execFileSync(adb, args, {encoding: 'utf8'});
  const scheduled = cp.spawnSync(adb, ['shell', 'run-as', pkg, 'cat', 'shared_prefs/eva-scheduled.xml'], {encoding: 'utf8'});
@@ -38,9 +38,9 @@ async function main() {
   });
  } finally { await browser.close(); }
  try {
-  const capture=check==='AttachmentImportCheck';
+  const capture=['AttachmentImportCheck','McpOAuthCheck','ApkInstallCheck'].includes(check);
   const result = cp.spawnSync(adb, ['shell', 'am', 'instrument', '-w', ...args, pkg + '/.' + check], capture?{encoding:'utf8'}:{stdio:'inherit'});
-  if(capture){process.stdout.write(result.stdout||'');process.stderr.write(result.stderr||'');if(!/INSTRUMENTATION_CODE:\s*-1/.test(result.stdout||'')||!result.stdout.includes('PASS attachment native import')||result.stdout.includes('cleanupError'))throw Error('Attachment import native check did not pass');}
+  if(capture){process.stdout.write(result.stdout||'');process.stderr.write(result.stderr||'');const expected={AttachmentImportCheck:'PASS attachment native import',McpOAuthCheck:'PASS scoped loopback callback',ApkInstallCheck:'PASS read-only APK provider'}[check];if(!result.stdout.includes(expected)||/INSTRUMENTATION_FAILED|FAIL |cleanupError/.test(result.stdout))throw Error('Native check did not pass: '+check);}
   if (result.error) throw result.error;
   if (result.status !== 0) throw Error('Isolated check failed to run');
  } finally {

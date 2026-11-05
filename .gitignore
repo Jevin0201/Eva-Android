@@ -22,3 +22,6 @@ transfer/
 
 # Large local REA evidence bundle; provenance and findings remain tracked.
 research/codex-flow/rea-evidence.json
+
+# macOS Finder metadata
+.DS_Store

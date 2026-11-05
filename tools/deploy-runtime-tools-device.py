@@ -4,6 +4,7 @@ adb=os.environ.get('EVA_ADB') or os.path.expandvars(r'%LOCALAPPDATA%\Android\Sdk
 base=[adb,'-s',os.environ.get('EVA_SERIAL','509655c7')];pkg='ai.eva.android.probe'
 assets=pathlib.Path('probe/assets/office')
 pairs=[(assets/'eva-office.py','eva-office.py'),(assets/'eva-render.py','.eva-office/eva-render.py'),(assets/'eva-presentations.py','.eva-office/eva-presentations.py'),(assets/'eva-capabilities.py','.eva-runtime/eva-capabilities.py')]
+pairs += [(assets/'eva-android-build.py','.eva-runtime/eva-android-build.py')]
 pairs += [(p,'.eva-codex/skills/'+p.relative_to(assets/'skills').as_posix()) for p in (assets/'skills').rglob('*') if p.is_file()]
 for source,name in pairs:
  target='files/alpine/root/'+name

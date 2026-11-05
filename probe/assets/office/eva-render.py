@@ -1,5 +1,5 @@
 """Local document rendering and visual checks for Eva Android. No account required."""
-import argparse, json, os, pathlib, re, shutil, subprocess, tempfile, zipfile
+import argparse, hashlib, json, os, pathlib, re, shutil, subprocess, tempfile, zipfile
 import xml.etree.ElementTree as ET
 
 ROOT = pathlib.Path('/root/eva-workspace')
@@ -63,11 +63,78 @@ def structure(source):
                          'transitions': len(tree.findall('.//p:transition', ns))})
     return rows
 
+OFFICE_FILTERS = {
+    '.docx': {'pdf':'writer_pdf_Export', 'docx':'Office Open XML Text', 'odt':'writer8'},
+    '.xlsx': {'pdf':'calc_pdf_Export', 'xlsx':'Calc MS Excel 2007 XML', 'ods':'calc8'},
+    '.pptx': {'pdf':'impress_pdf_Export', 'pptx':'Impress MS PowerPoint 2007 XML', 'odp':'impress8'},
+    '.odt': {'pdf':'writer_pdf_Export', 'docx':'Office Open XML Text', 'odt':'writer8'},
+    '.ods': {'pdf':'calc_pdf_Export', 'xlsx':'Calc MS Excel 2007 XML', 'ods':'calc8'},
+    '.odp': {'pdf':'impress_pdf_Export', 'pptx':'Impress MS PowerPoint 2007 XML', 'odp':'impress8'},
+}
+
+def office_input(source):
+    if source.stat().st_size > 64 * 1024 * 1024:
+        raise ValueError('Office 输入超过 64 MiB')
+    with zipfile.ZipFile(source) as archive:
+        entries = archive.infolist()
+        if len(entries) > 10000 or sum(row.file_size for row in entries) > 128 * 1024 * 1024:
+            raise ValueError('Office 解压内容超过限制')
+        for row in entries:
+            name = row.filename.lower()
+            if name.endswith('vbaproject.bin') or name.startswith('xl/externallinks/'):
+                raise ValueError('转换不接受宏或外部工作簿链接，请先制作不含这些内容的副本')
+
+def office_profile(destination):
+    profile = destination / 'office-profile'
+    profile.mkdir()
+    # Isolated profile shared by both PDF and editable conversion paths.
+    (profile / 'registrymodifications.xcu').write_text(
+        '<?xml version="1.0" encoding="UTF-8"?>'
+        '<oor:items xmlns:oor="http://openoffice.org/2001/registry">'
+        '<item oor:path="/org.openoffice.Office.Common/Security/Scripting">'
+        '<prop oor:name="MacroSecurityLevel" oor:op="fuse"><value>3</value></prop></item>'
+        '</oor:items>', encoding='utf-8')
+    return profile.as_uri()
+
+def office_convert(source, destination, output_format):
+    filters = OFFICE_FILTERS.get(source.suffix.lower(), {})
+    if output_format not in filters:
+        raise ValueError('此文档类型不支持要求的转换格式')
+    office_input(source)
+    before = hashlib.sha256(source.read_bytes()).hexdigest()
+    profile = office_profile(destination)
+    run(['libreoffice', '-env:UserInstallation=' + profile, '--headless', '--convert-to',
+         output_format + ':' + filters[output_format], '--outdir', str(destination), str(source)])
+    result = destination / (source.stem + '.' + output_format)
+    if not result.is_file() or result.stat().st_size < 100:
+        raise RuntimeError('Office 引擎没有生成有效输出文件')
+    if hashlib.sha256(source.read_bytes()).hexdigest() != before:
+        raise RuntimeError('源文档在转换期间发生变化，请重新读取')
+    if output_format != 'pdf':
+        office_input(result)
+    return result
+
+def convert(source, destination, output_format):
+    check_cancel()
+    source = workspace(source, True)
+    destination = workspace(destination)
+    destination.mkdir(parents=True, exist_ok=False)
+    output = office_convert(source, destination, output_format)
+    check_cancel()
+    report = {'output': str(output), 'engine': 'LibreOffice',
+              'sourcePreserved': True, 'visualReviewRequired': True,
+              'formulaEvaluationEngine': 'LibreOffice Calc' if source.suffix.lower() in ('.xlsx', '.ods') else None,
+              'note': 'Calc 重算依赖可用字体和受支持函数；宏及外部工作簿链接被拒绝。'}
+    (destination / 'conversion-report.json').write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')
+    return report
+
 def render(source, destination, expected=None, editable=False):
     check_cancel()
     source = workspace(source, True)
     destination = workspace(destination)
     destination.mkdir(parents=True, exist_ok=False)
+    if source.suffix.lower() in OFFICE_FILTERS:
+        office_input(source)
     layout = structure(source)
     if editable and layout and any(not page['textRuns'] for page in layout):
         raise ValueError('存在没有可编辑文字的 PPT 页面；不能作为可编辑 PPT 交付')
@@ -95,10 +162,7 @@ def render(source, destination, expected=None, editable=False):
         pdf = destination / source.name
         shutil.copyfile(source, pdf)
     elif suffix in ('.pptx', '.docx', '.xlsx', '.odt', '.odp', '.ods'):
-        profile = (destination / 'office-profile').as_uri()
-        run(['libreoffice', '-env:UserInstallation=' + profile, '--headless', '--convert-to',
-             'pdf', '--outdir', str(destination), str(source)])
-        pdf = destination / (source.stem + '.pdf')
+        pdf = office_convert(source, destination, 'pdf')
     else:
         raise ValueError('支持 PPTX、DOCX、XLSX、PDF、HTML 与 OpenDocument')
     if not pdf.is_file() or pdf.stat().st_size < 100:
@@ -133,12 +197,20 @@ def render(source, destination, expected=None, editable=False):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('action', choices=['status', 'render'])
+    parser.add_argument('action', choices=['status', 'render', 'convert', 'recalculate'])
     parser.add_argument('--input'); parser.add_argument('--output-dir')
+    parser.add_argument('--format', choices=['pdf','docx','xlsx','pptx','odt','ods','odp'])
     parser.add_argument('--expect-pages', type=int)
     parser.add_argument('--require-editable', action='store_true')
     args = parser.parse_args()
-    value = status() if args.action == 'status' else render(args.input, args.output_dir, args.expect_pages, args.require_editable)
+    if args.action == 'status':
+        value = status()
+    elif args.action in ('convert', 'recalculate'):
+        if args.action == 'recalculate' and pathlib.Path(args.input).suffix.lower() not in ('.xlsx', '.ods'):
+            raise ValueError('重算仅支持 XLSX 或 ODS')
+        value = convert(args.input, args.output_dir, 'xlsx' if args.action == 'recalculate' else args.format)
+    else:
+        value = render(args.input, args.output_dir, args.expect_pages, args.require_editable)
     print(json.dumps(value, ensure_ascii=False), flush=True)
 
 if __name__ == '__main__':

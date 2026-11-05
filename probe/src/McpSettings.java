@@ -18,7 +18,10 @@ final class McpSettings {
   if(action.equals("resources"))return host.rpc("mcpServerStatus/list",new JSONObject().put("serverName",name).put("detail","full").put("limit",100));
   if(action.equals("resourceRead")){String uri=args.getString("uri");if(uri.length()>8192)throw new IOException("资源地址过长");JSONObject value=host.rpc("mcpServer/resource/read",new JSONObject().put("server",name).put("uri",uri));JSONArray contents=value.optJSONArray("contents"),output=new JSONArray();if(contents!=null)for(int n=0;n<contents.length()&&n<20;n++){JSONObject content=contents.optJSONObject(n);if(content==null)continue;String text=content.optString("text");output.put(new JSONObject().put("uri",content.optString("uri")).put("mimeType",content.optString("mimeType")).put("text",text.length()>65536?text.substring(0,65536):text).put("truncated",text.length()>65536).put("binary",content.has("blob")));}return new JSONObject().put("contents",output);}
   if(action.equals("status"))return host.rpc("mcpServerStatus/list",new JSONObject().put("serverName",name).put("detail","toolsAndAuthOnly").put("limit",100));
-  if(action.equals("login")){JSONObject result=host.rpc("mcpServer/oauth/login",new JSONObject().put("name",name).put("timeoutSecs",180));String url=result.getString("authorizationUrl");URI uri=new URI(url);if(!"https".equals(uri.getScheme()))throw new IOException("授权地址必须为 HTTPS");host.context.startActivity(new Intent(host.context,ShellActivity.class).putExtra("page","browser").putExtra("initialUrl",url).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));return new JSONObject().put("opened",true);}
+  if(action.equals("login"))return McpOAuth.login(host,name);
+  if(action.equals("cancel"))return McpOAuth.cancel(host,name);
+  if(action.equals("logout"))return McpOAuth.logout(host,name);
+
   JSONObject server=servers.optJSONObject(name);
   if(action.equals("remove")){if(server==null)throw new IOException("服务器不存在");servers.remove(name);}
   else if(action.equals("toggle")){if(server==null)throw new IOException("服务器不存在");server.put("enabled",args.getBoolean("enabled"));}

@@ -1,0 +1,27 @@
+{
+  "desktopSource": "/Users/jevin/Documents/Codex/Eva-Source/src/main/mcp-auth-lifecycle.js",
+  "sha256": "0ec9272393cc300f9916cbda8c10ab3b054706aa244d2e7a37c7d673c914bdf4",
+  "coreCopiedUnchanged": true,
+  "additionalSources": [
+    "src/main/main.js rae/oauth/logout",
+    "src/renderer/settings.js mcpServer/oauth/login and logout",
+    "src/renderer/actions.js rae/oauth/state"
+  ],
+  "officialSpec": "https://modelcontextprotocol.io/specification/2026-07-28/basic/authorization",
+  "androidAdapters": [
+    "McpOAuth.java session and loopback transport",
+    "McpOAuthActivity.java scoped Eva browser",
+    "mcp-settings.js original lifecycle binding"
+  ],
+  "credentialOwner": "existing phone Codex runtime private CODEX_HOME",
+  "validation": [
+    "test-mcp-oauth-lifecycle.cjs passed",
+    "test-mcp-settings.cjs passed login/callback/cancel/logout UI",
+    "McpOAuthCheck.java compiled; pending parent-installed device execution",
+    "check-mcp-oauth-runtime-device.py installed kernel passed code/PKCE, oAuth tool discovery, refresh-token grant, CLI logout, access_denied cancellation"
+  ],
+  "limits": [
+    "real third-party account credentials and user authorization remain needed for service-specific verification",
+    "issuer/discovery/client registration/resource/PKCE remain owned by the installed Codex kernel, whose latest-spec coverage is not asserted by adapter fixture"
+  ]
+}

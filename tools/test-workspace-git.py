@@ -35,7 +35,7 @@ with tempfile.TemporaryDirectory(prefix='eva-git-check-') as tmp:
     g.run(repo,['config','diff.external','touch '+str(repo/'external-ran')])
     g.run(repo,['config','core.fsmonitor','touch '+str(repo/'monitor-ran')])
     check('worktree diff', '+第二行' in call('diff',path=source.name)['text'])
-    call('status');check('external diff and fsmonitor disabled',not (repo/'external-ran').exists() and not (repo/'monitor-ran').exists())
+    state=call('status');check('external diff and fsmonitor disabled',not (repo/'external-ran').exists() and not (repo/'monitor-ran').exists())
     state=call('stage',token=state['token'],path=source.name)
     check('cached diff','+第二行' in call('diff',path=source.name,staged=True)['text'])
     state=call('unstage',token=state['token'],path=source.name)

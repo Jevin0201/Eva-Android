@@ -1,0 +1,20 @@
+'use strict';
+const fs=require('node:fs');
+const vm=require('node:vm');
+const assert=require('node:assert/strict');
+(async()=>{
+ const context={window:{}};vm.runInNewContext(fs.readFileSync('probe/assets/desktop-mcp-auth-lifecycle.js','utf8'),context);
+ const events=[],requests=[];
+ const core=new context.window.EvaMcpAuthLifecycle(async(method,params)=>{requests.push({method,params});return method==='mcpServerStatus/list'?{data:[{name:'fixture',authStatus:'oAuth',runtimeStatus:'connected'}]}:{};},event=>events.push(event));
+ core.started('fixture',null,'current');
+ await core.observe('mcpServer/oauthLogin/completed',{name:'fixture',loginId:'stale',success:true});assert.equal(requests.length,0);
+ await Promise.all([core.observe('mcpServer/oauthLogin/completed',{name:'fixture',loginId:'current',success:true}),core.observe('mcpServer/oauthLogin/completed',{name:'fixture',loginId:'current',success:true})]);
+ assert.deepEqual(requests.map(r=>r.method),['config/mcpServer/reload','mcpServerStatus/list']);assert.equal(events.at(-1).state,'authorized');
+ await core.observe('mcpServer/oauthLogin/completed',{name:'fixture',loginId:'current',success:true});assert.equal(requests.length,2);
+ core.started('fixture',null,'cancel');await core.observe('mcpServer/oauthLogin/completed',{name:'fixture',loginId:'cancel',success:false});assert.equal(events.at(-1).state,'notLoggedIn');
+ await core.observe('mcpServer/startupStatus/updated',{name:'fixture',status:'failed',failureReason:'reauthenticationRequired'});assert.equal(events.at(-1).state,'reauthenticationRequired');
+ await core.observe('item/completed',{threadId:'t',item:{type:'mcpToolCall',server:'fixture',result:{_meta:{'mcp/www_authenticate':'scope="extra"'}}}});assert.equal(events.at(-1).state,'reauthenticationRequired');
+ const failed=new context.window.EvaMcpAuthLifecycle(async()=>{throw Error('offline');},event=>events.push(event));await failed.observe('mcpServer/oauthLogin/completed',{name:'fixture',success:true});assert.equal(events.at(-1).state,'unverified');
+ const desktop=fs.readFileSync('/Users/jevin/Documents/Codex/Eva-Source/src/main/mcp-auth-lifecycle.js','utf8');assert(fs.readFileSync('probe/assets/desktop-mcp-auth-lifecycle.js','utf8').includes(desktop));
+ console.log('PASS unchanged desktop OAuth lifecycle: stale and duplicate completions, cancellation, reload/verified auth, challenge reauthentication and failed verification');
+})().catch(error=>{console.error(error);process.exitCode=1;});

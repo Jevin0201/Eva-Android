@@ -1,0 +1,11 @@
+{
+  "desktopSource": "src/main/managed-worktrees.js",
+  "sha256": "e3bea6485a43b0a98dc1c310be9e703a513dedccb493cd692fa65ac5c6866f45",
+  "retainedContract": [
+    "envFor removes inherited GIT_* controls",
+    "git executes argument arrays and uses a 120000ms timeout",
+    "repo validates top-level and workspace boundary",
+    "fetch validates explicit remote and ref before worktree operations"
+  ],
+  "implementation": "Existing eva-git.py invokes Git itself. Android UI and Keystore adapt host services. This desktop source implements managed-worktree remote host paths, not a full remote Git UI."
+}

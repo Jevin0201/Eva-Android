@@ -1,0 +1,25 @@
+{
+  "date": "2026-11-06",
+  "desktopAudit": [
+    {
+      "path": "/Users/jevin/Documents/Codex/Eva-Source/src/main/office-preview.js",
+      "sha256": "94037d5c0e7ed6d703afcd0752ed7d426f655a81b6ab757f30658c3849f3493f"
+    },
+    {
+      "path": "/Users/jevin/Documents/Codex/Eva-Source/src/main/office-preview-worker.js",
+      "sha256": "2126443cd8fa4edd4fd73504efddd04a022e1c04cdbf121444180a8cc2014103"
+    },
+    {
+      "path": "/Users/jevin/Documents/Codex/Eva-Android/probe/assets/office/eva-render.py",
+      "sha256": "d6b928fe2b2f229ec0b52c8fd890b1324b66e4ccf0cfa03942d92c5596e55812"
+    },
+    {
+      "path": "/Users/jevin/Documents/Codex/Eva-Android/tools/test-office-complex.py",
+      "sha256": "2088472719be9e36865fefcaaca936f9778ffab27d0053c1869637a49a46a176"
+    }
+  ],
+  "runtimeReuse": "Existing phone LibreOffice + Poppler render pipeline; editable conversion uses the same isolated-profile engine. Desktop read-only parser was audited and retains its own unsupported-feature boundaries.",
+  "hostReport": "artifacts/office-complex/run-asqbbuhi/acceptance.json",
+  "deviceReport": "artifacts/office-complex/device/acceptance.json",
+  "newThirdPartyDependencies": []
+}

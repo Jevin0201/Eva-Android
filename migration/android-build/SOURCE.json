@@ -1,0 +1,27 @@
+{
+  "nativeLicense": "Apache-2.0",
+  "nativeProject": "https://github.com/lzhiyong/android-sdk-tools",
+  "sdkSource": "Google Android SDK archives; retains NOTICE and source.properties",
+  "downloads": {
+    "native": [
+      "https://github.com/lzhiyong/android-sdk-tools/releases/download/35.0.2/android-sdk-tools-static-aarch64.zip",
+      "db1cea2c4454d5f9c5a802646b2d1cf560b4ee7badbe23e51ab8e1881bb50fc2"
+    ],
+    "platform": [
+      "https://dl.google.com/android/repository/platform-36_r02.zip",
+      "37607369a28c5b640b3a7998868d45898ebcb777565a0e85f9acf36f29631d2e"
+    ],
+    "jars35": [
+      "https://dl.google.com/android/repository/build-tools_r35_macosx.zip",
+      "530cdbd1ec315e1477624d7ed2f0f2962108d69f36eddba5894cef9ea2cedb48"
+    ],
+    "jars": [
+      "https://dl.google.com/android/repository/build-tools_r36_macosx.zip",
+      "04e7f3a72044de4926fa038fa0e251a37bba1e1c3fb8beab6f8401bfd9eb4bf3"
+    ]
+  },
+  "java": "Alpine signed openjdk17-jdk GPL-2.0-with-classpath-exception",
+  "gradle": "Alpine signed gradle 8.14.1 Apache-2.0",
+  "desktopBaseline": "Eva-Source/src/main runtime/process execution; Android toolchain is host-specific",
+  "evidence": "artifacts/capability-upgrade-20261106/gradle35-acceptance.log"
+}
