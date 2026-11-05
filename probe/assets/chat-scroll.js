@@ -9,11 +9,13 @@ window.evaChatScroll = (() => {
  function position(flow, state) {
   const rect = flow.getBoundingClientRect();
   const parent = flow.parentElement.getBoundingClientRect();
-  state.button.style.top = Math.max(0, rect.bottom - parent.top - 54) + 'px';
+  state.button.style.top = Math.max(0, rect.bottom - parent.top - 56) + 'px';
   state.button.style.left = rect.left - parent.left + rect.width / 2 + 'px';
  }
  function paint(flow, state) {
   state.button.hidden = state.follow;
+  state.button.dataset.visible = String(!state.follow);
+  state.button.dataset.working = String(!!active()?.running);
   position(flow, state);
  }
  function place(flow, state) {
@@ -47,7 +49,7 @@ window.evaChatScroll = (() => {
   button.hidden = true;
   button.setAttribute('aria-label', '回到最新内容');
   button.title = '回到最新内容';
-  button.innerHTML = window.cloudComposerIcons?.jump || '<span aria-hidden="true">↓</span>';
+  button.innerHTML = '<span class="transcript-jump-dots" aria-hidden="true"><i></i><i></i><i></i></span><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3.5v13m-5-5 5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   flow.parentElement.append(button);
   state = {id, button, follow: true, readingTop: 0, expectedTop: null, userUntil: 0, listeners: new AbortController()};
   states.set(flow, state);

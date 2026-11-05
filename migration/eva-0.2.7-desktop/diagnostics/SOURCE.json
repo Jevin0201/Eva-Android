@@ -1,0 +1,12 @@
+{
+  "runtime-warnings.js": {
+    "source": "src/renderer/runtime-warnings.js",
+    "sha256": "509ae26d73797fa1045a2c53bd227be055b2f902d0f2f4456be32f1a9b0c51cf",
+    "changes": "none; lexical host adapter"
+  },
+  "conversation-failures.js": {
+    "source": "src/renderer/conversation-failures.js",
+    "sha256": "0bed85123f7450ee9b0a9ed4c0bffafaed7eaa898602603f42c3cf9d445553cf",
+    "changes": "none; lexical host adapter"
+  }
+}

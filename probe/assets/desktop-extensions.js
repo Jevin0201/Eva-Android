@@ -135,16 +135,16 @@ function customizeSection(title,items,kind,category=null) {
 }
 function renderCustomize() {
   if(!state.customize)return;
-  customizeSidebar();
+
   const root=document.getElementById('customize-page'),kind=state.customize,isSkill=kind==='skills',query=customization.query[kind],q=query.trim().toLowerCase();
   const focused=document.activeElement?.id==='customize-search',caret=focused?document.activeElement.selectionStart:null;
   const top=root.scrollTop;root.classList.remove('hidden');root.dataset.kind=kind;
-  if(customization.detail){renderPluginDetail(root);return;}
+  if(customization.detail){renderPluginDetail(root);root.insertAdjacentHTML('afterbegin',extensionTabs(kind));return;}
   let body='';
   const matches=p=>!q||[p.name,customizeName(p),customizeRawDescription(p),customizeDescription(p),p.interface?.category].join(' ').toLowerCase().includes(q);
   if(isSkill){
     const skills=customizeSkills().filter(s=>!s.pluginId&&!isEvaBuiltin(s)&&matches(s));
-    body=customizeSection('已安装',skills,'skills');
+    body='';
     body+=`<div class="customize-tabs" aria-label="技能来源">${[['user','个人'],['system','系统'],['plugins','插件技能']].map(([v,l])=>`<button data-customize-scope="${v}" class="${customization.scope===v?'selected':''}" aria-pressed="${customization.scope===v}">${l}</button>`).join('')}</div>`;
     const scoped=customization.scope==='plugins'?customizeSkills().filter(s=>s.pluginId&&matches(s)):skills.filter(s=>s.scope===(customization.scope==='user'?'user':'system'));
     body+=`<div class="customize-grid customize-scope-grid">${scoped.slice(0,customization.limit).map(s=>customizeCard(s,'skills')).join('')||'<p class="customize-muted">没有匹配的技能</p>'}</div>`;
@@ -169,7 +169,7 @@ function renderCustomize() {
   }
   const builtins=customizeSkills().filter(s=>isEvaBuiltin(s)&&matches(s));body=customizeSection('Eva 内置 · 无需登录 ChatGPT',builtins,'skills')+body;if(!isSkill&&customization.chatgptSignedIn===false){body=customizeSection('Eva 内置 · 无需登录 ChatGPT',builtins,'skills')+customizeSection('本地插件',customizePlugins().filter(matches),'plugins')+'<p class="customize-muted">本地插件可使用当前配置的模型；登录 ChatGPT 后可浏览账号提供的云端目录。</p>';}
   const sourceErrors=customization.plugins?.marketplaceLoadErrors||[];const errors=[...customization.errors,...(customization.operationError?[customization.operationError]:[])].filter(Boolean);if(sourceErrors.length)body='<details class="customize-source-status"><summary>有 '+sourceErrors.length+' 个来源尚未同步；已安装插件仍可使用</summary><p>'+sourceErrors.map(error=>esc(error.marketplaceName||'插件来源')+'：'+esc(customizeError(error.message||error.error||'暂时无法读取'))).join('<br>')+'</p><button class="btn" data-customize-source-retry>重新同步来源</button></details>'+body;
-  root.innerHTML=`<div class="customize-content"><header class="customize-heading"><div><h1>${isSkill?'技能':'插件'}</h1><p>${isSkill?'通过任务专用技能扩展 Eva':'连接插件，让 Eva 在你的各类工具中协同工作'}</p></div><div class="customize-toolbar"><label class="customize-search">${ic('search')}<input id="customize-search" placeholder="搜索${isSkill?'技能':'插件'}" value="${esc(query)}"/></label><button class="icon-btn" data-customize-refresh title="刷新" aria-label="刷新"${customization.loading?' disabled':''}>${ic('refresh')}</button><button class="icon-btn" data-customize-settings title="管理设置" aria-label="管理设置">${ic('gear')}</button><button class="customize-add" data-customize-add>添加${isSkill?'':ic('chevron')}</button></div></header>${errors.map(e=>`<p class="customize-error" role="alert">${esc(e)}</p>`).join('')}${customization.loading&&!customization[kind]&&!builtins.length?'<p class="customize-muted" role="status">正在读取目录…</p>':body}</div>`;
+  root.innerHTML=`<div class="customize-content">${extensionTabs(kind)}<header class="customize-heading"><div class="customize-toolbar"><label class="customize-search">${ic('search')}<input id="customize-search" aria-label="搜索${isSkill?'技能':'插件'}" placeholder="搜索${isSkill?'技能':'插件'}" value="${esc(query)}"/></label><button class="icon-btn" data-customize-refresh title="刷新" aria-label="刷新"${customization.loading?' disabled':''}>${ic('refresh')}</button><button class="icon-btn" data-customize-settings title="管理设置" aria-label="管理设置">${ic('gear')}</button><button class="customize-add" data-customize-add>添加${isSkill?'':ic('chevron')}</button></div></header>${errors.map(e=>`<p class="customize-error" role="alert">${esc(e)}</p>`).join('')}${customization.loading&&!customization[kind]&&!builtins.length?'<p class="customize-muted" role="status">正在读取目录…</p>':body}</div>`;
   root.scrollTop=top;
   if(customization.plugins?._raeSnapshot){const note=document.createElement('p');note.className='customize-muted';note.setAttribute('role','status');note.textContent='正在显示本地目录快照，在线更新完成后自动同步。';root.querySelector('.customize-content').prepend(note);}
   const search=root.querySelector('#customize-search');search.oninput=()=>{const caret=search.selectionStart;customization.query[kind]=search.value;customization.limit=120;renderCustomize();const next=document.getElementById('customize-search');next.focus();next.setSelectionRange(caret,caret);};
@@ -413,9 +413,9 @@ renderCustomize=function(){
  section.querySelectorAll('[data-android-tool]').forEach(b=>b.onclick=()=>EvaHost.open(b.dataset.androidTool));
 };
 closeCustomize=function(){state.customize=null;EvaPluginAddHost?.detach();closeModelPanel();document.body.classList.remove('customizing');settingPage=null;render()};
-openCustomize=function(kind='plugins'){if(!['plugins','skills'].includes(kind))return;settingPage='desktop-extensions';$('#phone').classList.remove('drawer-open');state.customize=kind;customization.detail=null;if(!document.getElementById('customize-page'))$('#screen').innerHTML='<header class="app-head">'+control('back','返回','desktop-extensions-back')+'<strong>自定义</strong><span data-desktop-status role="status"></span></header><div class="desktop-extensions"><aside id="customize-sidebar" class="customize-sidebar"></aside><main id="customize-page" class="customize-page"></main></div>';renderCustomize();loadCustomization().catch(e=>{customization.loading=false;customization.errors.push(customizeError(e));renderCustomize()})};
+openCustomize=function(kind='plugins'){if(!['plugins','skills'].includes(kind))return;settingPage='desktop-extensions';$('#phone').classList.remove('drawer-open');state.customize=kind;customization.detail=null;if(!document.getElementById('customize-page'))$('#screen').innerHTML='<header class="app-head">'+control('back','返回','desktop-extensions-back')+'<strong>技能与插件</strong><span data-desktop-status role="status"></span></header><div class="desktop-extensions"><aside id="customize-sidebar" class="customize-sidebar"></aside><main id="customize-page" class="customize-page"></main></div>';renderCustomize();loadCustomization().catch(e=>{customization.loading=false;customization.errors.push(customizeError(e));renderCustomize()})};
 const priorSettings=settingsGo;settingsGo=function(page){if(['extensions','plugins','skills'].includes(page)){if(settingPage==='skills'&&!skillManager.canLeave())return;openCustomize(page==='skills'?'skills':'plugins');return;}state.customize=null;globalThis.EvaPluginAddHost?.detach();priorSettings(page)};
-const priorNav=navigate;navigate=function(action){if(action==='desktop-extensions-back'){if(customization.detail){backPluginCatalog();return}state.customize=null;settingsGo('settings');return}priorNav(action)};
+const priorNav=navigate;navigate=function(action){if(action==='desktop-extensions-back'){if(customization.detail){backPluginCatalog();return}state.customize=null;navigate('settings-back');return}priorNav(action)};
 const priorBack=window.evaBack;window.evaBack=()=>{if(document.querySelector('.eva-native-plugin-add [role=dialog],.eva-native-plugin-add [role=menu]')){globalThis.EvaPluginAddHost?.detach();renderCustomize();return true}if(document.querySelector('#eva-panel')){closeModelPanel();return true}if(state.customize){navigate('desktop-extensions-back');return true}return priorBack()};
 window.evaDesktopExtensions={open:openCustomize,load:loadCustomization,state:customization,plugins:customizePlugins};
 })();

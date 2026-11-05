@@ -9,7 +9,27 @@ window.evaPermissions=(()=>{
  function validate(result,c){const m=modes[current(c)];if(result.approvalPolicy!=null&&result.approvalPolicy!==m.approvalPolicy)throw Error('内核返回了不同的批准策略，已停止发送，请检查权限设置');if(result.approvalsReviewer&&result.approvalsReviewer!==m.approvalsReviewer&&!(current(c)==='assisted'&&result.approvalsReviewer==='guardian_subagent'))throw Error('内核返回了不同的批准方式，已停止发送，请检查权限设置');const kind=result.sandbox?.type;if(kind&&kind!==(m.sandbox==='danger-full-access'?'dangerFullAccess':'workspaceWrite'))throw Error('内核返回了不同的访问权限，已停止发送，请检查权限设置');}
  let dismiss,resize;
  function close(){document.querySelector('#menu-root .permission-menu')?.remove();if(dismiss)document.removeEventListener('pointerdown',dismiss,true);if(resize)window.removeEventListener('resize',resize);dismiss=resize=null;document.querySelector('[data-action=kernel-permissions]')?.setAttribute('aria-expanded','false');}
- function renderControl(){if(settingPage||!['home','chat'].includes(route))return;const dock=document.querySelector('.dock'),composer=document.querySelector('.composer');if(!dock||!composer)return;let row=dock.querySelector('.permission-row');if(!row){row=document.createElement('div');row.className='permission-row';composer.after(row);}const key=current(active()),m=modes[key];row.innerHTML=`<button class="permission-chip${key==='full'?' full-access':''}" data-action="kernel-permissions" aria-haspopup="menu" aria-expanded="false" ${kernelBusy||active()?.running?'disabled':''}>${ic(m.icon)}<span>${esc(m.label)}</span>${cloudComposerIcons.down}</button>`;}
+ function renderControl(){
+  if(settingPage||!['home','chat'].includes(route))return;
+  const controls=document.querySelector('.composer .controls');
+  if(!controls)return;
+  let button=document.querySelector('[data-action=kernel-permissions]');
+  if(!button){
+   button=document.createElement('button');button.type='button';button.dataset.action='kernel-permissions';
+   button.setAttribute('aria-haspopup','menu');button.setAttribute('aria-expanded','false');
+  }
+  const attach=controls.querySelector('[data-action=attach-menu],[data-action=tools]');
+  if(attach&&button.previousElementSibling!==attach)attach.after(button);
+  else if(!attach&&button.parentElement!==controls)controls.prepend(button);
+  document.querySelectorAll('.permission-row').forEach(row=>row.remove());
+  const key=current(active()),mode=modes[key];
+  button.className='permission-chip'+(key==='full'?' full-access':'');
+  button.disabled=!!(kernelBusy||active()?.running);
+  button.setAttribute('aria-label','执行权限：'+mode.label);
+  button.title=mode.label;
+  if(button.dataset.permissionIconMode!==key){button.innerHTML=ic(mode.icon);button.dataset.permissionIconMode=key;}
+ }
+
  function open(){if(kernelBusy||active()?.running)return;closeModelPanel();close();const anchor=document.querySelector('[data-action=kernel-permissions]');if(!anchor)return;const root=document.querySelector('#menu-root')||document.body.appendChild(Object.assign(document.createElement('div'),{id:'menu-root'}));const menu=document.createElement('div');menu.className='menu permission-menu';menu.setAttribute('role','menu');menu.setAttribute('aria-label','执行权限');root.append(menu);const selected=current(active());menu.innerHTML=`<div class="permission-menu-head"><span>应如何批准 Codex 操作？</span><button data-permission-help>了解更多</button></div>${Object.keys(modes).map(key=>`<button class="permission-choice${key==='full'?' permission-danger':''}" data-permission-mode="${key}" role="menuitemradio" aria-checked="${key===selected}"><span class="permission-choice-icon">${ic(modes[key].icon)}</span><span class="permission-choice-copy"><strong>${esc(modes[key].label)}</strong><small>${esc(modes[key].description)}</small></span><span class="permission-choice-check">${key===selected?ic('check'):''}</span></button>`).join('')}`;
   menu.querySelectorAll('[data-permission-mode]').forEach(button=>button.onclick=()=>{if(kernelBusy||active()?.running)return;const key=button.dataset.permissionMode,c=active();const next={...data,permissionMode:key,drafts:(data.drafts||[]).map(chat=>chat===c?{...chat,permissionMode:key}:chat),chats:data.chats.map(chat=>chat===c?{...chat,permissionMode:key}:chat)};if(EvaHost.save(JSON.stringify(next))===false){kernelNotice='权限选择保存失败，请重试';refreshKernelControls();return}data=next;close();renderControl();});
   menu.querySelector('[data-permission-help]').onclick=()=>{close();const host=modelPanel('权限说明');host.innerHTML='<p>请求批准：工作区内可编辑，越界或联网操作由你批准。</p><p>帮我批准：使用内核 auto_review 审核权限请求，自动批准或拒绝；不会绕过内核沙箱。需要审核模型可用，失败会显示错误。</p><p>完全访问权限：关闭内核沙箱和交互批准，仍受 Android 系统与服务权限约束。</p>';};

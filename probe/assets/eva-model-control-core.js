@@ -1,7 +1,9 @@
+// Same display-name formatter as desktop composer.js; IDs remain untouched.
+window.evaModelDisplayName=function(value){return String(value||'').replace(/^(GPT-\d+(?:\.\d+)?)-(Sol|Luna|Astra|Terra)$/i,(_all,version,family)=>version.toUpperCase()+' '+family[0].toUpperCase()+family.slice(1).toLowerCase());};
 // Extracted with an Android provider-switch policy hook from user-provided Eva 0.2.0 composer.js. See migration/eva-0.2.0-model-control/source.json.
 window.createDesktopModelControl=function(adapter){
 const {state,els,store,t,esc,clamp,openMenu,closeMenu,renderComposer,modelEntries,startNewThread,toast,openSettings,ic,EFFORT_LABELS}=adapter;
-function codexModelDisplayName(value){return String(value||'').replace(/^(GPT-\d+(?:\.\d+)?)-(Sol|Luna|Astra|Terra)$/i,(_all,version,family)=>version.toUpperCase()+' '+family[0].toUpperCase()+family.slice(1).toLowerCase());}
+const codexModelDisplayName=window.evaModelDisplayName;
 function codexFastTier(model=state.models.find(m=>(m.model||m.id)===state.model)){return state.provider?null:(model?.serviceTiers||[]).find(t=>t.id==='priority'||/^fast$/i.test(t.name||''))||null;}
 function codexSelectedServiceTier(){const tier=codexFastTier();return tier&&store.get('codex.serviceTiers',{})[state.model]===tier.id?tier.id:null;}
 

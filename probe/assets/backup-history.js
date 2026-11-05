@@ -19,15 +19,5 @@
   if(readonly(active())&&['kernel-send','kernel-steer','kernel-stop','save','kernel-models','attach-menu','attach-photos','attach-files'].includes(action)){notice();return;}
   previousNavigate(action);
  };
- const previousSettings=settingsGo;settingsGo=function(page){previousSettings(page);if(page==='settings'){
-  const flow=$('.flow');if(!flow)return;
-  const group=document.createElement('section');group.className='group';
-  const title=document.createElement('h3');title.textContent='技能与扩展';group.append(title);
-  for(const action of ['settings:skills','settings:plugins','settings:mcp','settings:memories','settings:hooks']){
-   const entry=flow.querySelector('[data-action="'+action+'"]');if(!entry)continue;
-   const old=entry.closest('section.group');group.append(entry);if(old&&!old.querySelector('[data-action]'))old.remove();
-  }
-  flow.prepend(group);flow.insertAdjacentHTML('beforeend',settingGroup('数据',row('folder','备份与恢复','会话及项目元数据 · 导入历史只读','data-backup')));
- }};
  notice();
 })();

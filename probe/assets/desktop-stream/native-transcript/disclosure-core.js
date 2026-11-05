@@ -1,0 +1,11 @@
+/* Codex shipped function bodies; see disclosure-provenance.json. */
+(function(root){
+function FCo(e){return e!=null&&(e.content.trim().length>0||e.completed||e.structuredOutput!=null)}
+function ICo(e){return e?.phase===`final_answer`&&e.delivery!==`async`&&e.requestUserInputAsync==null&&FCo(e)}
+function LCo(e){return e!=null&&e.completed&&ICo(e)&&(e.content.trim().length>0||e.structuredOutput!=null)}
+function E(e){return e.result?.type===`error`&&e.result.error===`MCP tool call requires approval, but approval policy is never`}
+function uM({hasFinalAssistantStarted:e,isTurnCancelled:t,hasRenderableAgentItems:n,allowCollapseBeforeFinal:r=!1,forceExpanded:i=!1,preventAutoCollapse:a,persistedCollapsed:o}){return(r||e&&!t)&&n?{shouldAllowCollapse:!0,isCollapsed:!i&&(o??!a)}:{shouldAllowCollapse:!1,isCollapsed:!1}}
+function rM({unit:e,hasFollowingFinalAnswer:t,keepMcpAppEntriesPersistent:n,mcpServerStatuses:r,renderMcpApps:i}){if(e.kind!==`standalone`)return!1;let a=e.item.item;return a.type===`user-input-response`?!a.completed:a.type===`mcp-tool-call`&&nv(a)||a.type===`assistant-message`&&Ai(a)||a.type===`dynamic-tool-call`&&th(a)||n&&i&&a.type===`mcp-tool-call`&&iM({item:a,mcpServerStatuses:r})?!0:a.type===`user-message`&&(a.steeringStatus===`pending`||a.followsInterruptedFinalAnswer===!0||a.wasInHistoryPreview===!0||a.deliveryStatus===`not-sent`||a.hookFeedback===!0||!t)}
+function bind(dynamicRenderer,mcpAppPersistent){const Ai=ICo,nv=E,th=e=>dynamicRenderer(e)?.persistentInCollapsedConversation===true,iM=mcpAppPersistent;return function rM({unit:e,hasFollowingFinalAnswer:t,keepMcpAppEntriesPersistent:n,mcpServerStatuses:r,renderMcpApps:i}){if(e.kind!==`standalone`)return!1;let a=e.item.item;return a.type===`user-input-response`?!a.completed:a.type===`mcp-tool-call`&&nv(a)||a.type===`assistant-message`&&Ai(a)||a.type===`dynamic-tool-call`&&th(a)||n&&i&&a.type===`mcp-tool-call`&&iM({item:a,mcpServerStatuses:r})?!0:a.type===`user-message`&&(a.steeringStatus===`pending`||a.followsInterruptedFinalAnswer===!0||a.wasInHistoryPreview===!0||a.deliveryStatus===`not-sent`||a.hookFeedback===!0||!t)};}
+root.EvaNativeDisclosure=Object.freeze({state:uM,isFinal:ICo,isCompletedFinal:LCo,bindPersistent:bind});
+})(globalThis);

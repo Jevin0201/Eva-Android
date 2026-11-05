@@ -39,15 +39,25 @@ window.desktopModelControl=(()=>{
   dismiss=e=>{if(!menu.contains(e.target)&&!anchor()?.contains(e.target))close();};document.addEventListener('pointerdown',dismiss,true);
   resize=()=>position(menu);window.addEventListener('resize',resize);window.visualViewport?.addEventListener('resize',resize);
  }
+ function paintLabel(){
+  const button=anchor(),c=active(),p=selectedProvider(c);if(!button)return;
+  const id=c?.model||p?.model;
+  const catalog=typeof modelCatalog==='undefined'?[]:modelCatalog;
+  const model=(state?.models||catalog).find(m=>(m.model||m.id)===id);
+  const name=p?.models?.find(m=>m.id===id)?.name||p?.displayName||window.evaModelDisplayName(model?.displayName||id)||'连接模型';
+  const effort=c?.effort||p?.effort;
+  button.innerHTML='<span class="model-name">'+esc(name)+'</span>'+(effort?'<span class="model-effort">'+esc(labels[effort]||effort)+'</span>':'')+cloudComposerIcons.down;
+  button.title=name+(effort?' · '+(labels[effort]||effort):'');
+ }
  function commit(){
-  if(!state||kernelBusy||active()?.running)return;
+  if(!state||kernelBusy||active()?.running||active()?.scheduledReadOnly)return;
   const providerId=state.provider||'openai',selection={providerId,model:state.model,effort:state.effort,serviceTier:state.provider?'':(data.modelTiers||{})[state.model]||''};
   const c=active();if(c){if(c.providerId!==selection.providerId||c.model!==selection.model)for(const stamp of loadedKernelThreads)if(stamp.split('|')[0]===c.kernelThread?.id)loadedKernelThreads.delete(stamp);Object.assign(c,selection);scheduleKernelSave();}
   else if(providerId==='openai'){EvaHost.accountChoice(selection.model,selection.effort||'',selection.serviceTier);}
   else if(modelConfig.active!==providerId){EvaHost.providerChoice(providerId);}
   data.providerSelections||={};data.providerSelections[providerId]={model:selection.model,effort:selection.effort,serviceTier:selection.serviceTier};
   scheduleKernelSave();readProviders();
-  const button=anchor();if(button){const p=state.providers.find(p=>p.id===state.provider),m=state.models.find(m=>(m.model||m.id)===state.model);button.innerHTML=esc(p?.displayName||m?.displayName||state.model)+cloudComposerIcons.down;}
+  paintLabel();
  }
  function ic(kind,cls=''){return kind==='check'?`<svg class="${cls}" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m3 8 3 3 7-7" stroke="currentColor" stroke-width="1.5"/></svg>`:cloudComposerIcons[kind]||'';}
  function open(models){
@@ -61,5 +71,5 @@ window.desktopModelControl=(()=>{
  }
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&root().children.length){close();anchor()?.focus();}});
  function refresh(models){if(!state||!control||!document.querySelector('#menu-root .menu'))return;const power=!!document.querySelector('#menu-root .model-control'),c=active(),p=selectedProvider(c);state.models=accountModels(models);state.providers=providers();if(p){state.provider=p.id==='openai'?null:p.id;state.model=c?.model||p.model;state.effort=c?.effort||p.effort||'high';}power?control.openModelMenu():control.openModelList();}
- return {open,close,refresh,isOpen:()=>!!document.querySelector('#menu-root .menu')};
+ return {open,close,refresh,paintLabel,isOpen:()=>!!document.querySelector('#menu-root .menu')};
 })();

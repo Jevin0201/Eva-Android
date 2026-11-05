@@ -1,7 +1,14 @@
 const fs=require('fs'),assert=require('assert/strict'),{chromium,launchOptions}=require('./browser-test-env.cjs');
+for(const asset of ['/chat-scroll.js','/chat-scroll.css','/desktop-thread-activity.js']) assert.ok(fs.readFileSync('probe/src/ShellActivity.java','utf8').includes('path.equals("'+asset+'")'),'native resource '+asset);
 (async()=>{const b=await chromium.launch(launchOptions());try{const p=await b.newPage({viewport:{width:390,height:844}});await p.addInitScript(()=>{window.EvaHost={load:()=>JSON.stringify({chats:[{id:'long',title:'长历史',messages:[],draft:'待发送草稿',providerId:'test',model:'test',kernelThread:{id:'t',turns:Array.from({length:200},(_,i)=>({id:'turn'+i,status:'completed',items:[{id:'a'+i,type:'agentMessage',text:'第'+i+'回合 '+('历史正文'.repeat(40))}]}))}}],drafts:[],projects:[],active:'long'}),save:()=>true,settings:()=>'{}',providers:()=>JSON.stringify({providers:[{id:'test',name:'test',model:'test'}],active:'test'}),tasks:()=>'[]',kernelDrain:()=>'[]',kernelCall:()=>{},open:()=>{}}});await p.route('https://eva.invalid/**',r=>{const name=new URL(r.request().url()).pathname.slice(1);return r.fulfill({body:fs.readFileSync('probe/assets/'+name),contentType:name.endsWith('.js')?'text/javascript':name.endsWith('.css')?'text/css':'text/html'})});await p.goto('https://eva.invalid/index.html');await p.evaluate(()=>{route='chat';render()});await p.waitForTimeout(100);
 const gap=()=>p.evaluate(()=>{const f=document.querySelector('.flow');return f.scrollHeight-f.clientHeight-f.scrollTop});
 assert.ok(await gap()<=24,'entry opens latest');
+await p.evaluate(()=>kernelEvent({method:'turn/started',params:{threadId:active().kernelThread.id,turn:{id:'status-test',status:'inProgress',items:[]}}}));
+assert.equal(await p.locator('.tree-chat.is-active').getAttribute('data-runtime-status'),'loading');
+await p.evaluate(()=>kernelEvent({method:'turn/completed',params:{threadId:active().kernelThread.id,turn:{id:'status-test',status:'completed',items:[]}}}));
+assert.equal(await p.locator('.tree-chat.is-active').getAttribute('data-runtime-status'),'idle');
+await p.evaluate(()=>{active().kernelThread.turns=active().kernelThread.turns.filter(t=>t.id!=='status-test');updateKernelFlow(active());});
+
 await p.evaluate(()=>{const f=document.querySelector('.flow');f.scrollTop=300;f.dispatchEvent(new Event('scroll'))});
 await p.waitForTimeout(50);assert.equal(await p.locator('.chat-scroll-bottom').isVisible(),true);
 const top=await p.evaluate(()=>document.querySelector('.flow').scrollTop);

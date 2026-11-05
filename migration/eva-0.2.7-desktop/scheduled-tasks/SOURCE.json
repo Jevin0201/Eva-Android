@@ -1,0 +1,54 @@
+{
+  "atomic-json.js": {
+    "source": "src/main/atomic-json.js",
+    "sha256": "0ef577e47baee5f8603e2af7d02b645d506ab685426e6ae5d395f07b19d9c570"
+  },
+  "native-heartbeat.js": {
+    "source": "src/main/native-heartbeat.js",
+    "sha256": "48902e42cd9a1b775e01c46e1a662cc72e83af637f29259ec4242c0bb0b15774"
+  },
+  "native-heartbeat-toml-original.cjs": {
+    "source": "src/main/native-heartbeat-toml-original.cjs",
+    "sha256": "d8a8e08d086c728ee2ef30f00b315402d6bf4b4cc89b9097e63b6104f033123d"
+  },
+  "native-heartbeat-schedule-original.cjs": {
+    "source": "src/main/native-heartbeat-schedule-original.cjs",
+    "sha256": "0434c7ccd04af92010ab6dcfc2907cc960bb4391a4c3039403da478a4052222a"
+  },
+  "native-heartbeat-store-original.cjs": {
+    "source": "src/main/native-heartbeat-store-original.cjs",
+    "sha256": "68ad912beb1ea3cf4149bd7e1b32a8a3d61f001466b061097825b76c3d58ffc3"
+  },
+  "native-heartbeat-original.cjs": {
+    "source": "src/main/native-heartbeat-original.cjs",
+    "sha256": "274f6c26f7999ea81afb01f37ad6f51b4b4118b01108e45c8b84044322b5bba6"
+  },
+  "native-heartbeat-instructions-original.cjs": {
+    "source": "src/main/native-heartbeat-instructions-original.cjs",
+    "sha256": "3121561f2dbc53d74cf7340cac9d269e7fd6b48bde250a312e2fdfc7f164d22b"
+  },
+  "native-heartbeat-tslib.cjs": {
+    "source": "src/main/native-heartbeat-tslib.cjs",
+    "sha256": "5b1e566051b18c117f2c8554197163ce9307a69d841dccd39e315e1c173cb21c"
+  },
+  "native-heartbeat-tools.js": {
+    "source": "src/main/native-heartbeat-tools.js",
+    "sha256": "2581e065b0091c42efbbef8bf4dcc596d8d6e7f8663944f223fb953acb7d7eab"
+  },
+  "native-cron-runner-original.cjs": {
+    "source": "src/main/native-cron-runner-original.cjs",
+    "sha256": "6924c7c56b4239da7904a92cc784e1885971e10ea9e31cb70bb226f2128d0e17"
+  },
+  "native-cron-turn-original.cjs": {
+    "source": "src/main/native-cron-turn-original.cjs",
+    "sha256": "b6a9f4e03c65d4250a658b58bc5c0757d858d477aaf95270e55b97370ee94f35"
+  },
+  "native-scheduled-support-original.cjs": {
+    "source": "src/main/native-scheduled-support-original.cjs",
+    "sha256": "6a80147791d8e33165a913d69e618e303fcfe26d0196b6dccb5c4d1e780b3d96"
+  },
+  "native-scheduled-cron.js": {
+    "source": "src/main/native-scheduled-cron.js",
+    "sha256": "a781fa7018909189eb37c6fb401c30c1d2b86d85336a269f8bac5d75ba6f2f13"
+  }
+}

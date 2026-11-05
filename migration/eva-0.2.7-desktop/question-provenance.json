@@ -1,0 +1,216 @@
+{
+  "archive": "/Applications/ChatGPT.app/Contents/Resources/app.asar",
+  "archiveSHA256": "130145706a912db74e4d260ad7538f10f1e05e88af955f9afba42cdf01e64606",
+  "member": "webview/assets/app-primary-7d7313419f84.js",
+  "memberSHA256": "745529956e303674c268a6871e6f5aad49eca7ef5af899952bf0379d829821b6",
+  "functions": [
+    {
+      "name": "Fai",
+      "utf16Start": 4618728,
+      "utf16End": 4619092,
+      "sha256": "17b2d3060b8fc00f52368e8f7087e203b0c7377c511c71f3c302dfbd402ab8f8"
+    },
+    {
+      "name": "Iai",
+      "utf16Start": 4619092,
+      "utf16End": 4620560,
+      "sha256": "e2f3267358daaf85e89b4f3924d697f1006e74248cbe6b6305fb9b97c184dbd8"
+    },
+    {
+      "name": "Lai",
+      "utf16Start": 4620560,
+      "utf16End": 4620613,
+      "sha256": "f902e1baf3aca0bb1593935c133d39dc40fdb653751710293d5f1faac10cf481"
+    },
+    {
+      "name": "Uai",
+      "utf16Start": 4620708,
+      "utf16End": 4621042,
+      "sha256": "ef6161a7a5f7bfd39fef3acdac03e5c1aaa5c4cef7037a4a87a673700d20ac52"
+    },
+    {
+      "name": "Wai",
+      "utf16Start": 4621042,
+      "utf16End": 4624169,
+      "sha256": "e2186f319ebd4b3bdd1aec0651beacc1b1122cbaab462f9ef64d010a940ae8de"
+    },
+    {
+      "name": "Jai",
+      "utf16Start": 4624308,
+      "utf16End": 4625762,
+      "sha256": "911917d73c77bf2e174a368f60ed8af13bd37c2830b8269927c66b88452494d7"
+    },
+    {
+      "name": "Qai",
+      "utf16Start": 4625847,
+      "utf16End": 4626965,
+      "sha256": "ecc6c22b41f5e9e231784c436c496fc54d54cc70e08c97a395e9cabd5e2de438"
+    },
+    {
+      "name": "noi",
+      "utf16Start": 4627055,
+      "utf16End": 4628298,
+      "sha256": "f5606fb30a5594dc776eea9c6dd6463be1fbd888f797d92d5d7755a0b85b6771"
+    },
+    {
+      "name": "roi",
+      "utf16Start": 4628298,
+      "utf16End": 4628351,
+      "sha256": "b1771ed68b4236681a5524df1e3095bf49790a6b4aaa572326ab11721e248ea9"
+    },
+    {
+      "name": "soi",
+      "utf16Start": 4628445,
+      "utf16End": 4628525,
+      "sha256": "620827aa57f94c67ddb1bfe56f5bf9555a47c223c7f68323e3c956b5152eb1e3"
+    },
+    {
+      "name": "coi",
+      "utf16Start": 4628525,
+      "utf16End": 4628561,
+      "sha256": "814b534d6118420ad71f06591c520da62c84b36252109411335b3a095cdc5f3d"
+    },
+    {
+      "name": "loi",
+      "utf16Start": 4628561,
+      "utf16End": 4628617,
+      "sha256": "c4f4874370c25125c2d695cf642d95f936d21d63bfcb3b752065aa58860353b1"
+    },
+    {
+      "name": "uoi",
+      "utf16Start": 4628617,
+      "utf16End": 4628789,
+      "sha256": "6e3a2883a17e75b1b1b7cd9a0b3515b80f82c3ff0af97f02fd4b317e382c6c24"
+    },
+    {
+      "name": "doi",
+      "utf16Start": 4628789,
+      "utf16End": 4647120,
+      "sha256": "44b6a2ee66ae44b721ec66886a11fef4eae80a2087091cde8de3c303cb83e073"
+    },
+    {
+      "name": "hsi",
+      "utf16Start": 4675749,
+      "utf16End": 4680154,
+      "sha256": "21fa6d9204907f41fa540f99164dd42f1aac2f5156ad4fb7f23d078093e9d9a3"
+    },
+    {
+      "name": "gsi",
+      "utf16Start": 4680154,
+      "utf16End": 4680351,
+      "sha256": "1149027869edefc522b9ff8323ba6f0954b45e5186333fe077717721bce419e4"
+    },
+    {
+      "name": "_si",
+      "utf16Start": 4680351,
+      "utf16End": 4680398,
+      "sha256": "52921019614ecfba87f8ea5b8de513ac1aba3b4db20d03dcb1ee45a4c86aca86"
+    },
+    {
+      "name": "vsi",
+      "utf16Start": 4680398,
+      "utf16End": 4680451,
+      "sha256": "54344fbd6a1ed3f17a8e3d3aa57ce0e6bfed4158d9a65114284b9d1df66f76c3"
+    },
+    {
+      "name": "ysi",
+      "utf16Start": 4680451,
+      "utf16End": 4680621,
+      "sha256": "e0aeeb073a21d4f0bbe23e2ae5cfd0596a7ff3c4e23d807456d0bd9fe3bf1222"
+    },
+    {
+      "name": "bsi",
+      "utf16Start": 4680621,
+      "utf16End": 4680648,
+      "sha256": "0307ae839ff10a0f503f195cfd29384f6636ff549345ceb7345f083ed184fc79"
+    },
+    {
+      "name": "Asi",
+      "utf16Start": 4684496,
+      "utf16End": 4685032,
+      "sha256": "5332c8ba33fee0888319fe88ee413f6c3915c4e69e2452bc19403dab06dfea4d"
+    }
+  ],
+  "additionalSources": [
+    {
+      "member": "webview/assets/app-initial-feb30b196d11.js",
+      "memberSHA256": "8f4e5fe65617413cabf689afbfc04bc6c24f73a5c0b57d7d0de443942343bd55",
+      "functions": [
+        {
+          "name": "p1t",
+          "utf16Start": 2621813,
+          "utf16End": 2621887,
+          "sha256": "c294f88694f88d47182f2af96627a520073466b7a88ce32faa5873e0819a4de4"
+        },
+        {
+          "name": "m1t",
+          "utf16Start": 2621887,
+          "utf16End": 2621948,
+          "sha256": "0e31e20571a043e280ebc5152410f7e0f1ee47602cd62937c816f8907cc214ff"
+        },
+        {
+          "name": "h1t",
+          "utf16Start": 2621948,
+          "utf16End": 2622195,
+          "sha256": "8f205f25816dd00207e63631e657179a7d28f64d1290073e95cb9560dc563cf0"
+        },
+        {
+          "name": "x1t",
+          "utf16Start": 2622445,
+          "utf16End": 2622567,
+          "sha256": "9782788391dd4839d9ffb95c8d3bfd5a8ef69dbff79a2bb64d9d550b6ca847dc"
+        },
+        {
+          "name": "nw",
+          "utf16Start": 2622613,
+          "utf16End": 2622692,
+          "sha256": "8240eca741dd80e1fee741200e7471a8cd7c07838f4bc71a1dad4758d86f98d7"
+        },
+        {
+          "name": "C1t",
+          "utf16Start": 2622692,
+          "utf16End": 2622746,
+          "sha256": "76ab77af4d014a0037374f86318537acb85ecc73c1163b0865d8b15d4110997b"
+        }
+      ]
+    },
+    {
+      "member": "webview/assets/pending-request-item-panel-d6399df5889a.js",
+      "memberSHA256": "cbe53a4c4668bce469ac5408a81f6456027d24db701ae712c2621819d255245a",
+      "functions": [
+        {
+          "name": "Qr",
+          "utf16Start": 84423,
+          "utf16End": 84883,
+          "sha256": "a28d3a7daab0150ba2e9bced0197e4f7c1e38a0e62604c58f1c990b5bf477b33"
+        }
+      ]
+    }
+  ],
+  "cssMembers": [
+    "webview/assets/app-shared-bd3e4e649b69.css",
+    "webview/assets/app-initial-56db6e0bcb8b.css",
+    "webview/assets/app-primary-5fa64a4ee99d.css"
+  ],
+  "scope": "Verbatim shared questionnaire, option list, input wrappers, navigation, answer selection, async question actions and helpers. EVA adapts React/intl/primitives/editor, uses the original motion runtime/variants and system reduced-motion preference, masks secret editor inputs, and supplies thread transport; no official bootstrap.",
+  "reaAnalysis": "analysis/rea-user-input-20261027",
+  "reaEvidence": [
+    "ev_ab25f9c37e21a7ddc417dd15295fcdba1e1b22ede6184c4158143b5ecd31bea7",
+    "ev_9056faf3657fdd5db25c70d0e7a1ba934570121027ad8bbfb218f31ac0f6ea83"
+  ],
+  "cssSources": [
+    {
+      "member": "webview/assets/app-shared-bd3e4e649b69.css",
+      "sha256": "af8636f03c49c5c7676116af7e972b499a5928ea354822e5977d6caa90ed3acb"
+    },
+    {
+      "member": "webview/assets/app-initial-56db6e0bcb8b.css",
+      "sha256": "282a45dd2c1bcb26c555638bfd0a7935a6c0579f2c77479f30d76a167261a0c9"
+    },
+    {
+      "member": "webview/assets/app-primary-5fa64a4ee99d.css",
+      "sha256": "887650ab7dd34cb5b6f1889e60b458acb00d1b6f2246da9051c0d43df97dd719"
+    }
+  ],
+  "originalCSSSHA256": "56efab4ff399c512bfe5a0505c1578bcece4a28504836952486c2a05851a8405"
+}

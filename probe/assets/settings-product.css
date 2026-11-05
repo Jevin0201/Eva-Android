@@ -1,0 +1,20 @@
+/* Shared settings surface, scoped away from conversation and composer layouts. */
+#screen:has(>header [data-action="settings-back"])>.flow,
+#screen:has(>header [data-action="memory-back"])>.flow{padding:10px 20px 22px;max-width:780px;width:100%;margin:0 auto}
+#screen:has(>header [data-action="settings-back"])>.flow>.group,
+#screen:has(>header [data-action="memory-back"])>.flow>.group{display:block;border:0;border-radius:0;padding:0;margin:0 0 12px;background:transparent}
+.settings-flow>.group>h3,#screen:has(>header [data-action="settings-back"]) .group>h3,#screen:has(>header [data-action="memory-back"]) .group>h3{font-size:11px;font-weight:550;letter-spacing:.4px;margin:0 0 2px;color:var(--muted)}
+#screen:has(>header [data-action="settings-back"]) .row,#screen:has(>header [data-action="memory-back"]) .row{min-height:44px;padding:8px 0;gap:12px}
+#screen:has(>header [data-action="settings-back"]) .row .copy b{font-size:14px;font-weight:500}
+.settings-flow .row .copy small:empty{display:none}
+.settings-flow .row>svg:first-child{width:19px;height:19px;color:var(--muted)}
+.settings-flow .row .copy small{font-size:12px;margin-top:2px}
+#screen:has(>.settings-flow)>.app-head strong{flex:1}
+.setting-select{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:52px;border-bottom:1px solid var(--line);font-size:14px}
+.setting-select select{font:inherit;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:11px;min-height:44px;padding:6px 10px;max-width:55%}
+.setting-help{font-size:12px;color:var(--muted);line-height:1.8;margin:12px 0 20px}
+.setting-help summary{cursor:pointer;min-height:44px;display:flex;align-items:center;gap:8px}
+.setting-help summary:before{content:'›';font-size:18px}.setting-help[open] summary:before{transform:rotate(90deg)}
+.settings-flow .field{margin:12px 0}.settings-flow .primary{width:auto}
+.settings-flow>.preview-label{font-size:12px;line-height:1.8}.settings-flow #setting-message:empty{display:none}
+@media(max-width:350px){#screen:has(>header [data-action="settings-back"])>.flow,#screen:has(>header [data-action="memory-back"])>.flow{padding:14px 16px 24px}}

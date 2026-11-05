@@ -1,0 +1,11 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
+const {createNativeHeartbeat}=require('../probe/assets/scheduled-task-core/native-heartbeat');
+const fixture=fs.mkdtempSync(path.resolve('tmp/scheduled-due-'));
+let now=Date.parse('2026-11-05T01:00:00Z');
+class Clock extends Date{constructor(...args){super(...(args.length?args:[now]));}static now(){return now;}}
+let tick,calls=[];
+const timers={setInterval(fn){tick=fn;return {unref(){}};},clearInterval(){},setTimeout,clearTimeout};
+const flush=()=>new Promise(setImmediate);
+const manager=createNativeHeartbeat({runtimeHome:path.join(fixture,'home'),officialHome:path.join(fixture,'official'),Date:Clock,timers,isReady:()=>true,getThreadState:async()=>({isEligible:false}),request:async(method,params)=>{calls.push({method,params});if(method==='model/list')return {data:[{id:'test',model:'test',isDefault:true,supportedReasoningEfforts:[{reasoningEffort:'medium'}],defaultReasoningEffort:'medium'}],nextCursor:null};if(method==='config/read')return {config:{model:'test'}};if(method==='thread/start')return {thread:{id:'due-thread'}};if(method==='turn/start')return {turn:{id:'due-turn',status:'inProgress'}};return {};}});
+(async()=>{try{const task=await manager.create({name:'due fixture',prompt:'fixture',model:'test',threadMode:'new',status:'ACTIVE',rrule:'FREQ=MINUTELY;INTERVAL=10'});await manager.start();const row=manager.list().find(r=>r.id===task.id);assert.ok(row.nextRunAt);now=row.nextRunAt+60000;await tick();for(let i=0;i<15;i++)await flush();assert.equal(calls.filter(c=>c.method==='turn/start').length,1,'due clock reaches original kernel turn path');assert.equal(calls.find(c=>c.method==='turn/start').params.sandboxPolicy.type,'readOnly');await tick();for(let i=0;i<5;i++)await flush();assert.equal(calls.filter(c=>c.method==='turn/start').length,1,'same due boundary not dispatched twice');assert.ok(manager.history(task.id).some(r=>r.status==='IN_PROGRESS'));console.log('PASS original RRULE due-time dispatch, read-only permissions, durable run history and duplicate tick prevention');}finally{manager.dispose();fs.rmSync(fixture,{recursive:true,force:true});}})().catch(e=>{console.error(e);process.exitCode=1;});

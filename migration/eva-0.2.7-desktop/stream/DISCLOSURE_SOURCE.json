@@ -1,0 +1,16 @@
+{
+  "source": "src/renderer/activity-disclosure.js",
+  "sha256": "0eb9e4ca1c742ed9f5f7e97060daaee85a9d2cf674afb908aeb03286b415cfd2",
+  "adapter": "probe/assets/desktop-stream-disclosure.js",
+  "changes": [
+    "IIFE becomes create({state,els,renderTranscript}) factory",
+    "stateStore returns only injected state.expanded",
+    "API returned to caller instead of assigned to globalThis.activityDisclosure"
+  ],
+  "preserved": [
+    "180ms animation",
+    "1000ms active summary throttling",
+    "350ms resize anchor lifetime",
+    "transition cleanup on disconnect"
+  ]
+}

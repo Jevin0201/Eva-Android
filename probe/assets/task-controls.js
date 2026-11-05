@@ -3,7 +3,7 @@
 (()=>{
  const restartCandidates=new Set([...data.chats,...data.drafts].filter(c=>c.running||c.pending||c.recoveryState)),sessionOwned=new WeakSet();
  const stopping=new Set(),interrupting=new Set(),steering=new Set(),stopSent=new Set();
- const turnOf=c=>c?.kernelThread?.turns?.findLast(t=>t.status==='inProgress');
+ const turnOf=c=>latestKernelTurn(c?.kernelThread);
  async function reconcile(c){
   if(!c?.kernelThread?.id)return false;const oldTurn=c.kernelThread.turns?.at(-1)?.id;
   const r=await kernelCall('thread/read',{threadId:c.kernelThread.id,includeTurns:true});
@@ -56,12 +56,16 @@
  async function steer(){
   const c=active(),turn=turnOf(c),input=$('#prompt'),text=input?.value.trim()||'',attachments=[...(c?.attachments||[])],references=window.evaReferences?.selected(c)||[];
   if(!turn||(!text&&!attachments.length)||steering.has(c.id)||stopping.has(c.id))return;
+  const clientId=crypto.randomUUID();
   steering.add(c.id);input.value='';c.draft='';refreshKernelControls();
   try{
-   const referenceInput=await (window.evaReferences?.inputs(references,c)||Promise.resolve([]));const content=[{type:'text',text:text+(attachments.length?'\n\n附件：\n'+attachments.map(a=>JSON.stringify({name:a.name,path:a.path})).join('\n'):''),text_elements:[]},...attachments.filter(a=>/^image\/(png|jpeg|webp|gif)$/.test(a.mime||'')).map(a=>({type:'localImage',path:a.path})),...referenceInput];
-   await kernelCall('turn/steer',{threadId:c.kernelThread.id,expectedTurnId:turn.id,clientUserMessageId:crypto.randomUUID(),input:content});
+   const referenceInput=await (window.evaReferences?.inputs(references,c)||Promise.resolve([]));const content=[{type:'text',text:localAttachmentText(text,attachments),text_elements:[]},...referenceInput];
+   window.evaDesktopSteering?.begin({threadId:c.kernelThread.id,id:clientId,targetTurnId:turn.id,input:content,nativeTurns:c.kernelThread.turns,attachments});
+   if(active()===c)updateKernelFlow(c);
+   const receipt=await kernelCall('turn/steer',{threadId:c.kernelThread.id,expectedTurnId:turn.id,clientUserMessageId:clientId,input:content});
+   window.evaDesktopSteering?.accepted(c.kernelThread.id,clientId,{serverUserMessageId:receipt?.userMessageId});
    c.attachments=(c.attachments||[]).filter(a=>!attachments.some(sent=>sent.id===a.id));window.evaReferences?.accepted(c,references);kernelNotice='引导信息已接收';
-  }catch(e){c.draft=[text,c.draft].filter(Boolean).join('\n');if(active()===c&&$('#prompt'))$('#prompt').value=c.draft;kernelNotice='引导未确认：'+e.message+'；内容已保留，请先核对执行过程，勿重复发送。';}
+  }catch(e){window.evaDesktopSteering?.unknown(c.kernelThread.id,clientId,e);c.draft=[text,c.draft].filter(Boolean).join('\n');if(active()===c&&$('#prompt'))$('#prompt').value=c.draft;kernelNotice='引导未确认：'+e.message+'；内容已保留，请先核对执行过程，勿重复发送。';}
   finally{steering.delete(c.id);scheduleKernelSave();if(active()===c){updateKernelFlow(c);refreshKernelControls();}}
  }
  const oldEvent=kernelEvent;kernelEvent=function(e){oldEvent(e);const p=e.params||{},c=[...data.chats,...data.drafts].find(c=>c.kernelThread?.id===p.threadId);if(!c)return;if(e.method==='turn/started')sessionOwned.add(c);if(e.method==='turn/started'&&stopping.has(c.id))interrupt(c);if(e.method==='turn/completed'){if(stopping.has(c.id))kernelNotice=p.turn?.status==='interrupted'?'任务已停止':'任务已结束';stopping.delete(c.id);stopSent.delete(c.id);if(active()===c)refreshKernelControls();}};

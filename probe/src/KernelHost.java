@@ -7,6 +7,53 @@ public final class KernelHost {
  static synchronized KernelHost api(Context c){if(apiInstance==null)apiInstance=new KernelHost(c.getApplicationContext(),true);return apiInstance;}
  static KernelHost forThread(Context c,String thread){return c.getSharedPreferences("eva-kernel-routing",0).getBoolean(thread,false)?api(c):get(c);}
  static synchronized KernelHost get(Context c){if(instance==null)instance=new KernelHost(c.getApplicationContext());return instance;}
+
+ /** Dedicated desktop Cron transport. Ordinary UI permission presets never rewrite this policy. */
+ static JSONObject scheduledRequest(Context context,String method,JSONObject value,JSONObject binding)throws Exception{
+  Set<String> reads=new HashSet<>(Arrays.asList("model/list","account/read","config/read","configRequirements/read","thread/read","thread/turns/list"));
+  Set<String> writes=new HashSet<>(Arrays.asList("thread/start","thread/resume","turn/start","thread/archive","turn/interrupt"));
+  if(!reads.contains(method)&&!writes.contains(method))throw new IOException("定时任务不支持此内核操作");
+  if(writes.contains(method)&&(binding==null||binding.optString("automationId").isEmpty()||binding.optString("provider").isEmpty()||binding.optString("model").isEmpty()))throw new IOException("定时任务缺少固定模型绑定");
+  if(binding!=null&&(!"on-request".equals(binding.optString("approvalPolicy","on-request"))||!"user".equals(binding.optString("approvalsReviewer","user"))||binding.optJSONObject("sandboxPolicy")!=null&&!"readOnly".equals(binding.getJSONObject("sandboxPolicy").optString("type"))))throw new IOException("定时任务权限绑定无效");
+  JSONObject params=new JSONObject(value.toString());
+  String provider=binding==null?"openai":binding.optString("provider","openai");
+  KernelHost kernel="openai".equals(provider)?get(context):api(context);
+  if(params.has("threadId")){
+   String saved=context.getSharedPreferences("eva-scheduled-routing",0).getString(params.getString("threadId"),null);
+   if(saved==null)throw new IOException("这个会话不属于定时任务或路由尚未恢复");
+   if(saved!=null){JSONObject owner=new JSONObject(saved);if(binding!=null&&(!owner.optString("automationId").equals(binding.optString("automationId"))||writes.contains(method)&&(!owner.optString("provider").equals(provider)||!owner.optString("model").equals(binding.optString("model")))))throw new IOException("定时任务模型或会话绑定不一致");kernel=forThread(context,params.getString("threadId"));}
+  }
+  synchronized(kernel.startup){kernel.ensureStarted();}
+  synchronized(providerDispatch){
+   if((writes.contains(method)||method.equals("model/list"))&&!new ModelStore(context).read().getJSONArray("providers").toString().equals(kernel.configStamp))throw new IOException("提供商配置已变化，请停止任务并重新打开 Eva 后使用定时任务");
+   if(!"openai".equals(provider))new ModelStore(context).provider(provider);
+   if(method.equals("model/list")&&binding!=null)kernel.selectKernelProvider(provider);
+   if(method.equals("config/read"))params.put("cwd","/root/eva-workspace");
+   if(method.equals("thread/start")||method.equals("thread/resume")){
+    kernel.selectKernelProvider(provider);
+    params.put("model",binding.getString("model")).put("modelProvider",provider).put("cwd","/root/eva-workspace");
+    params.put("approvalPolicy","on-request").put("approvalsReviewer","user").put("sandbox","read-only");
+    params.put("dynamicTools",new JSONArray()).put("config",new JSONObject().put("model_providers",kernel.providerDefinitions()));
+    params.remove("sandboxPolicy");params.remove("androidProject");
+   }
+   if(method.equals("turn/start")){
+    kernel.selectKernelProvider(provider);
+    JSONObject meta=kernel.rpc("thread/read",new JSONObject().put("threadId",params.getString("threadId")).put("includeTurns",false)).optJSONObject("thread");
+    if(meta==null||meta.optJSONObject("status")!=null&&"active".equals(meta.getJSONObject("status").optString("type")))throw new IOException("定时任务会话仍在运行或状态无法确认");
+    params.put("model",binding.getString("model")).put("approvalPolicy","on-request").put("approvalsReviewer","user").put("sandboxPolicy",new JSONObject().put("type","readOnly"));
+    params.remove("sandbox");params.remove("config");params.remove("dynamicTools");
+   }
+   JSONObject result=kernel.rpc(method,params);
+   if(method.equals("thread/start")||method.equals("thread/resume")){
+    JSONObject thread=result.getJSONObject("thread");String id=thread.getString("id");if(thread.has("cwd")&&!"/root/eva-workspace".equals(thread.getString("cwd")))throw new IOException("定时任务目录未获内核确认");
+    if(!provider.equals(result.optString("modelProvider",provider))||!binding.getString("model").equals(result.optString("model",binding.getString("model"))))throw new IOException("内核未接受定时任务模型绑定");
+    kernel.threadProviders.put(id,provider);kernel.threadCwds.put(id,"/root/eva-workspace");
+    if(!context.getSharedPreferences("eva-scheduled-routing",0).edit().putString(id,binding.toString()).commit())throw new IOException("定时任务会话绑定保存失败，未发送任务");
+    context.getSharedPreferences("eva-kernel-routing",0).edit().putBoolean(id,kernel.apiOnly).commit();
+   }
+   return result;
+  }
+ }
  final Context context;final ExecutorService work=Executors.newCachedThreadPool();final ConcurrentHashMap<Integer,CompletableFuture<JSONObject>> pending=new ConcurrentHashMap<>();final AtomicInteger ids=new AtomicInteger(1);final ArrayDeque<JSONObject> events=new ArrayDeque<>();final ArrayList<String> secrets=new ArrayList<>();volatile Process process;BufferedWriter input;String configStamp="";boolean ready;KernelNetwork network;
  final boolean apiOnly;
  static final Set<String> cancelledTurns=ConcurrentHashMap.newKeySet();
@@ -21,7 +68,7 @@ public final class KernelHost {
  final Map<String,JSONObject> questions=new LinkedHashMap<>();
  String pendingQuestions(){synchronized(eventLock){return new JSONArray(questions.values()).toString();}}
  void trackQuestions(JSONObject row){synchronized(eventLock){String method=row.optString("method");JSONObject p=row.optJSONObject("params");if(method.equals("item/tool/requestUserInput")&&row.has("id"))questions.put(String.valueOf(row.opt("id")),row);if(method.equals("turn/completed")&&p!=null){Iterator<JSONObject> it=questions.values().iterator();while(it.hasNext()){JSONObject q=it.next().optJSONObject("params");if(q!=null&&q.optString("threadId").equals(p.optString("threadId")))it.remove();}}if(method.equals("android/kernelExited")){JSONArray ids=p==null?null:p.optJSONArray("threadIds");if(ids==null)questions.clear();else{Set<String> ended=new HashSet<>();for(int n=0;n<ids.length();n++)ended.add(ids.optString(n));Iterator<JSONObject> it=questions.values().iterator();while(it.hasNext()){JSONObject q=it.next().optJSONObject("params");if(q!=null&&ended.contains(q.optString("threadId")))it.remove();}}}if(method.equals("serverRequest/resolved")&&p!=null)questions.remove(String.valueOf(p.opt("requestId")));}}
- void emit(JSONObject value){if(apiOnly){try{if(value.has("id")&&value.has("method"))value.put("id","api:"+new JSONArray().put(value.get("id")).toString());if("serverRequest/resolved".equals(value.optString("method"))&&value.optJSONObject("params")!=null&&value.getJSONObject("params").has("requestId")){JSONObject p=value.getJSONObject("params");p.put("requestId","api:"+new JSONArray().put(p.get("requestId")).toString());}}catch(JSONException ignored){}get(context).emit(value);return;}trackQuestions(value);VoiceAgent.event(context,value);synchronized(eventLock){if(events.size()>=4000){events.clear();try{events.add(new JSONObject().put("method","android/resyncRequired"));}catch(Exception ignored){}}events.add(value);}Runnable listener=eventSignal;if(listener!=null)listener.run();}
+ void emit(JSONObject value){if(apiOnly){try{if(value.has("id")&&value.has("method"))value.put("id","api:"+new JSONArray().put(value.get("id")).toString());if("serverRequest/resolved".equals(value.optString("method"))&&value.optJSONObject("params")!=null&&value.getJSONObject("params").has("requestId")){JSONObject p=value.getJSONObject("params");p.put("requestId","api:"+new JSONArray().put(p.get("requestId")).toString());}}catch(JSONException ignored){}get(context).emit(value);return;}trackQuestions(value);if(value.has("method")&&value.optJSONObject("params")!=null)ScheduledTaskHost.get(context).observe(value.optString("method"),value.optJSONObject("params"));VoiceAgent.event(context,value);synchronized(eventLock){if(events.size()>=4000){events.clear();try{events.add(new JSONObject().put("method","android/resyncRequired"));}catch(Exception ignored){}}events.add(value);}Runnable listener=eventSignal;if(listener!=null)listener.run();}
  String drain(){synchronized(eventLock){JSONArray rows=new JSONArray();for(int n=0;n<200&&!events.isEmpty();n++)rows.put(events.removeFirst());return rows.toString();}}
  String redact(String text){synchronized(secrets){for(String secret:secrets)if(!secret.isEmpty())text=text.replace(secret,"[REDACTED]");}return text;}
  synchronized void write(JSONObject message)throws Exception{if(input==null)throw new IOException("Codex 内核未启动");input.write(message.toString());input.newLine();input.flush();}

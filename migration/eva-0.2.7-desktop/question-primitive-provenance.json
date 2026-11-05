@@ -1,0 +1,377 @@
+{
+  "archive": "/Applications/ChatGPT.app/Contents/Resources/app.asar",
+  "archiveSHA256": "130145706a912db74e4d260ad7538f10f1e05e88af955f9afba42cdf01e64606",
+  "sources": [
+    {
+      "member": "webview/assets/app-initial-feb30b196d11.js",
+      "memberSHA256": "8f4e5fe65617413cabf689afbfc04bc6c24f73a5c0b57d7d0de443942343bd55"
+    },
+    {
+      "member": "webview/assets/app-shared-2cae01273bae.js",
+      "memberSHA256": "3ca9f1b7132de9c81602a5cbb55822107add07c7ed7e00ad5256c372aeb1ec36"
+    }
+  ],
+  "entries": [
+    {
+      "member": "webview/assets/app-initial-feb30b196d11.js",
+      "name": "bpo",
+      "kind": "function",
+      "utf16Start": 7563372,
+      "utf16End": 7563838,
+      "sha256": "e813cd0748d4becc154d29992856a9e90d972795430ffee64b06ef9cbef26f71"
+    },
+    {
+      "member": "webview/assets/app-initial-feb30b196d11.js",
+      "name": "b6s",
+      "kind": "function",
+      "utf16Start": 10079642,
+      "utf16End": 10080449,
+      "sha256": "e13ef2de8f23732cc699585635fd83817bc8fa88d1431a9264812edc1e3b95ec"
+    },
+    {
+      "member": "webview/assets/app-initial-feb30b196d11.js",
+      "name": "w6s",
+      "kind": "function",
+      "utf16Start": 10080524,
+      "utf16End": 10080981,
+      "sha256": "ce0cb7d9a04d38d1d3ecea193be2fc2b5899af4ce3fc003c975d96b58fc56ed9"
+    },
+    {
+      "member": "webview/assets/app-initial-feb30b196d11.js",
+      "name": "O6s",
+      "kind": "function",
+      "utf16Start": 10081056,
+      "utf16End": 10081885,
+      "sha256": "bc7074070a878df14181a130cd4d9fa263631207be7dfc450bb9196c988df602"
+    },
+    {
+      "member": "webview/assets/app-initial-feb30b196d11.js",
+      "name": "N6s",
+      "kind": "function",
+      "utf16Start": 10082002,
+      "utf16End": 10083406,
+      "sha256": "594ba56d4c10f24a43148cb224c5967e42299051cb8460a585af930f6820ab3e"
+    },
+    {
+      "member": "webview/assets/app-initial-feb30b196d11.js",
+      "name": "M7s",
+      "kind": "function",
+      "utf16Start": 10155206,
+      "utf16End": 10155967,
+      "sha256": "6af65efb6110abe35337dfb1fb5473bd395ecd48051c23875eefc474d848fbf7"
+    },
+    {
+      "member": "webview/assets/app-initial-feb30b196d11.js",
+      "name": "I7s",
+      "kind": "function",
+      "utf16Start": 10157931,
+      "utf16End": 10159301,
+      "sha256": "028af55139d452fb61923e06b0e295bcf10cb51b2c422a9ea3e4b2057db60587"
+    },
+    {
+      "member": "webview/assets/app-initial-feb30b196d11.js",
+      "name": "L7s",
+      "kind": "function",
+      "utf16Start": 10159301,
+      "utf16End": 10159585,
+      "sha256": "70daf51a2dc19432265ea6c3a86b3694883d55d556053f8c5c3493279f0b096d"
+    },
+    {
+      "member": "webview/assets/app-initial-feb30b196d11.js",
+      "name": "H7s",
+      "kind": "function",
+      "utf16Start": 10159802,
+      "utf16End": 10160713,
+      "sha256": "f92d217e342f00ec7e380191bde55cfae7aae4dec5b22d6480383ee0800ccc00"
+    },
+    {
+      "member": "webview/assets/app-initial-feb30b196d11.js",
+      "name": "q7s",
+      "kind": "function",
+      "utf16Start": 10160807,
+      "utf16End": 10162531,
+      "sha256": "fd97a0a55f8479bf978c65d021f0bf5c6e363937e486c92d2f4d6369c368eca4"
+    },
+    {
+      "member": "webview/assets/app-shared-2cae01273bae.js",
+      "name": "Pze",
+      "kind": "function",
+      "utf16Start": 1153031,
+      "utf16End": 1153094,
+      "sha256": "03f3af8df0a435effb0048b79b597214a872a7ad922a0194f0582e2f7eb354ae"
+    },
+    {
+      "member": "webview/assets/app-shared-2cae01273bae.js",
+      "name": "Fze",
+      "kind": "function",
+      "utf16Start": 1153094,
+      "utf16End": 1153221,
+      "sha256": "dfd1a90f860cb15280ba21bf159d044c2ccef776e49fe7e450e7d3b62acb5ec8"
+    },
+    {
+      "member": "webview/assets/app-shared-2cae01273bae.js",
+      "name": "fz",
+      "kind": "function",
+      "utf16Start": 1153221,
+      "utf16End": 1153788,
+      "sha256": "0b4cb901fcbd92a0ad5d3ee33790a7a5ff94a65736f33fcf8fc3ca77a73620b7"
+    },
+    {
+      "member": "webview/assets/app-shared-2cae01273bae.js",
+      "name": "hz",
+      "kind": "function",
+      "utf16Start": 1158851,
+      "utf16End": 1159031,
+      "sha256": "313b4eb8dfe1ac544b2a9f9993077992140ef3ad8d0b9510d6b63d80bd585032"
+    },
+    {
+      "member": "webview/assets/app-shared-2cae01273bae.js",
+      "name": "gz",
+      "kind": "function",
+      "utf16Start": 1159314,
+      "utf16End": 1159456,
+      "sha256": "b6a6292d006c0a4ddb70b8091671e77ff43bbde15c1909a7ea94cdd47995b293"
+    },
+    {
+      "member": "webview/assets/app-shared-2cae01273bae.js",
+      "name": "Uze",
+      "kind": "function",
+      "utf16Start": 1159456,
+      "utf16End": 1159684,
+      "sha256": "90ba354145359bc0aaa5a9239c7f225c15186a0974eed2af51284f8cba397d34"
+    },
+    {
+      "member": "webview/assets/app-shared-2cae01273bae.js",
+      "name": "_z",
+      "kind": "function",
+      "utf16Start": 1159684,
+      "utf16End": 1160108,
+      "sha256": "f48d5aed4e19ff10a940fa466784def57bd80cf9f6554983312943002b94783b"
+    },
+    {
+      "member": "webview/assets/app-shared-2cae01273bae.js",
+      "name": "vz",
+      "kind": "function",
+      "utf16Start": 1160108,
+      "utf16End": 1160983,
+      "sha256": "1a02ee56020b1a63e8046bd92853260a042c9a8ea7ade4992e41beb56f0897eb"
+    },
+    {
+      "member": "webview/assets/app-shared-2cae01273bae.js",
+      "name": "wLt",
+      "kind": "function",
+      "utf16Start": 2266810,
+      "utf16End": 2267316,
+      "sha256": "eb28d28b952cb093015d3550b76b513eee109efae0b70287c614b522a263da60"
+    },
+    {
+      "member": "webview/assets/app-shared-2cae01273bae.js",
+      "name": "TLt",
+      "kind": "function",
+      "utf16Start": 2267316,
+      "utf16End": 2267920,
+      "sha256": "de497c816c865955ebde23bf7d84e0229987b7e560a92918ec3765a7d46d447d"
+    },
+    {
+      "member": "webview/assets/app-shared-2cae01273bae.js",
+      "name": "v1",
+      "kind": "function",
+      "utf16Start": 2268045,
+      "utf16End": 2268146,
+      "sha256": "dda2bf3909dfa99cfe7da1d00d7cbb38ab9e2a1d6ddfb1079e683a7215884357"
+    },
+    {
+      "member": "webview/assets/app-shared-2cae01273bae.js",
+      "name": "jLt",
+      "kind": "function",
+      "utf16Start": 2269032,
+      "utf16End": 2273831,
+      "sha256": "7776eacf1e4d4aae39d448e04fc0ec9692d191b48c6df4a7895941f08f562fea"
+    },
+    {
+      "member": "webview/assets/app-shared-2cae01273bae.js",
+      "name": "Z$t",
+      "kind": "function",
+      "utf16Start": 3206650,
+      "utf16End": 3207225,
+      "sha256": "313d26c91a6fceeb63dafe9ef9ed0875ee7bbf4056e8989127cbe574374929ef"
+    },
+    {
+      "member": "webview/assets/app-shared-2cae01273bae.js",
+      "name": "$$t",
+      "kind": "function",
+      "utf16Start": 3207269,
+      "utf16End": 3208853,
+      "sha256": "14373a3b0e62ecfaf9430e152ce4ce479b1d07a0789d1e38b2b718659ed1f5f7"
+    },
+    {
+      "member": "webview/assets/app-shared-2cae01273bae.js",
+      "name": "i1t",
+      "kind": "function",
+      "utf16Start": 3208937,
+      "utf16End": 3209034,
+      "sha256": "19509b5be264d131a21230f58ef95d9fc3c41b1ba9884d1c1bbdfa3da3642a69"
+    },
+    {
+      "member": "webview/assets/app-shared-2cae01273bae.js",
+      "name": "o1t",
+      "kind": "function",
+      "utf16Start": 3209059,
+      "utf16End": 3209122,
+      "sha256": "17d6056a553d56b1a59977b5c0a9d35ca7498620f836f6044cfe4f3dfb2887b1"
+    },
+    {
+      "member": "webview/assets/app-shared-2cae01273bae.js",
+      "name": "u1t",
+      "kind": "function",
+      "utf16Start": 3210375,
+      "utf16End": 3210692,
+      "sha256": "d692f535a4484835c1fbfc2b9c35c73d86077f215dbe42256d1004ef1e6350ac"
+    },
+    {
+      "member": "webview/assets/app-shared-2cae01273bae.js",
+      "name": "d1t",
+      "kind": "function",
+      "utf16Start": 3210692,
+      "utf16End": 3211000,
+      "sha256": "ce0e35767f91150be8d362bc992600ef6ec14e351636b98cd608a04066c33464"
+    },
+    {
+      "member": "webview/assets/app-shared-2cae01273bae.js",
+      "name": "z0",
+      "kind": "function",
+      "utf16Start": 3235451,
+      "utf16End": 3236000,
+      "sha256": "25256ce10fc99c1417863e68173e887ef2c5b4c95600882a0384f1b294322c15"
+    },
+    {
+      "member": "webview/assets/app-initial-feb30b196d11.js",
+      "name": "z7s",
+      "kind": "initializer",
+      "utf16Start": 10159692,
+      "utf16End": 10159741,
+      "sha256": "a101b4252fc928cd0b1b4beb538a8a3765984cd7b9d37d9fe042e4f857df3bea"
+    },
+    {
+      "member": "webview/assets/app-initial-feb30b196d11.js",
+      "name": "B7s",
+      "kind": "initializer",
+      "utf16Start": 10159746,
+      "utf16End": 10159795,
+      "sha256": "aed75146def078c906a76019403b8f65bb45dddaa2f215cc14f1c1740eb9e520"
+    },
+    {
+      "member": "webview/assets/app-initial-feb30b196d11.js",
+      "name": "Cpo",
+      "kind": "initializer",
+      "utf16Start": 7563915,
+      "utf16End": 7566136,
+      "sha256": "73562007b3e614696800d2c52ec4d34ee49557f23b3db077f9660a47ccc44aab"
+    },
+    {
+      "member": "webview/assets/app-initial-feb30b196d11.js",
+      "name": "tps",
+      "kind": "initializer",
+      "utf16Start": 9027779,
+      "utf16End": 9027782,
+      "sha256": "fa919037220614c0fa4f203f027ae2a7fd9a26e8b6893654662c0236979ce46c"
+    },
+    {
+      "member": "webview/assets/app-shared-2cae01273bae.js",
+      "name": "yLt",
+      "kind": "initializer",
+      "utf16Start": 2262753,
+      "utf16End": 2265456,
+      "sha256": "26b4421120263af41d3616e476b912f0d964f26fb43737751223f5be6c62925d"
+    },
+    {
+      "member": "webview/assets/app-shared-2cae01273bae.js",
+      "name": "NLt",
+      "kind": "initializer",
+      "utf16Start": 2273937,
+      "utf16End": 2287654,
+      "sha256": "0fc1e0cdc12bb830b46d54f3ae769d6ce2f57da8211327c27e6fc9cb3b5a2ad7"
+    },
+    {
+      "member": "webview/assets/app-shared-2cae01273bae.js",
+      "name": "PLt",
+      "kind": "initializer",
+      "utf16Start": 2287659,
+      "utf16End": 2295322,
+      "sha256": "5694f2bbd76597da0322d00742481673969c7ea56c6ec1c7780284e58a3d5625"
+    },
+    {
+      "member": "webview/assets/app-shared-2cae01273bae.js",
+      "name": "FLt",
+      "kind": "initializer",
+      "utf16Start": 2295327,
+      "utf16End": 2295485,
+      "sha256": "03ed591d0ae9908648bd13bb9353f579e364e894602b15d0f49289b135599273"
+    },
+    {
+      "member": "webview/assets/app-shared-2cae01273bae.js",
+      "name": "m1",
+      "kind": "initializer",
+      "utf16Start": 2265519,
+      "utf16End": 2266145,
+      "sha256": "d33539eef5e6bb5eb35aa27f8a5b6c9d4cf86fc2f3e29c0508e97cf4861237a7"
+    },
+    {
+      "member": "webview/assets/app-shared-2cae01273bae.js",
+      "name": "C6",
+      "kind": "initializer",
+      "utf16Start": 4199345,
+      "utf16End": 4199896,
+      "sha256": "da7b8eb1406669973ea5627cbc7044b53896e1a051a655886fd3f5c8cef3d485"
+    },
+    {
+      "member": "webview/assets/app-shared-2cae01273bae.js",
+      "name": "KRt",
+      "kind": "icon-preset",
+      "utf16Start": 2337605,
+      "utf16End": 2338683,
+      "sha256": "252a3adc3784c61f8baff8bb2ba3436cdecf147588bc56bd12828576f6fdd2af"
+    },
+    {
+      "member": "webview/assets/app-shared-2cae01273bae.js",
+      "name": "n$n",
+      "kind": "icon-preset",
+      "utf16Start": 5141630,
+      "utf16End": 5142702,
+      "sha256": "07a7452161f73d6a42966fad92b2ac0a23c7d17eb0378eb6f3acd63f4778a4d6"
+    },
+    {
+      "member": "webview/assets/app-shared-2cae01273bae.js",
+      "name": "i$n",
+      "kind": "icon-preset",
+      "utf16Start": 5142762,
+      "utf16End": 5145189,
+      "sha256": "d19731b4937660679191b804b12ac7cc0312e59eefb1b52998b5ecef10da4afb"
+    },
+    {
+      "member": "webview/assets/app-shared-2cae01273bae.js",
+      "name": "v0",
+      "kind": "icon-preset",
+      "utf16Start": 3200616,
+      "utf16End": 3201745,
+      "sha256": "27003640d8caa5f7d54d57f67437d279e5d41a98f9e370b34db991d76428d335"
+    },
+    {
+      "member": "webview/assets/app-shared-2cae01273bae.js",
+      "name": "Ayn",
+      "kind": "icon-preset",
+      "utf16Start": 4198346,
+      "utf16End": 4199277,
+      "sha256": "2af4f6781add40cd9806533ed992e0afc5340ba17598646f5a0f4f0c2e42f4f3"
+    },
+    {
+      "member": "webview/assets/app-shared-2cae01273bae.js",
+      "name": "lJt",
+      "kind": "icon-preset",
+      "utf16Start": 2873204,
+      "utf16End": 2874671,
+      "sha256": "49b98a7baf828b367ed3f095228a4e3dc88d23ca8ac433456550c54b63a29d59"
+    }
+  ],
+  "scope": "Original Work card/header/choice/marker/dismiss/button/badge/keycap/icon bodies, original class maps and literal SVG presets. Normal Work surface context is bound without loading official stores; React/compiler/JSX and intl/timer bindings are EVA host adapters."
+}

@@ -19,6 +19,11 @@ public abstract class ToolPageActivity extends Activity {
     void statusCard(TextView v){v.setPadding(dp(16),dp(16),dp(16),dp(16));v.setBackground(EvaUi.surface(this,paper==0xffFFFFFF?EvaUi.SOFT:0xff242c36,16));v.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_POLITE);}
     void clear(){body.removeAllViews();}
     void page(String title,String subtitle){
+        if(android.os.Build.VERSION.SDK_INT>=33){
+            getOnBackInvokedDispatcher().registerOnBackInvokedCallback(
+                android.window.OnBackInvokedDispatcher.PRIORITY_DEFAULT,
+                ()->onBackPressed());
+        }
         if(getSharedPreferences("eva-settings",0).getString("theme","light").equals("dark")){ink=0xffe9edf3;paper=0xff191e25;}
         root=new LinearLayout(this);root.setOrientation(1);root.setBackgroundColor(paper);root.setOnApplyWindowInsetsListener((v,i)->{v.setPadding(i.getSystemWindowInsetLeft(),i.getSystemWindowInsetTop(),i.getSystemWindowInsetRight(),i.getSystemWindowInsetBottom());return i;});setContentView(root);
         header=new LinearLayout(this);header.setGravity(Gravity.CENTER_VERTICAL);header.setPadding(dp(4),0,dp(8),0);header.addView(actionIcon("back","返回上一页",()->leavePage()));pageTitle=label(title,17);pageTitle.setTypeface(null,android.graphics.Typeface.BOLD);pageTitle.setSingleLine();pageTitle.setEllipsize(android.text.TextUtils.TruncateAt.END);header.addView(pageTitle,new LinearLayout.LayoutParams(0,-2,1));root.addView(header,new LinearLayout.LayoutParams(-1,dp(60)));View line=new View(this);line.setBackgroundColor(paper==0xffFFFFFF?0xffedf0f3:0xff303236);root.addView(line,new LinearLayout.LayoutParams(-1,dp(1)));

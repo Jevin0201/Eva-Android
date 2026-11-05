@@ -1,0 +1,542 @@
+[
+  {
+    "source": "util.js",
+    "sha256": "afad6f1e8ee9a96242e80e3dfbba67c322aae2b6d78f253bea58ef11cf820fea"
+  },
+  {
+    "source": "i18n.js",
+    "sha256": "0d215326d4c6bcc821d39579dd517726210c52878555f1fec6f631430bf56001"
+  },
+  {
+    "source": "icons.js",
+    "sha256": "d6238ce49325a66e038544b420543c02d4e6be98a59cfb669058d4a7149819da"
+  },
+  {
+    "source": "composer-input.js",
+    "sha256": "c461e342e98ac36f4809bd5d48ccda45b0f1768dafc748b431f78c403bfde0f5"
+  },
+  {
+    "source": "conversation-failures.js",
+    "sha256": "0bed85123f7450ee9b0a9ed4c0bffafaed7eaa898602603f42c3cf9d445553cf"
+  },
+  {
+    "source": "render.js",
+    "sha256": "ad1dfffabeea245f00a3aa8d9e7a97fb8233a58784e27c1229bc11a26800c2b8"
+  },
+  {
+    "source": "transcript-dom.js",
+    "sha256": "313400a57cb2495d1c5b4174b4863d0455440ab55a947d3f3d7e4f6d787e5a88"
+  },
+  {
+    "source": "native-steering/bootstrap.js",
+    "sha256": "a581c529ad6bfed2168c3d4dd6c681ed3f6498b0423000c44e3af0282d58664c"
+  },
+  {
+    "source": "native-steering/bundle.js",
+    "sha256": "a1a9403123bab9968ba51a3a3cd62b2fbbdfcd8382c940f63d7b3543af7d0e29"
+  },
+  {
+    "source": "native-image-preview/bootstrap.js",
+    "sha256": "877ab796e11351f7e29218197dfe0aa909cc9168a8200ba5f6823065352c1bf2",
+    "target": "probe/assets/desktop-stream/native-image-preview/bootstrap.js",
+    "targetSha256": "877ab796e11351f7e29218197dfe0aa909cc9168a8200ba5f6823065352c1bf2"
+  },
+  {
+    "source": "native-image-preview/common.js",
+    "sha256": "671421e75a2bc542f623936b7ce927f64e72e311ae2470cad2e13d8b7a6edb73",
+    "target": "probe/assets/desktop-stream/native-image-preview/common.js",
+    "targetSha256": "671421e75a2bc542f623936b7ce927f64e72e311ae2470cad2e13d8b7a6edb73"
+  },
+  {
+    "source": "native-image-preview/tool.js",
+    "sha256": "1e581ca9c068495527bf3e1dd428effa054f78a96ebd4c24e10dd9d982276605",
+    "target": "probe/assets/desktop-stream/native-image-preview/tool.js",
+    "targetSha256": "1e581ca9c068495527bf3e1dd428effa054f78a96ebd4c24e10dd9d982276605"
+  },
+  {
+    "source": "native-steering/app-initial-161052524772.css",
+    "sha256": "3dc5c93ba624fdb74c855721df1d353b2c79f65fb5793f27ef179ef463847fb5",
+    "target": "probe/assets/desktop-stream/native-steering/app-initial-161052524772.css",
+    "targetSha256": "3dc5c93ba624fdb74c855721df1d353b2c79f65fb5793f27ef179ef463847fb5"
+  },
+  {
+    "source": "native-steering/app-initial-b0cd131b9dba.js",
+    "sha256": "1f85f99b49667cb1197fea62e66a2ed96061252d47361c77b8c707999d64132d",
+    "target": "probe/assets/desktop-stream/native-steering/app-initial-b0cd131b9dba.js",
+    "targetSha256": "1f85f99b49667cb1197fea62e66a2ed96061252d47361c77b8c707999d64132d"
+  },
+  {
+    "source": "native-steering/app-shared-624e1c099f95.js",
+    "sha256": "e438eec71177a79ef0e1531210d6dab8c6cae43b2e9fb4bdfcc29f1344237985",
+    "target": "probe/assets/desktop-stream/native-steering/app-shared-624e1c099f95.js",
+    "targetSha256": "e438eec71177a79ef0e1531210d6dab8c6cae43b2e9fb4bdfcc29f1344237985"
+  },
+  {
+    "source": "native-steering/assets/04d7c5db17d1.ttf",
+    "sha256": "07d8e303ce4fc12b4bb54f1004170dd190a1f3db45d400fe68060df3e0897268",
+    "target": "probe/assets/desktop-stream/native-steering/assets/04d7c5db17d1.ttf",
+    "targetSha256": "07d8e303ce4fc12b4bb54f1004170dd190a1f3db45d400fe68060df3e0897268"
+  },
+  {
+    "source": "native-steering/assets/12a522d123de.woff",
+    "sha256": "a6f7ec0d846ac7ad975adb8959c37ed49b94acbc4ae436db9ce9e20287e4a64c",
+    "target": "probe/assets/desktop-stream/native-steering/assets/12a522d123de.woff",
+    "targetSha256": "a6f7ec0d846ac7ad975adb8959c37ed49b94acbc4ae436db9ce9e20287e4a64c"
+  },
+  {
+    "source": "native-steering/assets/18623275cd29.ttf",
+    "sha256": "3931dd81faed86ba021bb2bbdc36f5bed9a38d6b4f4077aca59b265aa1b02083",
+    "target": "probe/assets/desktop-stream/native-steering/assets/18623275cd29.ttf",
+    "targetSha256": "3931dd81faed86ba021bb2bbdc36f5bed9a38d6b4f4077aca59b265aa1b02083"
+  },
+  {
+    "source": "native-steering/assets/1f94eaffd140.ttf",
+    "sha256": "08ce98e51b04d58945a301e639e02b6998af29fdfd61a7b8afdd07bbfc479d4a",
+    "target": "probe/assets/desktop-stream/native-steering/assets/1f94eaffd140.ttf",
+    "targetSha256": "08ce98e51b04d58945a301e639e02b6998af29fdfd61a7b8afdd07bbfc479d4a"
+  },
+  {
+    "source": "native-steering/assets/2263edb0c99e.woff",
+    "sha256": "850c0af5c2238497febaf5e461d880bf458c341f42f4f330f1b1ab5698b1998e",
+    "target": "probe/assets/desktop-stream/native-steering/assets/2263edb0c99e.woff",
+    "targetSha256": "850c0af5c2238497febaf5e461d880bf458c341f42f4f330f1b1ab5698b1998e"
+  },
+  {
+    "source": "native-steering/assets/26083f2603c0.woff2",
+    "sha256": "6b47c40166b6dbe21a5dfca7718413f2147fd2399be1ba605d8ad39cedf25dfe",
+    "target": "probe/assets/desktop-stream/native-steering/assets/26083f2603c0.woff2",
+    "targetSha256": "6b47c40166b6dbe21a5dfca7718413f2147fd2399be1ba605d8ad39cedf25dfe"
+  },
+  {
+    "source": "native-steering/assets/280f5b5cfd4d.woff",
+    "sha256": "2014c523c3210bcc166648c4d4cc57f05b747df07a24277bf71c51e67dc79e3d",
+    "target": "probe/assets/desktop-stream/native-steering/assets/280f5b5cfd4d.woff",
+    "targetSha256": "2014c523c3210bcc166648c4d4cc57f05b747df07a24277bf71c51e67dc79e3d"
+  },
+  {
+    "source": "native-steering/assets/2de770044ccf.woff2",
+    "sha256": "7af58c5ec8f132a2ddde9027c6d7814decce4d3b822a11192a42a20e2e973264",
+    "target": "probe/assets/desktop-stream/native-steering/assets/2de770044ccf.woff2",
+    "targetSha256": "7af58c5ec8f132a2ddde9027c6d7814decce4d3b822a11192a42a20e2e973264"
+  },
+  {
+    "source": "native-steering/assets/305fded40630.ttf",
+    "sha256": "ed0b74372feefcbb9c0666b2e210da37b7e49fa7fbbf3eeb11db5f693dacfbb7",
+    "target": "probe/assets/desktop-stream/native-steering/assets/305fded40630.ttf",
+    "targetSha256": "ed0b74372feefcbb9c0666b2e210da37b7e49fa7fbbf3eeb11db5f693dacfbb7"
+  },
+  {
+    "source": "native-steering/assets/306a83955cdd.ttf",
+    "sha256": "138ac28d1663b3037e9c5f52371fa5c63d8324f4a38d22cd573e6ea3a3fd0cf8",
+    "target": "probe/assets/desktop-stream/native-steering/assets/306a83955cdd.ttf",
+    "targetSha256": "138ac28d1663b3037e9c5f52371fa5c63d8324f4a38d22cd573e6ea3a3fd0cf8"
+  },
+  {
+    "source": "native-steering/assets/32a59bcdb555.ttf",
+    "sha256": "d0332f52868370fd83ae7fa46470f90c8f2eab2fcf12bc4f88080b340c95a830",
+    "target": "probe/assets/desktop-stream/native-steering/assets/32a59bcdb555.ttf",
+    "targetSha256": "d0332f52868370fd83ae7fa46470f90c8f2eab2fcf12bc4f88080b340c95a830"
+  },
+  {
+    "source": "native-steering/assets/33768fb75a6c.woff",
+    "sha256": "91ee67500cc0129aa0ace3ac5c61ff1692102f0f31d02b69347fba35dcb75bf2",
+    "target": "probe/assets/desktop-stream/native-steering/assets/33768fb75a6c.woff",
+    "targetSha256": "91ee67500cc0129aa0ace3ac5c61ff1692102f0f31d02b69347fba35dcb75bf2"
+  },
+  {
+    "source": "native-steering/assets/3759e9c6a0df.ttf",
+    "sha256": "0d85ae7cc30f23790a7f1a58c4a112fdca8aae769b6ba11429af1d98b1b6cb3a",
+    "target": "probe/assets/desktop-stream/native-steering/assets/3759e9c6a0df.ttf",
+    "targetSha256": "0d85ae7cc30f23790a7f1a58c4a112fdca8aae769b6ba11429af1d98b1b6cb3a"
+  },
+  {
+    "source": "native-steering/assets/4489718bbd71.woff",
+    "sha256": "1ae6bd7475590e97e7f145a89e09ccde322f7a6bc0b91607b1c8b8ee28290fed",
+    "target": "probe/assets/desktop-stream/native-steering/assets/4489718bbd71.woff",
+    "targetSha256": "1ae6bd7475590e97e7f145a89e09ccde322f7a6bc0b91607b1c8b8ee28290fed"
+  },
+  {
+    "source": "native-steering/assets/45fb882464a4.woff",
+    "sha256": "99f9c6750b489c9462bf04900bd3f939df9b829339daaaaa99ef5495cdddea58",
+    "target": "probe/assets/desktop-stream/native-steering/assets/45fb882464a4.woff",
+    "targetSha256": "99f9c6750b489c9462bf04900bd3f939df9b829339daaaaa99ef5495cdddea58"
+  },
+  {
+    "source": "native-steering/assets/4c2ce066f751.woff",
+    "sha256": "f1d6ef86f3b11a528bd5185199bd2443ecb2b0dead96d88674b5a2c12be24bdf",
+    "target": "probe/assets/desktop-stream/native-steering/assets/4c2ce066f751.woff",
+    "targetSha256": "f1d6ef86f3b11a528bd5185199bd2443ecb2b0dead96d88674b5a2c12be24bdf"
+  },
+  {
+    "source": "native-steering/assets/4da3b85121c9.ttf",
+    "sha256": "f36ea897e19f4a2e571d1e900e4e3710e438deb05a842486045ba0a3e616a4ad",
+    "target": "probe/assets/desktop-stream/native-steering/assets/4da3b85121c9.ttf",
+    "targetSha256": "f36ea897e19f4a2e571d1e900e4e3710e438deb05a842486045ba0a3e616a4ad"
+  },
+  {
+    "source": "native-steering/assets/5085d14c6356.woff2",
+    "sha256": "0cdd387c9590a1a9f9794560022dbb59654a7d86f187aa0c81495ad42d3a7308",
+    "target": "probe/assets/desktop-stream/native-steering/assets/5085d14c6356.woff2",
+    "targetSha256": "0cdd387c9590a1a9f9794560022dbb59654a7d86f187aa0c81495ad42d3a7308"
+  },
+  {
+    "source": "native-steering/assets/5d9c444d356a.ttf",
+    "sha256": "9163df9c7122432e6495b4229fa9071cf9ae86a758ae5efc4924ec2e1a6dbce1",
+    "target": "probe/assets/desktop-stream/native-steering/assets/5d9c444d356a.ttf",
+    "targetSha256": "9163df9c7122432e6495b4229fa9071cf9ae86a758ae5efc4924ec2e1a6dbce1"
+  },
+  {
+    "source": "native-steering/assets/6c0cfe753859.woff",
+    "sha256": "9be7ceb88004ab8ad124082246fbfcca4091e36385d4ec6ed1df67375dad50fb",
+    "target": "probe/assets/desktop-stream/native-steering/assets/6c0cfe753859.woff",
+    "targetSha256": "9be7ceb88004ab8ad124082246fbfcca4091e36385d4ec6ed1df67375dad50fb"
+  },
+  {
+    "source": "native-steering/assets/76d8dbe2a29e.woff2",
+    "sha256": "c2342cd8b869e01752a9321dc17213fc40d4d04c79688c1d43f2cf316abd7866",
+    "target": "probe/assets/desktop-stream/native-steering/assets/76d8dbe2a29e.woff2",
+    "targetSha256": "c2342cd8b869e01752a9321dc17213fc40d4d04c79688c1d43f2cf316abd7866"
+  },
+  {
+    "source": "native-steering/assets/775d28dfbb83.ttf",
+    "sha256": "f9377ab0271cda59af24bcffbd46a4d0c8a3572ffafdbb38de2ad5ea7b0d5ee5",
+    "target": "probe/assets/desktop-stream/native-steering/assets/775d28dfbb83.ttf",
+    "targetSha256": "f9377ab0271cda59af24bcffbd46a4d0c8a3572ffafdbb38de2ad5ea7b0d5ee5"
+  },
+  {
+    "source": "native-steering/assets/7b80a516842b.ttf",
+    "sha256": "a6b2099fb555c60e3a0db3a08842ebf1d732c6eb4e4bf44913613bed4fc4e39b",
+    "target": "probe/assets/desktop-stream/native-steering/assets/7b80a516842b.ttf",
+    "targetSha256": "a6b2099fb555c60e3a0db3a08842ebf1d732c6eb4e4bf44913613bed4fc4e39b"
+  },
+  {
+    "source": "native-steering/assets/7b9c963f9063.woff2",
+    "sha256": "623bb4f58818f629f2edc9c1cabd7eec2fec3163aa867b1c0279e0b54f46d4dd",
+    "target": "probe/assets/desktop-stream/native-steering/assets/7b9c963f9063.woff2",
+    "targetSha256": "623bb4f58818f629f2edc9c1cabd7eec2fec3163aa867b1c0279e0b54f46d4dd"
+  },
+  {
+    "source": "native-steering/assets/81ff0bab7ac4.ttf",
+    "sha256": "1e6f9579e90e2cac37f8f60a597c436e075c114385652b7cbeb0dec0421291b3",
+    "target": "probe/assets/desktop-stream/native-steering/assets/81ff0bab7ac4.ttf",
+    "targetSha256": "1e6f9579e90e2cac37f8f60a597c436e075c114385652b7cbeb0dec0421291b3"
+  },
+  {
+    "source": "native-steering/assets/8531ea67beae.ttf",
+    "sha256": "1ece03f79f95277d57dc7f6b435a74e1379b0d46104a8530286b60ff49369ea0",
+    "target": "probe/assets/desktop-stream/native-steering/assets/8531ea67beae.ttf",
+    "targetSha256": "1ece03f79f95277d57dc7f6b435a74e1379b0d46104a8530286b60ff49369ea0"
+  },
+  {
+    "source": "native-steering/assets/8bea0fdbdd58.woff2",
+    "sha256": "74444efd593c005e3f4573b44524704c0af0a937fe911cca9e94068d0d140d3f",
+    "target": "probe/assets/desktop-stream/native-steering/assets/8bea0fdbdd58.woff2",
+    "targetSha256": "74444efd593c005e3f4573b44524704c0af0a937fe911cca9e94068d0d140d3f"
+  },
+  {
+    "source": "native-steering/assets/8eeabe219f5c.woff2",
+    "sha256": "71d517d67827787cfabdf186914cc3358eda539e37931941f2b2fd4a21f68c0b",
+    "target": "probe/assets/desktop-stream/native-steering/assets/8eeabe219f5c.woff2",
+    "targetSha256": "71d517d67827787cfabdf186914cc3358eda539e37931941f2b2fd4a21f68c0b"
+  },
+  {
+    "source": "native-steering/assets/92e9fa94a896.woff",
+    "sha256": "11e4dc8a6471ff6d6ee561d53d10fde8f7489e798257ff449c5d37c197435605",
+    "target": "probe/assets/desktop-stream/native-steering/assets/92e9fa94a896.woff",
+    "targetSha256": "11e4dc8a6471ff6d6ee561d53d10fde8f7489e798257ff449c5d37c197435605"
+  },
+  {
+    "source": "native-steering/assets/93440fab4cbe.woff",
+    "sha256": "3398dd02302557a793f2863f88e02d96ce10df2abffa07c8e9fa90775116e65c",
+    "target": "probe/assets/desktop-stream/native-steering/assets/93440fab4cbe.woff",
+    "targetSha256": "3398dd02302557a793f2863f88e02d96ce10df2abffa07c8e9fa90775116e65c"
+  },
+  {
+    "source": "native-steering/assets/9362217a940f.woff2",
+    "sha256": "51814d270d06ff0255dba0799994fa4d8c84d11f09951d47595f4abb1f3602dc",
+    "target": "probe/assets/desktop-stream/native-steering/assets/9362217a940f.woff2",
+    "targetSha256": "51814d270d06ff0255dba0799994fa4d8c84d11f09951d47595f4abb1f3602dc"
+  },
+  {
+    "source": "native-steering/assets/93ab932aa041.woff",
+    "sha256": "6ab6b62e9b62dae2c00dd90f791bd10950be0ecc3490d7d6045f51c2e8fe0949",
+    "target": "probe/assets/desktop-stream/native-steering/assets/93ab932aa041.woff",
+    "targetSha256": "6ab6b62e9b62dae2c00dd90f791bd10950be0ecc3490d7d6045f51c2e8fe0949"
+  },
+  {
+    "source": "native-steering/assets/999ef36c0999.woff2",
+    "sha256": "dc47344dbb6cb5b655c8460d561f4df5f501b90c804ad3c6cec65fe322351ab1",
+    "target": "probe/assets/desktop-stream/native-steering/assets/999ef36c0999.woff2",
+    "targetSha256": "dc47344dbb6cb5b655c8460d561f4df5f501b90c804ad3c6cec65fe322351ab1"
+  },
+  {
+    "source": "native-steering/assets/99b7008cb9f0.woff",
+    "sha256": "c76c5d696297d51b9cb1639c7da4334f0e7dec81b42b11213b5e25ef671bb822",
+    "target": "probe/assets/desktop-stream/native-steering/assets/99b7008cb9f0.woff",
+    "targetSha256": "c76c5d696297d51b9cb1639c7da4334f0e7dec81b42b11213b5e25ef671bb822"
+  },
+  {
+    "source": "native-steering/assets/b1f7ce887570.woff2",
+    "sha256": "0f60d1b897938ec918c8ce073092411baf9438f6739465693ff18b0f9d20b021",
+    "target": "probe/assets/desktop-stream/native-steering/assets/b1f7ce887570.woff2",
+    "targetSha256": "0f60d1b897938ec918c8ce073092411baf9438f6739465693ff18b0f9d20b021"
+  },
+  {
+    "source": "native-steering/assets/b4c52f663c1d.woff",
+    "sha256": "e14fed02b1aba7ce9f5afd5844b5d0321b22351febc720e0de8b8723527609f7",
+    "target": "probe/assets/desktop-stream/native-steering/assets/b4c52f663c1d.woff",
+    "targetSha256": "e14fed02b1aba7ce9f5afd5844b5d0321b22351febc720e0de8b8723527609f7"
+  },
+  {
+    "source": "native-steering/assets/b5f79b67eb84.woff",
+    "sha256": "c943cc986384f59e86bea5fd7dc50a9c4dfe567a7c05eb40d6790720dead97c9",
+    "target": "probe/assets/desktop-stream/native-steering/assets/b5f79b67eb84.woff",
+    "targetSha256": "c943cc986384f59e86bea5fd7dc50a9c4dfe567a7c05eb40d6790720dead97c9"
+  },
+  {
+    "source": "native-steering/assets/b71f456a1819.woff2",
+    "sha256": "00b26ac825e2095056396e0553b8ac26d3f8ad158c3826e28b4c45b385c4714a",
+    "target": "probe/assets/desktop-stream/native-steering/assets/b71f456a1819.woff2",
+    "targetSha256": "00b26ac825e2095056396e0553b8ac26d3f8ad158c3826e28b4c45b385c4714a"
+  },
+  {
+    "source": "native-steering/assets/b9264196a3e0.ttf",
+    "sha256": "1c67f068fea8bb09bf099c088b1cf64bd27516a6e07f4684344873564bb66a67",
+    "target": "probe/assets/desktop-stream/native-steering/assets/b9264196a3e0.ttf",
+    "targetSha256": "1c67f068fea8bb09bf099c088b1cf64bd27516a6e07f4684344873564bb66a67"
+  },
+  {
+    "source": "native-steering/assets/c0d3ffcf5e9f.woff",
+    "sha256": "8a8d244581371912b8f3f5a23e2437cb2a59cd9bcaebb0346e722c05737a2571",
+    "target": "probe/assets/desktop-stream/native-steering/assets/c0d3ffcf5e9f.woff",
+    "targetSha256": "8a8d244581371912b8f3f5a23e2437cb2a59cd9bcaebb0346e722c05737a2571"
+  },
+  {
+    "source": "native-steering/assets/c30429e527bc.woff2",
+    "sha256": "68e8c73ef42afd3ccec58bf0fba302cce448938e7fc020a5e31f8a952eee1342",
+    "target": "probe/assets/desktop-stream/native-steering/assets/c30429e527bc.woff2",
+    "targetSha256": "68e8c73ef42afd3ccec58bf0fba302cce448938e7fc020a5e31f8a952eee1342"
+  },
+  {
+    "source": "native-steering/assets/c56711d328c4.woff2",
+    "sha256": "d8891174b6ee24eb2a18b2545fcc5e2583981d0122ee25dc889658beda98f537",
+    "target": "probe/assets/desktop-stream/native-steering/assets/c56711d328c4.woff2",
+    "targetSha256": "d8891174b6ee24eb2a18b2545fcc5e2583981d0122ee25dc889658beda98f537"
+  },
+  {
+    "source": "native-steering/assets/cc9bd60e01a9.woff",
+    "sha256": "30da91e84c893f875e252689faebdc590b2871145e8adc7f9a9d4dbd8ce0b251",
+    "target": "probe/assets/desktop-stream/native-steering/assets/cc9bd60e01a9.woff",
+    "targetSha256": "30da91e84c893f875e252689faebdc590b2871145e8adc7f9a9d4dbd8ce0b251"
+  },
+  {
+    "source": "native-steering/assets/d182002564db.ttf",
+    "sha256": "68534840bcfdd2bffb6f0e8deb48684dd01e7f04ea2813267577afb906de1d13",
+    "target": "probe/assets/desktop-stream/native-steering/assets/d182002564db.ttf",
+    "targetSha256": "68534840bcfdd2bffb6f0e8deb48684dd01e7f04ea2813267577afb906de1d13"
+  },
+  {
+    "source": "native-steering/assets/d580edee966b.woff2",
+    "sha256": "97479ca6cce906abc961ecac96faa5f9ca2e61b8e7670d475826bcdee9a7c267",
+    "target": "probe/assets/desktop-stream/native-steering/assets/d580edee966b.woff2",
+    "targetSha256": "97479ca6cce906abc961ecac96faa5f9ca2e61b8e7670d475826bcdee9a7c267"
+  },
+  {
+    "source": "native-steering/assets/d6141bf4e372.ttf",
+    "sha256": "c647367d1dd4e162468717d020e1fc0f1dc5c26ebfdffbe55261713bf88c5877",
+    "target": "probe/assets/desktop-stream/native-steering/assets/d6141bf4e372.ttf",
+    "targetSha256": "c647367d1dd4e162468717d020e1fc0f1dc5c26ebfdffbe55261713bf88c5877"
+  },
+  {
+    "source": "native-steering/assets/db22128e8820.woff",
+    "sha256": "ece03cfd83e22c212cdef66feb8442d25a083beb988db3f1883f3f9738d750ba",
+    "target": "probe/assets/desktop-stream/native-steering/assets/db22128e8820.woff",
+    "targetSha256": "ece03cfd83e22c212cdef66feb8442d25a083beb988db3f1883f3f9738d750ba"
+  },
+  {
+    "source": "native-steering/assets/dbb27b9efc8a.ttf",
+    "sha256": "95b6d2f1a50173bfedb8c63e1d1c99b10427d0a4df4201cb44513b226951a22b",
+    "target": "probe/assets/desktop-stream/native-steering/assets/dbb27b9efc8a.ttf",
+    "targetSha256": "95b6d2f1a50173bfedb8c63e1d1c99b10427d0a4df4201cb44513b226951a22b"
+  },
+  {
+    "source": "native-steering/assets/e0a57b34933f.ttf",
+    "sha256": "500e04d54f0d51666332c9d2089aa803be22aa878eca539e59fa53c6e522b082",
+    "target": "probe/assets/desktop-stream/native-steering/assets/e0a57b34933f.ttf",
+    "targetSha256": "500e04d54f0d51666332c9d2089aa803be22aa878eca539e59fa53c6e522b082"
+  },
+  {
+    "source": "native-steering/assets/e259229c5327.woff2",
+    "sha256": "e99a4258393f746552665fb8a07a7dcdacf2af4834cc0611148761005c7e006d",
+    "target": "probe/assets/desktop-stream/native-steering/assets/e259229c5327.woff2",
+    "targetSha256": "e99a4258393f746552665fb8a07a7dcdacf2af4834cc0611148761005c7e006d"
+  },
+  {
+    "source": "native-steering/assets/e2ea347ec7e1.woff2",
+    "sha256": "5d53e70ad607c2352162dec9e0923fb54ecdafaccbf604cd8dcf7d00facb989b",
+    "target": "probe/assets/desktop-stream/native-steering/assets/e2ea347ec7e1.woff2",
+    "targetSha256": "5d53e70ad607c2352162dec9e0923fb54ecdafaccbf604cd8dcf7d00facb989b"
+  },
+  {
+    "source": "native-steering/assets/e5e65c59c557.woff2",
+    "sha256": "a4af7d414440a1c1790825cfb700cf9cf43b0f2c4b04f0ebc523011ad9853ec0",
+    "target": "probe/assets/desktop-stream/native-steering/assets/e5e65c59c557.woff2",
+    "targetSha256": "a4af7d414440a1c1790825cfb700cf9cf43b0f2c4b04f0ebc523011ad9853ec0"
+  },
+  {
+    "source": "native-steering/assets/eafc847daced.woff2",
+    "sha256": "de7701e42cf1f4cf0b766c03fb27977207eee2f4fd5d76fa82188406da43ea4c",
+    "target": "probe/assets/desktop-stream/native-steering/assets/eafc847daced.woff2",
+    "targetSha256": "de7701e42cf1f4cf0b766c03fb27977207eee2f4fd5d76fa82188406da43ea4c"
+  },
+  {
+    "source": "native-steering/assets/ebf7825a0610.woff",
+    "sha256": "c6368d87e8a1a3a5d337623d83d8dc4b868f242a9ad476237d6f8d1e0f168cdc",
+    "target": "probe/assets/desktop-stream/native-steering/assets/ebf7825a0610.woff",
+    "targetSha256": "c6368d87e8a1a3a5d337623d83d8dc4b868f242a9ad476237d6f8d1e0f168cdc"
+  },
+  {
+    "source": "native-steering/assets/f10c9dc0392e.woff2",
+    "sha256": "99cd42a3c072d918f2f44984a807cf7aa16e13545fd0875fc07c6c65f99e715b",
+    "target": "probe/assets/desktop-stream/native-steering/assets/f10c9dc0392e.woff2",
+    "targetSha256": "99cd42a3c072d918f2f44984a807cf7aa16e13545fd0875fc07c6c65f99e715b"
+  },
+  {
+    "source": "native-steering/assets/f175ce1c47d7.woff",
+    "sha256": "5e28753be717dac97f559f49bc10be9cf3c124ddcabda6659d11cb68febc6463",
+    "target": "probe/assets/desktop-stream/native-steering/assets/f175ce1c47d7.woff",
+    "targetSha256": "5e28753be717dac97f559f49bc10be9cf3c124ddcabda6659d11cb68febc6463"
+  },
+  {
+    "source": "native-steering/assets/f2e1dc7dd26e.woff2",
+    "sha256": "d04c54219f9eaec6d4d4fd42dfb28785975a4794d6b2fc71e566b9cd6db842dd",
+    "target": "probe/assets/desktop-stream/native-steering/assets/f2e1dc7dd26e.woff2",
+    "targetSha256": "d04c54219f9eaec6d4d4fd42dfb28785975a4794d6b2fc71e566b9cd6db842dd"
+  },
+  {
+    "source": "native-steering/assets/f3c4f3261ba5.ttf",
+    "sha256": "70ee1f64a20f2048c21940ef46d0144fd215baa953ca69afd1e31e98544f708f",
+    "target": "probe/assets/desktop-stream/native-steering/assets/f3c4f3261ba5.ttf",
+    "targetSha256": "70ee1f64a20f2048c21940ef46d0144fd215baa953ca69afd1e31e98544f708f"
+  },
+  {
+    "source": "native-steering/assets/f5b144b4183d.woff2",
+    "sha256": "e99ae51144bf1232efcc1bfe5add36262c6866b0faab24fa75740e1b98577a62",
+    "target": "probe/assets/desktop-stream/native-steering/assets/f5b144b4183d.woff2",
+    "targetSha256": "e99ae51144bf1232efcc1bfe5add36262c6866b0faab24fa75740e1b98577a62"
+  },
+  {
+    "source": "native-steering/assets/f721beff1dfa.ttf",
+    "sha256": "f01f3e87d9c6a61c0c081ceb577abd864eb00a612f7ac1620dd6915fad2ef5aa",
+    "target": "probe/assets/desktop-stream/native-steering/assets/f721beff1dfa.ttf",
+    "targetSha256": "f01f3e87d9c6a61c0c081ceb577abd864eb00a612f7ac1620dd6915fad2ef5aa"
+  },
+  {
+    "source": "native-steering/assets/f7c0859f17af.woff2",
+    "sha256": "036d4e95149b69ff9bcc0cd55771efeb25ffa3947293e69acd78d5ac328c684b",
+    "target": "probe/assets/desktop-stream/native-steering/assets/f7c0859f17af.woff2",
+    "targetSha256": "036d4e95149b69ff9bcc0cd55771efeb25ffa3947293e69acd78d5ac328c684b"
+  },
+  {
+    "source": "native-steering/assets/f9c90562aa5a.woff",
+    "sha256": "d96cdf2b3bdd4d64a8fd5f74a4c467f123a8a73931cd435889f08ffaf9bf947a",
+    "target": "probe/assets/desktop-stream/native-steering/assets/f9c90562aa5a.woff",
+    "targetSha256": "d96cdf2b3bdd4d64a8fd5f74a4c467f123a8a73931cd435889f08ffaf9bf947a"
+  },
+  {
+    "source": "native-steering/browser-eb936edba459.js",
+    "sha256": "234e468337e67f84d363eecedb597210e677d785e7cc8a62df11e917ba00adb2",
+    "target": "probe/assets/desktop-stream/native-steering/browser-eb936edba459.js",
+    "targetSha256": "234e468337e67f84d363eecedb597210e677d785e7cc8a62df11e917ba00adb2"
+  },
+  {
+    "source": "native-steering/core-51383d4e7880.js",
+    "sha256": "4693ed9fbc90bdef49d22b774c2e3f38673cd5820f9ad6f7e1ea4421d94bd6dc",
+    "target": "probe/assets/desktop-stream/native-steering/core-51383d4e7880.js",
+    "targetSha256": "4693ed9fbc90bdef49d22b774c2e3f38673cd5820f9ad6f7e1ea4421d94bd6dc"
+  },
+  {
+    "source": "native-steering/core-e0ac85b4f9b8.js",
+    "sha256": "97a5950351893cd676ff23d2078ab85cb51ace37bd8ec15b27da6ac270d09fe0",
+    "target": "probe/assets/desktop-stream/native-steering/core-e0ac85b4f9b8.js",
+    "targetSha256": "97a5950351893cd676ff23d2078ab85cb51ace37bd8ec15b27da6ac270d09fe0"
+  },
+  {
+    "source": "native-steering/highlight-code-af02b8c4df14.js",
+    "sha256": "fa8bf3a6af215bcbb0c6dcd464f90241b9c530547cb2fc853777f9c99efc844c",
+    "target": "probe/assets/desktop-stream/native-steering/highlight-code-af02b8c4df14.js",
+    "targetSha256": "fa8bf3a6af215bcbb0c6dcd464f90241b9c530547cb2fc853777f9c99efc844c"
+  },
+  {
+    "source": "native-steering/katex-b62b0c0d6a07.js",
+    "sha256": "b9e1f679349bbd51ae4bca766b85619d86d20424ea42a0369d99e810e7768853",
+    "target": "probe/assets/desktop-stream/native-steering/katex-b62b0c0d6a07.js",
+    "targetSha256": "b9e1f679349bbd51ae4bca766b85619d86d20424ea42a0369d99e810e7768853"
+  },
+  {
+    "source": "native-steering/katex-fb2359bfd034.js",
+    "sha256": "5aec3e86fde4795e383716c343ac2bfb51d49175895be4e59829bfcca46dcbdd",
+    "target": "probe/assets/desktop-stream/native-steering/katex-fb2359bfd034.js",
+    "targetSha256": "5aec3e86fde4795e383716c343ac2bfb51d49175895be4e59829bfcca46dcbdd"
+  },
+  {
+    "source": "native-steering/lodash-18ea765911e3.js",
+    "sha256": "707999935da7f7b6adf5f9f617a73e5f245fbc508afd8f489a0620f33ca5df9d",
+    "target": "probe/assets/desktop-stream/native-steering/lodash-18ea765911e3.js",
+    "targetSha256": "707999935da7f7b6adf5f9f617a73e5f245fbc508afd8f489a0620f33ca5df9d"
+  },
+  {
+    "source": "native-steering/pierre-highlights-45c306162794.js",
+    "sha256": "d7a1c57c8b7ed3c88e1c4893223bd1e62f44f6a52f4e53e9f02d0e34e3b9344d",
+    "target": "probe/assets/desktop-stream/native-steering/pierre-highlights-45c306162794.js",
+    "targetSha256": "d7a1c57c8b7ed3c88e1c4893223bd1e62f44f6a52f4e53e9f02d0e34e3b9344d"
+  },
+  {
+    "source": "native-steering/pierre-highlights-d860e64474f4.js",
+    "sha256": "53649cbc4c765bb07aa580557a7c78e37464e1968b70d524c32bf2cc8d5275ea",
+    "target": "probe/assets/desktop-stream/native-steering/pierre-highlights-d860e64474f4.js",
+    "targetSha256": "53649cbc4c765bb07aa580557a7c78e37464e1968b70d524c32bf2cc8d5275ea"
+  },
+  {
+    "source": "native-steering/rolldown-runtime-2d059c5e81f4.js",
+    "sha256": "e0a79ad36c6ca1ffbc796c80aa5661803a9d1bc684e29d1587f48b4ba9a82714",
+    "target": "probe/assets/desktop-stream/native-steering/rolldown-runtime-2d059c5e81f4.js",
+    "targetSha256": "e0a79ad36c6ca1ffbc796c80aa5661803a9d1bc684e29d1587f48b4ba9a82714"
+  },
+  {
+    "source": "native-transcript/activity-core.js",
+    "sha256": "0eb620e6888343a5932937770c301698784d17ca092620c172cc376bb84d90ee",
+    "target": "probe/assets/desktop-stream/native-transcript/activity-core.js",
+    "targetSha256": "0eb620e6888343a5932937770c301698784d17ca092620c172cc376bb84d90ee"
+  },
+  {
+    "source": "native-transcript/disclosure-core.js",
+    "sha256": "cf99f14c13aa7624b0502f555389b4789c1019714bafe8a8de364a41f3aa5329",
+    "target": "probe/assets/desktop-stream/native-transcript/disclosure-core.js",
+    "targetSha256": "cf99f14c13aa7624b0502f555389b4789c1019714bafe8a8de364a41f3aa5329"
+  },
+  {
+    "source": "native-transcript/host.js",
+    "sha256": "64764266ddb60877df0b5e4c1360fd9d746aa314aaaa845ef4a5fab48a860fdd",
+    "target": "probe/assets/desktop-stream/native-transcript/host.js",
+    "targetSha256": "64764266ddb60877df0b5e4c1360fd9d746aa314aaaa845ef4a5fab48a860fdd"
+  },
+  {
+    "source": "native-transcript/original-core.js",
+    "sha256": "a80f57ad4d677dfd153c48a49bb61d98f4479568d03ec7600b75710ce24406ed",
+    "target": "probe/assets/desktop-stream/native-transcript/original-core.js",
+    "targetSha256": "a80f57ad4d677dfd153c48a49bb61d98f4479568d03ec7600b75710ce24406ed"
+  },
+  {
+    "source": "native-transcript/statistics-core.js",
+    "sha256": "0ca46ac5aaa42e70e56b1ed1e590f817695052733093ba3e8036fbfba0b648ac",
+    "target": "probe/assets/desktop-stream/native-transcript/statistics-core.js",
+    "targetSha256": "0ca46ac5aaa42e70e56b1ed1e590f817695052733093ba3e8036fbfba0b648ac"
+  },
+  {
+    "source": "work-timer.js",
+    "sha256": "72764948b48e05fce3fae0f364e3c3afbddc14e95b97d18dd130d523a4125d89",
+    "target": "probe/assets/desktop-stream/work-timer.js",
+    "targetSha256": "72764948b48e05fce3fae0f364e3c3afbddc14e95b97d18dd130d523a4125d89"
+  }
+]

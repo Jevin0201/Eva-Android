@@ -1,0 +1,42 @@
+{
+  "files": [
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/classify.mjs",
+      "copy": "migration/eva-0.2.7-desktop/delivery/classify.mjs",
+      "sha256": "a399a38d892f5aa8dc777ce71d2f45c1f1af27e4d36a93def712d6269654fd6a"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/classify-library.mjs",
+      "copy": "migration/eva-0.2.7-desktop/delivery/classify-library.mjs",
+      "sha256": "28c28189128baae6a8398ff61f4374e3ca9482d7545b252883e7fb4fb0453ad4"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-delivery/file-icon.mjs",
+      "copy": "migration/eva-0.2.7-desktop/delivery/file-icon.mjs",
+      "sha256": "0eafb4a7c55594c957fb5a0fdd79639502a74c939f69085fa8a07dc2b5254bb9"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/provenance.json",
+      "copy": "migration/eva-0.2.7-desktop/delivery/provenance.json",
+      "sha256": "e994ae9d48f6453544f747cf8638672e4ead16025b966f9ba788e9ff1c0910ed"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/document-engines-provenance.json",
+      "copy": "migration/eva-0.2.7-desktop/delivery/document-engines-provenance.json",
+      "sha256": "9e75d64ab9846425cab39a05875f1c00ce196e43913531e53ac6aa40edbd372c"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/bundle.js",
+      "copy": "probe/assets/desktop-notebook-bundle.js",
+      "sha256": "22bca464637526584c4f20ba0985925f8587b34f743f95c7c727212455b0bde6",
+      "unmodified": true
+    }
+  ],
+  "purpose": "Desktop preview classification core and original file icon. Android host retains bounded filesystem access.",
+  "notebookAdapter": {
+    "markdown": "existing markdown-it with html:false, linkify:false",
+    "transport": "PreviewHost.readNotebook JSON envelope, parent-provided Android single-file bridge",
+    "worker": "CSP worker-src none; original code synchronous fallback",
+    "temporaryContent": "No temporary downloads or diagnostic scripts created. All produced source/build assets retained for runtime and verification."
+  }
+}

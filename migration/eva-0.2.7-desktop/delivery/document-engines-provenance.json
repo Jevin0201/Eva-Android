@@ -1,0 +1,35 @@
+{
+  "archiveSHA256": "6fbedf054a8d8cafaf5c745b40aa59176512e106e0bd6308275ae123b60fd074",
+  "records": [
+    {
+      "member": "webview/assets/pdf-4820c2b2f0dc.js",
+      "target": "pdf-current.mjs",
+      "sha256": "80f1ae5a5cc230c523f97c191e43114a29a5fe8774107bbd13cb4ede1bb44938",
+      "retainedStart": 0,
+      "retainedEnd": 449558
+    },
+    {
+      "member": "webview/assets/pdf_viewer-d6e4bc7c601f.js",
+      "target": "pdf-viewer-current.mjs",
+      "sha256": "b425d720108b142738805ba085626aa4f23393f9b10d4bcc85b63c92c3ecc9dc",
+      "retainedStart": 28,
+      "retainedEnd": 152884
+    },
+    {
+      "member": "webview/assets/docx-preview-ca5523f50dcc.js",
+      "target": "docx-current.mjs",
+      "sha256": "65a7a3494be03f25cee05ecd5a00d93665401e46f29811ed9c5fcd1694b5017f",
+      "retainedStart": 0,
+      "retainedEnd": 170558
+    },
+    {
+      "member": "webview/assets/rolldown-runtime-428824ca0286.js",
+      "target": "rolldown-runtime-428824ca0286.js",
+      "sha256": "f85e715d54a11fa37b7774ad77b536896ed01bfdfc98f485b678c81859fc8e2e",
+      "retainedStart": 0,
+      "retainedEnd": 1301
+    }
+  ],
+  "pdfWorkerVersion": "5.4.296",
+  "uiStatus": "Host frame controls remain pending original panel migration"
+}

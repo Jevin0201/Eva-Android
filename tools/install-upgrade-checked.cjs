@@ -9,7 +9,7 @@ async function main(){
  const pid=run(['shell','pidof',pkg]).trim().split(/\s+/)[0];try{run(['forward','--remove','tcp:9223'])}catch{}run(['forward','tcp:9223','localabstract:webview_devtools_remote_'+pid]);
  const {chromium}=require('playwright-core');const browser=await chromium.connectOverCDP('http://127.0.0.1:9223');let page,locked=false;
  try{
-  page=browser.contexts().flatMap(c=>c.pages()).find(p=>p.url()==='https://eva.invalid/index.html');if(!page)throw Error('Eva chat page unavailable');
+  page=browser.contexts().flatMap(c=>c.pages()).find(p=>p.url()==='https://eva.invalid/index.html');if(!page)throw Error('Eva chat page unavailable');await page.waitForFunction(()=>typeof kernelBusy!=='undefined'&&typeof data!=='undefined',null,{timeout:15000});
   const check=await page.evaluate(()=>({busy:kernelBusy,running:[...data.chats,...data.drafts].filter(c=>c.running).length,pending:[...data.chats,...data.drafts].filter(c=>c.pending).length}));assertIdle(check);
   const snapshot=await page.evaluate(()=>{
    if(kernelBusy||[...data.chats,...data.drafts].some(c=>c.running||c.pending))throw Error('发送状态已变化，取消安装');

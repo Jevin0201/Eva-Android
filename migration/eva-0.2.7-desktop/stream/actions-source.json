@@ -1,0 +1,17 @@
+{
+  "sources": {
+    "actions.js": "afb50da1b19480191c93384e89244b6d0fc377d4518d70084196c5e9e6474c07",
+    "ui.js": "df2766c123d4491bd39553bd12781531217d2975c101f0007e2239b3227f8ee0"
+  },
+  "functions": [
+    "showTurnDiff",
+    "showItemDiff",
+    "copyTurnText",
+    "modalDiff",
+    "saveTurnConnections",
+    "recordTurnConnection",
+    "finishTurnConnection",
+    "recoverTurnConnection"
+  ],
+  "adaptation": "Android modalShell and native clipboard injected, original function bodies retained"
+}

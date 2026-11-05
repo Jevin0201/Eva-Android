@@ -1,1 +1,40 @@
-.screen{position:relative}.chat-scroll-bottom{position:absolute;z-index:20;transform:translateX(-50%);width:40px;height:40px;display:grid;place-items:center;border:1px solid var(--line);border-radius:50%;background:var(--paper);color:var(--ink);box-shadow:0 2px 8px #0001;cursor:pointer}.chat-scroll-bottom[hidden]{display:none}.chat-scroll-bottom svg{width:20px;height:20px}.chat-scroll-bottom:focus-visible{outline:2px solid var(--ink);outline-offset:2px}.flow{overflow-anchor:none}
+/* Original wqAy frame: 32px circle, centered, 24px above the composer. */
+.chat-scroll-bottom {
+  position: absolute; z-index: 6; left: 50%; transform: translateX(-50%);
+  display: flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; padding: 0; border: 1px solid var(--line);
+  border-radius: 50%; background: var(--paper); background-clip: padding-box;
+  color: var(--ink); cursor: pointer; opacity: 0; pointer-events: none;
+  transition: opacity .15s ease-in-out;
+}
+.chat-scroll-bottom[data-visible="true"] { opacity: 1; pointer-events: auto; }
+.chat-scroll-bottom svg { width: 20px; height: 20px; }
+.chat-scroll-bottom:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.transcript-jump-dots { display: none; align-items: center; justify-content: center; gap: 4px; }
+.transcript-jump-dots i { width: 4px; height: 4px; border-radius: 50%; background: currentColor; animation: transcript-jump-wave 1.2s ease-in-out infinite; }
+.transcript-jump-dots i:nth-child(2) { animation-delay: .15s; }
+.transcript-jump-dots i:nth-child(3) { animation-delay: .3s; }
+.chat-scroll-bottom[data-working="true"]:not(:hover):not(:focus-visible) svg { display: none; }
+.chat-scroll-bottom[data-working="true"]:not(:hover):not(:focus-visible) .transcript-jump-dots { display: flex; }
+@keyframes transcript-jump-wave { 0%,60%,100% { opacity: .4; transform: translateY(0); } 30% { opacity: 1; transform: translateY(-2px); } }
+@media (prefers-reduced-motion: reduce) { .transcript-jump-dots i { animation: none; } .chat-scroll-bottom { transition: none; } }
+@media print { .chat-scroll-bottom { display: none; } }
+
+/* Android layout owns the scroll container and composer geometry. */
+.screen { position: relative; }
+.chat-scroll-bottom { z-index: 20; }
+.chat-scroll-bottom[hidden] { display: none; }
+.flow { overflow-anchor: none; }
+.tree-chat [data-thread-status] { flex: none; width: 12px; height: 12px; margin-left: auto; }
+.tree-chat [data-thread-status][hidden] { display: none; }
+.tree-chat[data-runtime-status="loading"] [data-thread-status] {
+ border: 1.5px solid currentColor; border-right-color: transparent;
+ border-radius: 50%; animation: eva-thread-spin .8s linear infinite;
+}
+.tree-chat[data-runtime-status="error"] [data-thread-status] { color: #b43333; }
+.tree-chat[data-runtime-status="error"] [data-thread-status]::after { content: '!'; }
+.tree-chat[data-runtime-status="idle"][data-unread="true"] [data-thread-status] {
+ width: 6px; height: 6px; border-radius: 50%; background: currentColor;
+}
+@keyframes eva-thread-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .tree-chat[data-runtime-status="loading"] [data-thread-status] { animation: none; } }

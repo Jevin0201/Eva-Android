@@ -1,0 +1,240 @@
+{
+  "baseline": "Eva-Source/src/renderer",
+  "files": [
+    {
+      "path": "subagents.js",
+      "sha256": "30634f0b76176855a2909a017505023cc75b4d1ab84dad5b0f9fe8d6fe8aa215"
+    },
+    {
+      "path": "subagents.css",
+      "sha256": "372af25a297af70a98e5c3b029571d2f5f60d43790e96ef48119af3d22ba827b"
+    },
+    {
+      "path": "native-steering/adapter.jsx",
+      "sha256": "cbab87a76958605509e6d3fc4fbc871a1035cd9eb34fb574a5412f6b92c49787"
+    },
+    {
+      "path": "native-steering/file-services.mjs",
+      "sha256": "211a19bd383b7ce3ee8cd6f8a92892b9944a464f4a12c788f668f7308e1c64ea"
+    },
+    {
+      "path": "native-image-preview/common/adapter.jsx",
+      "sha256": "7f84a1fdb89e0bc15c16b4829ff3d8e0b8447579e4d7bc64232703404b2023fc"
+    },
+    {
+      "path": "assets/subagents/08-light.svg",
+      "sha256": "e03a1e6737f94f9327705a79e7413586b5a0f6af54e9e5236e3288a331a2779d"
+    },
+    {
+      "path": "assets/subagents/11-light.svg",
+      "sha256": "3c2cb2a16d4879bc4cedbe015ef7b50f46b1e99d359770a2ccc742c11c84f581"
+    },
+    {
+      "path": "assets/subagents/01-dark.svg",
+      "sha256": "0ae0a9941104251aa0a148ad27836aa93780744a15172d5c4e3eb28b01b13ed5"
+    },
+    {
+      "path": "assets/subagents/05-light.svg",
+      "sha256": "d5d819c963b44f27ccbbdc21d81430119edc44e511d06d2648004972ed34f7b6"
+    },
+    {
+      "path": "assets/subagents/00-dark.svg",
+      "sha256": "001bf4d89600e06958b18da4e8e568d9bfc32a4653b1db08eced2b3ba908f5bf"
+    },
+    {
+      "path": "assets/subagents/24-light.svg",
+      "sha256": "9db3e45cee709368560d7e1813d4a9bf06cd2d225ef2caf6f795cadda6d7554d"
+    },
+    {
+      "path": "assets/subagents/22-dark.svg",
+      "sha256": "a49ae215adc7fb97166a4667be886d54104e97fbcd6f3abbc346f073932a5583"
+    },
+    {
+      "path": "assets/subagents/23-dark.svg",
+      "sha256": "cee41bd3775af2b9692e89bd0457406a3f8928db2d8ca57c5fe951723851a70b"
+    },
+    {
+      "path": "assets/subagents/22-light.svg",
+      "sha256": "1f5be1149740fbf4e8daa18ad2e52b1742aaeaf03022b0ca6c22d6ad2c826222"
+    },
+    {
+      "path": "assets/subagents/16-dark.svg",
+      "sha256": "70455c300c5997ad2f205ffc36d1ab98fde7e5359982aa99900bc988b3982298"
+    },
+    {
+      "path": "assets/subagents/17-dark.svg",
+      "sha256": "e5dbb75eb807154a92092cbe499efa6ece1ac50dae9cac3a4c39830b9a540f2c"
+    },
+    {
+      "path": "assets/subagents/17-light.svg",
+      "sha256": "2cdf664b1888b329f6082136a34e6f65baf78547b5870efd3f0cbdef28a37aeb"
+    },
+    {
+      "path": "assets/subagents/03-light.svg",
+      "sha256": "b15e7f2437f9aff0575a4b547b30037b66959957963a15c38367e198e0800278"
+    },
+    {
+      "path": "assets/subagents/09-light.svg",
+      "sha256": "c44c239f1019b658a54a1ab377b710a755a42e9f826306d7e577df9a3f9c27e3"
+    },
+    {
+      "path": "assets/subagents/25-dark.svg",
+      "sha256": "3c4bab902f6a599925b8f7186202057fdd303be28a37136638df93c058703fbb"
+    },
+    {
+      "path": "assets/subagents/24-dark.svg",
+      "sha256": "56eba6135b31140f47abe820bfe25c821c7d73a9474e3cf2b9c2a355e61751a8"
+    },
+    {
+      "path": "assets/subagents/11-dark.svg",
+      "sha256": "23506566602e5707e5141984840f2d6e212d15b696b8722fa209133dc802a761"
+    },
+    {
+      "path": "assets/subagents/04-light.svg",
+      "sha256": "fdd6367637d17e3ba81a14b25545c3f8fa46a8884d8c0be581785ddfdd6c216c"
+    },
+    {
+      "path": "assets/subagents/10-dark.svg",
+      "sha256": "5e3df3b5459b7726f887ee9cf4ce5431f55fe6a279915cb0e3663f675f5260e8"
+    },
+    {
+      "path": "assets/subagents/10-light.svg",
+      "sha256": "12b8a8adbb8c80a8895d4ffe86ebe91b6232310587c0646569392e1e4032fc94"
+    },
+    {
+      "path": "assets/subagents/25-light.svg",
+      "sha256": "022cb3c3ddb01f91a769355f3caee1b8017f06f7118ca9f67ab3702554154ecc"
+    },
+    {
+      "path": "assets/subagents/23-light.svg",
+      "sha256": "686441c6ccddcd2bedac7f5fb4b05b829e4dd141a4062884d9bf0ac81cdb563a"
+    },
+    {
+      "path": "assets/subagents/06-dark.svg",
+      "sha256": "dfd595e064fe6463ac748aad8ec877e7d59dcc33e2ca0a1b75e7b513d23e4f21"
+    },
+    {
+      "path": "assets/subagents/07-dark.svg",
+      "sha256": "4646c689d8b2f8b8cdf6a49f2aca3946780dcb22f276340334cc2440c6c1f160"
+    },
+    {
+      "path": "assets/subagents/02-light.svg",
+      "sha256": "af224d585846623402fd800899a9fe81b5e13899be7844dc24f7e6eaf04ff170"
+    },
+    {
+      "path": "assets/subagents/16-light.svg",
+      "sha256": "43d451e7ccf1e7c94a46682fcbf1d77cae736e58a518f9f8b80bb7721e538400"
+    },
+    {
+      "path": "assets/subagents/15-dark.svg",
+      "sha256": "3652ff5ea1e65fd98603ffac62e0bf4d0726c5f6d7bf8be6e01a58f80da169b4"
+    },
+    {
+      "path": "assets/subagents/14-dark.svg",
+      "sha256": "253cf302efeddbd696c10a89c0d0f4855ef849a5ac09da5e8d4cf87abd377f3a"
+    },
+    {
+      "path": "assets/subagents/13-light.svg",
+      "sha256": "f012995223ba479617a8b0d8f3f7f771202004327d06b2e330085a19c22df298"
+    },
+    {
+      "path": "assets/subagents/21-dark.svg",
+      "sha256": "362be34d9fe0df252c4cbc1392d82151d2894a3e263294914c9697c1d2cb7787"
+    },
+    {
+      "path": "assets/subagents/20-dark.svg",
+      "sha256": "e74af3b06c5391d08bce6d3f717f7acb6c177b0242f8830844d09d60b8a88a42"
+    },
+    {
+      "path": "assets/subagents/07-light.svg",
+      "sha256": "380b217243d9fca9dcdad73e52edc8b941b288cc3f40a16fd4cda782c9d6d330"
+    },
+    {
+      "path": "assets/subagents/18-light.svg",
+      "sha256": "4fa476c8b7f896d9ee25bcaa7cc34afe3d0d20f4f5d243c72d4b53399aed04e9"
+    },
+    {
+      "path": "assets/subagents/02-dark.svg",
+      "sha256": "d699d8b74d60d1b331c442831b75d057c85de81ab8a20a763e17756e415f2572"
+    },
+    {
+      "path": "assets/subagents/03-dark.svg",
+      "sha256": "8f6a685fc61bf10e8dca4bb82c43894555e59c322032bba03ce2718cdb060d44"
+    },
+    {
+      "path": "assets/subagents/15-light.svg",
+      "sha256": "f90215384a2942cbdf4914c5c25eafd0bcd5480979ab75783bdc0956e50a7512"
+    },
+    {
+      "path": "assets/subagents/08-dark.svg",
+      "sha256": "5f969d4dc90d617b1e6166445c075114603e4fc36a69087b66110fa26c9d3ec7"
+    },
+    {
+      "path": "assets/subagents/09-dark.svg",
+      "sha256": "a841a246ce365112bf0fc43d343cf16372ced53b5728413e489e36ed6fe3eb89"
+    },
+    {
+      "path": "assets/subagents/01-light.svg",
+      "sha256": "656cba0afe154f3962e3beca88d650e60656663b9ca25eb5182c277bd94a4031"
+    },
+    {
+      "path": "assets/subagents/20-light.svg",
+      "sha256": "fee3af69dc62197691cfc4aed415bcbe73f3d12845ef71a85994d3119f6ba762"
+    },
+    {
+      "path": "assets/subagents/05-dark.svg",
+      "sha256": "8b2abb12805d740fc8bed56cfdfc1dbf8622d83682d326989aa31c386a738c42"
+    },
+    {
+      "path": "assets/subagents/04-dark.svg",
+      "sha256": "541c528fcc79c7dce0fc42f310507977c5f997271d682ebea605e59c7dc43612"
+    },
+    {
+      "path": "assets/subagents/06-light.svg",
+      "sha256": "a828aa510d4d6f0bae4ae520c4ea1f2d5429f3468eea404f42befeaca008ccf4"
+    },
+    {
+      "path": "assets/subagents/12-light.svg",
+      "sha256": "e0d17749719004ad47b9d79ef2c0326cb73ec4a7da8ed1d7ee0371770e66a07a"
+    },
+    {
+      "path": "assets/subagents/12-dark.svg",
+      "sha256": "e532454bf77a62794899c0a769825d56627fec48be82f821a78d54c4c34116ff"
+    },
+    {
+      "path": "assets/subagents/13-dark.svg",
+      "sha256": "7dcaaa9769d0a95157cdfdb6479d55d389978ee257d082b88730e4f04b675b3b"
+    },
+    {
+      "path": "assets/subagents/19-light.svg",
+      "sha256": "8025b3b35aecc396f7970f0b17bca4f6b93303c4e932e43852f3d6bf8d5fcfd4"
+    },
+    {
+      "path": "assets/subagents/00-light.svg",
+      "sha256": "a34cb39597c245584b03eb6d3043ae65720e339e19b60f9d2a57e9e54849c510"
+    },
+    {
+      "path": "assets/subagents/14-light.svg",
+      "sha256": "ffabff8dbc0badb7b590e038aeabc6c81d7ca688e69ec856fd655ab044dcf0db"
+    },
+    {
+      "path": "assets/subagents/18-dark.svg",
+      "sha256": "183e7c2efa981041cb37afe806c84a27922668ac54217b109e906642a4da1e34"
+    },
+    {
+      "path": "assets/subagents/19-dark.svg",
+      "sha256": "9ea803114b80b88c4a9d09db1e03f15ea3895a56433634e62271a8118de7ec2e"
+    },
+    {
+      "path": "assets/subagents/21-light.svg",
+      "sha256": "54e796c51a8ac0467ff592432b3772cc8d540a97a44d1db58881b64c04a742a5"
+    }
+  ],
+  "androidAdaptations": [
+    "workspaceFiles.readBinary delegates to bounded workspace-only image service",
+    "original dialog portal defaults to original styled shadow scope",
+    "original native-scoped theme included in message roots",
+    "subagents.js presentation and subagents.css retained; Android panel binds membership, paged history and polling",
+    "initial kernel history waits for desktop renderer instead of painting legacy cards"
+  ]
+}

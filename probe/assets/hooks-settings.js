@@ -56,6 +56,6 @@ window.evaHooks=(()=>{
   $('[data-hook-cancel]').onclick=()=>{state.editing=null;draw();};$('[data-hook-save]').onclick=()=>writeDeclaration('save',state.editing);
  }
  async function writeDeclaration(action,entry){if(state.busy)return;if(kernelBusy||[...(data.chats||[]),...(data.drafts||[])].some(c=>c.running)){state.error='请先完成或停止正在执行的任务，再修改钩子。';draw();return;}state.busy=true;state.error='';draw();try{await kernelCall('android/hooks',{action,...entry,revision:state.revision});state.editing=null;loadedKernelThreads.clear();await fetchRows();state.notice='声明已保存，未自动信任；请检查下方命令和当前指纹。';}catch(e){state.error='修改失败：'+e.message;}finally{state.busy=false;draw();}}
- const previousSettings=settingsGo;settingsGo=function(page){if(page==='hooks'){settingPage='hooks';$('#phone').classList.remove('drawer-open');draw();load();return;}previousSettings(page);if(page==='settings')$('.flow').insertAdjacentHTML('afterbegin',settingGroup('自动执行',row('terminal','生命周期钩子','查看来源、启停和信任状态','settings:hooks')));};
+ const previousSettings=settingsGo;settingsGo=function(page){if(page==='hooks'){settingPage='hooks';$('#phone').classList.remove('drawer-open');draw();load();return;}previousSettings(page);};
  return {open:()=>settingsGo('hooks'),load,state};
 })();

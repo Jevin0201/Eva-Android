@@ -1,0 +1,8 @@
+{
+  "source": "src/renderer/native-user-input/bundle.js",
+  "sha256": "c193b6945756979f261adeb4da02a3355d8de8affb1b947c2c6f3400acaba31c",
+  "target": "probe/assets/desktop-user-input.js",
+  "adapter": "probe/assets/agent-questions.js",
+  "license": "Eva private source supplied by user. React/ReactDOM MIT notices retained in probe/assets/licenses; recovered component provenance remains in desktop native-user-input/provenance.json.",
+  "sourceScope": "Desktop src only"
+}

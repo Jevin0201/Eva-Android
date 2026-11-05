@@ -1,0 +1,40 @@
+{
+  "files": [
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/thread-activity.js",
+      "sha256": "829d1fadb9d55ba48dff439ef5ae0b327e65350c1a687520bb803e91f41042cf"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/render.js",
+      "sha256": "ad1dfffabeea245f00a3aa8d9e7a97fb8233a58784e27c1229bc11a26800c2b8"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/styles.css",
+      "sha256": "9d7daae7bf5022d85f6485a59e526045bcce173cced5bc01c105dae4f32ef08b"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/actions.js",
+      "sha256": "afb50da1b19480191c93384e89244b6d0fc377d4518d70084196c5e9e6474c07"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/main/main.js",
+      "sha256": "d62e407965135e4a7cf7c618186bdbe14db3b19154ac5eb38348fc40a10d4c8c"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/main/isolated-server.js",
+      "sha256": "2903d547aec4e33aaef7514922c0d96f6229faefc94560c09418492745471ab0"
+    }
+  ],
+  "adapterFiles": [
+    "probe/assets/desktop-thread-activity.js",
+    "probe/assets/desktop-task-status.css"
+  ],
+  "desktopFunctions": [
+    "renderThreadTree",
+    "renderThreadActivity",
+    "QEn",
+    "threadActivity.observe",
+    "threadActivity.read"
+  ],
+  "androidLayout": "Explicitly requested running-task aggregation region, not present as an independent group in the reviewed desktop renderThreadTree."
+}

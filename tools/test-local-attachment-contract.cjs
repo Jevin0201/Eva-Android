@@ -1,0 +1,37 @@
+'use strict';
+const fs=require('fs'),assert=require('assert/strict'),{chromium,launchOptions}=require('./browser-test-env.cjs');
+(async()=>{const browser=await chromium.launch(launchOptions());try{
+ const page=await browser.newPage({viewport:{width:390,height:844}}),errors=[];
+ page.on('pageerror',e=>errors.push(e.message));
+ await page.addInitScript(()=>{
+  window.events=[];window.calls=[];window.picks=[];window.receipt={};
+  window.EvaHost={load:()=>JSON.stringify({projects:[],drafts:[],active:'c',chats:[{id:'c',title:'Local attachments',messages:[],providerId:'fixture',model:'fixture',kernelThread:{id:'thread',turns:[]}}]}),save:()=>true,saveLater:()=>{},settings:()=>'{}',providers:()=>JSON.stringify({providers:[{id:'fixture',model:'fixture'}],active:'fixture'}),tasks:()=>'[]',pendingQuestions:()=>'[]',attachmentResult:()=>JSON.stringify(receipt),attachmentAck:()=>{receipt={}},pickAttachments:(...args)=>picks.push(args),pickAttachmentFolder:(...args)=>picks.push(["folder",...args]),kernelDrain:()=>JSON.stringify(events.splice(0)),kernelCall:(ticket,method,json)=>{const params=JSON.parse(json);calls.push({method,params});events.push({ticket,result:method==='thread/resume'?{thread:{id:'thread',turns:[]}}:method==='turn/start'?{turn:{id:'new-turn',status:'completed',items:[]}}:{}});}};
+ });
+ await page.route('https://eva.invalid/**',route=>{const name=new URL(route.request().url()).pathname.slice(1),file='probe/assets/'+name;if(name==='generated-image')return route.fulfill({status:404,body:''});return route.fulfill({status:fs.existsSync(file)?200:404,body:fs.existsSync(file)?fs.readFileSync(file):'',contentType:name.endsWith('.js')?'text/javascript':name.endsWith('.css')?'text/css':'text/html'});});
+ await page.goto('https://eva.invalid/index.html');
+ const plus=page.locator('[data-action=attach-menu]');await plus.click();
+ const menu=page.getByRole('menu',{name:'添加附件',exact:true});
+ assert.equal(await menu.getByRole('menuitem').count(),3,'three clearly labeled system attachment modes');
+ assert.equal(await page.locator('#eva-panel').count(),0,'attachment choice is not a full bottom sheet');
+ const rect=await menu.boundingBox();assert(rect.width<200&&rect.height<160,'compact anchored menu');
+ assert(!/32|10|云端/.test(await menu.innerText()));
+ await menu.getByRole('menuitem',{name:'手机文件',exact:true}).click();
+ assert.deepEqual(await page.evaluate(()=>picks),[['c','',false]]);
+ await plus.click();await page.getByRole('menuitem',{name:'手机文件夹',exact:true}).click();assert.deepEqual(await page.evaluate(()=>picks.at(-1)),['folder','c','']);
+ assert.equal(await page.locator('.attachment-menu').count(),0);
+ await plus.click();await page.keyboard.press('Escape');assert.equal(await page.locator('.attachment-menu').count(),0);
+ await plus.click();await page.locator('.flow').click({position:{x:300,y:12}});assert.equal(await page.locator('.attachment-menu').count(),0);
+ await page.evaluate(()=>{const files=Array.from({length:15},(_,i)=>({id:'a'+i,name:'local-'+i+(i<12?'.png':'.pdf'),mime:i<12?'image/png':'application/pdf',size:40*1024*1024,path:'/root/eva-workspace/attachments/11111111-1111-4111-8111-111111111111/local-'+i+(i<12?'.png':'.pdf')}));files.push({id:'dir',name:'source',kind:'directory',mime:'vnd.android.document/directory',size:100*1024*1024,path:'/root/eva-workspace/attachments/22222222-2222-4222-8222-222222222222/source'});receipt={id:'picked-many',target:'c',files};receiveAttachments();});
+ assert.equal(await page.evaluate(()=>active().attachments.length),16,'native receipt is not capped at ten');
+ await page.locator('#prompt').fill('Inspect these local paths when needed');await page.evaluate(()=>kernelSend());
+ await page.waitForFunction(()=>!kernelBusy&&calls.some(c=>c.method==='turn/start'));
+ const input=await page.evaluate(()=>calls.find(c=>c.method==='turn/start').params.input);
+ assert.equal(input.length,1,'selection sends only a local path manifest, not all image payloads');
+ assert.equal(input[0].type,'text');assert.equal((input[0].text.match(/^## /gm)||[]).length,17);
+ assert(input[0].text.includes('Directory attachment: true'));
+ assert(input[0].text.includes('/root/eva-workspace/attachments/'));
+ assert(!input[0].text.includes('base64'));
+ assert.equal(await page.evaluate(()=>active().attachments.length),0);
+ assert.deepEqual(errors,[]);
+ console.log('PASS compact attachment menu, picker routing/dismissal, sixteen local references, large-file metadata, directory envelope and no eager image payload');
+}finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1;});

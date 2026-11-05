@@ -23,7 +23,7 @@
  async function save(){if(state.busy||!state.current||!state.dirty)return;state.busy=true;state.error='';paint();try{state.current=await call(state.current.isNew?'create':'save',{id:state.current.isNew?state.name.trim():state.current.id,content:state.draft,...(!state.current.isNew?{revision:state.current.revision}:{})});state.draft=state.current.content;state.dirty=false;state.notice='记忆已保存';state.items=(await call('list')).items||[];}catch(e){state.error=e.message;}finally{state.busy=false;paint();}}
  async function remove(){if(state.busy||!state.current||state.current.isNew)return;state.busy=true;state.error='';paint();try{await call('delete',{id:state.current.id,revision:state.current.revision});state.current=null;state.draft='';state.dirty=false;state.notice='记忆已删除';state.items=(await call('list')).items||[];}catch(e){state.error=e.message;}finally{state.busy=false;paint();}}
  function open(){settingPage='memories';$('#phone').classList.remove('drawer-open');paint();refresh();}
- const previousSettings=settingsGo;settingsGo=function(page){if(page==='memories'){open();return;}previousSettings(page);if(page==='settings')$('.flow')?.insertAdjacentHTML('beforeend',settingGroup('记忆',row('file','记忆管理','查看和编辑此手机上的持久记忆','settings:memories')));};
+ const previousSettings=settingsGo;settingsGo=function(page){if(page==='memories'){open();return;}previousSettings(page);};
  const previousNavigate=navigate;navigate=function(action){if(settingPage==='memories'&&(action==='memory-back'||action==='settings-back')){discardThen(()=>settingsGo('settings'));return;}previousNavigate(action);};
  window.memorySettings={open,refresh};
 })();

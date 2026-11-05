@@ -1,0 +1,5 @@
+{
+  "source": "src/main/native-image-preview/original-rpc-core.cjs",
+  "sha256": "0bbd458d01b1c255eee0a97f7406d63a38872efcc26ba9caa61024cfceba2730",
+  "adaptation": "Browser MessagePort transport unchanged. Android workspaceFiles.readBinary resolves validated image paths through existing /generated-image native endpoint. No Electron or Node filesystem emulation."
+}

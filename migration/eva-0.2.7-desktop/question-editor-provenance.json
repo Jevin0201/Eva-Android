@@ -1,0 +1,129 @@
+{
+  "archive": "/Applications/ChatGPT.app/Contents/Resources/app.asar",
+  "archiveSHA256": "130145706a912db74e4d260ad7538f10f1e05e88af955f9afba42cdf01e64606",
+  "sources": [
+    {
+      "member": "webview/assets/app-primary-7d7313419f84.js",
+      "memberSHA256": "745529956e303674c268a6871e6f5aad49eca7ef5af899952bf0379d829821b6"
+    },
+    {
+      "member": "webview/assets/app-initial-feb30b196d11.js",
+      "memberSHA256": "8f4e5fe65617413cabf689afbfc04bc6c24f73a5c0b57d7d0de443942343bd55"
+    }
+  ],
+  "entries": [
+    {
+      "member": "webview/assets/app-primary-7d7313419f84.js",
+      "name": "xRr",
+      "kind": "function",
+      "utf16Start": 3787558,
+      "utf16End": 3794815,
+      "sha256": "c6a196e19d83921eb1c3824bebd281be700b95cb577c190fa7475c2a0f0d2a5e"
+    },
+    {
+      "member": "webview/assets/app-primary-7d7313419f84.js",
+      "name": "wRr",
+      "kind": "function",
+      "utf16Start": 3794987,
+      "utf16End": 3799446,
+      "sha256": "c065ec7554514706a492058b13bfdbf831f51b75406ac1f0e36632c668f3019a"
+    },
+    {
+      "member": "webview/assets/app-initial-feb30b196d11.js",
+      "name": "T4n",
+      "kind": "function",
+      "utf16Start": 3977532,
+      "utf16End": 3977823,
+      "sha256": "575d9906fa8e7fc33e89e9b5a32c45df5a0a41a58fac443ef05cb134872b8eb8"
+    },
+    {
+      "member": "webview/assets/app-initial-feb30b196d11.js",
+      "name": "m3n",
+      "kind": "function",
+      "utf16Start": 3998848,
+      "utf16End": 4000981,
+      "sha256": "3363f95372a6d6de98b5e327c1f33d3ed032b8b43947cf950a0874dc5772c2f9"
+    },
+    {
+      "member": "webview/assets/app-initial-feb30b196d11.js",
+      "name": "RX",
+      "kind": "function",
+      "utf16Start": 6333832,
+      "utf16End": 6334067,
+      "sha256": "5459afd606e5d86e6261da9731671bdac9b8181f79fdcb7ffc36d6aad3493ee8"
+    },
+    {
+      "member": "webview/assets/app-initial-feb30b196d11.js",
+      "name": "yzs",
+      "kind": "function",
+      "utf16Start": 9618641,
+      "utf16End": 9619153,
+      "sha256": "2d2da4d0ca0e232ec72d195ea25808b18568fc38340614db4678b7220cf9b391"
+    },
+    {
+      "member": "webview/assets/app-initial-feb30b196d11.js",
+      "name": "ABs",
+      "kind": "function",
+      "utf16Start": 9649615,
+      "utf16End": 9655247,
+      "sha256": "a8d2d4db5fa87828bc2ae37a59b382e4e1c6045244d26fb91c252d2077c5e631"
+    },
+    {
+      "member": "webview/assets/app-initial-feb30b196d11.js",
+      "name": "jBs",
+      "kind": "function",
+      "utf16Start": 9655247,
+      "utf16End": 9655691,
+      "sha256": "6ca56f394058673c6fc18e4df00afe5d566df629e2f2c71a0cb32e9c0358a699"
+    },
+    {
+      "member": "webview/assets/app-initial-feb30b196d11.js",
+      "name": "EBs",
+      "kind": "initializer",
+      "utf16Start": 9649395,
+      "utf16End": 9649495,
+      "sha256": "b845739179c07e6bb34f3f90f81d693576f2474957c5ba98d8a02bae4c4eb7dc"
+    },
+    {
+      "member": "webview/assets/app-initial-feb30b196d11.js",
+      "name": "DBs",
+      "kind": "initializer",
+      "utf16Start": 9649500,
+      "utf16End": 9649546,
+      "sha256": "ede8792b53231d9020ed08a8a5f21f6edc2ad878c220ce9577a91383e9eff5d7"
+    },
+    {
+      "member": "webview/assets/app-initial-feb30b196d11.js",
+      "name": "OBs",
+      "kind": "initializer",
+      "utf16Start": 9649551,
+      "utf16End": 9649608,
+      "sha256": "655310c2428dcbc12719cd497dc8a9b609e771c8a7590e4bd979d5d1811625a0"
+    },
+    {
+      "member": "webview/assets/app-initial-feb30b196d11.js",
+      "name": "IBs",
+      "kind": "initializer",
+      "utf16Start": 9657283,
+      "utf16End": 9657395,
+      "sha256": "2c948cca883cb01666099e779ce2e333ecd02bc0b4eee87ecd9944ca49c20234"
+    },
+    {
+      "member": "webview/assets/app-initial-feb30b196d11.js",
+      "name": "LBs",
+      "kind": "initializer",
+      "utf16Start": 9657400,
+      "utf16End": 9657428,
+      "sha256": "5d747a43fe6f441291bc45fe376268d51517c806f12652776887edf3daf5638d"
+    },
+    {
+      "member": "webview/assets/app-initial-feb30b196d11.js",
+      "name": "E4n",
+      "kind": "initializer",
+      "utf16Start": 3977869,
+      "utf16End": 3978058,
+      "sha256": "10629a3657f25a9e6c094baf74966e071170c0cd5e1c3485a0863ea851922afd"
+    }
+  ],
+  "scope": "Verbatim wRr/xRr/ABs/m3n editor wrappers and original classnames; explicit local plain-text controller adapter supplies view lifecycle. Official mention/account/link-dictionary/dictation services are unavailable on this question editor; official bootstrap and account stores are not loaded."
+}

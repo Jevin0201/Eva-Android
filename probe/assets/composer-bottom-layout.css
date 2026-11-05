@@ -1,0 +1,46 @@
+/* ShellActivity already applies system bar and IME insets to the WebView.
+   Keep the dock inside that native viewport without adding the safe area twice. */
+.dock {
+ flex:none;
+ padding-top:4px;
+ padding-bottom:2px;
+}
+.ime-visible .dock { padding-bottom:2px; }
+.composer { padding-bottom:0; }
+/* Return the recovered bottom space to the editable text area. */
+.composer textarea { height:54px; min-height:54px; }
+.composer .controls { min-width:0; gap:4px; }
+.composer .controls .permission-chip {
+ display:inline-flex; align-items:center; justify-content:center;
+ flex:0 0 40px; width:40px; height:40px; min-width:40px; min-height:40px;
+ padding:8px !important; border-radius:50%;
+}
+.composer .controls .permission-chip svg { width:20px; height:20px; flex:none; }
+.composer .controls .context { flex:1 1 0; min-width:0; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+.composer .controls .model { min-width:0; max-width:44vw; flex:0 1 auto; overflow:hidden; white-space:nowrap; }
+.dock .foot { margin-top:2px; margin-bottom:0; line-height:1.4; overflow-wrap:anywhere; }
+#eva-keyboard-toolbar { margin-bottom:2px; }
+.permission-menu { max-height:calc(100dvh - 16px); overflow-y:auto; }
+@media (orientation:landscape) and (max-height:500px) {
+ .composer textarea { max-height:25dvh; }
+ .dock { padding-top:2px; }
+}
+
+/* Keep the workspace at the lower-left edge instead of reserving a row above input. */
+.composer-footer{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,3fr) minmax(0,1fr);align-items:center;gap:4px;margin-top:2px;min-width:0}
+.workspace-chip{display:inline-flex;align-items:center;gap:4px;min-width:0;max-width:100%;min-height:20px;padding:0 2px;color:var(--muted);font-size:10px;line-height:20px;border-radius:5px;text-align:left}
+.workspace-chip svg{width:13px;height:13px;flex:none}
+.workspace-chip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.workspace-chip:hover{background:var(--hover)}
+.composer-footer .foot{grid-column:2;min-width:0;margin:0;text-align:center;font-size:9px;line-height:16px}
+/* Move glyphs and labels lower inside their unchanged touch targets. */
+.composer .controls [data-action="attach-menu"] svg,.composer .controls .permission-chip svg{transform:translateY(4px)}
+.composer .controls .model{display:inline-flex;align-items:center;gap:4px;position:relative;top:4px;max-width:52vw}
+.composer .controls .model-name{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.composer .controls .model-effort{color:var(--muted);flex:none}
+.composer .controls .model>svg{width:12px;height:12px;flex:none}
+
+.attachment-menu{min-width:0;position:fixed;z-index:1000;width:172px;padding:5px;border:1px solid var(--line);border-radius:14px;background:var(--paper);box-shadow:0 8px 28px #0002;color:var(--ink);font-size:13px}
+.attachment-menu .menu-item{display:flex;align-items:center;gap:11px;width:100%;min-height:42px;padding:9px 11px;border-radius:10px;text-align:left;line-height:20px}
+.attachment-menu .menu-item:hover,.attachment-menu .menu-item:active{background:var(--hover)}
+.attachment-menu .menu-item svg{width:19px;height:19px;flex:none;color:var(--muted)}
