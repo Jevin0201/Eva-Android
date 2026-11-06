@@ -62,7 +62,8 @@ public final class DesktopStreamFixtureActivity extends Activity {
       String html = new String(bytes, StandardCharsets.UTF_8);
       String entry = "<script src=\"app.js\">";
       if (!html.contains(entry)) throw new IllegalStateException("Fixture entry not found");
-      html = html.replace(entry, "<script src=\"desktop-stream-check.js\"></script>" + entry);
+      String check=getIntent().getBooleanExtra("storageBenchmark",false)?"storage-performance-check.js":"desktop-stream-check.js";
+      html = html.replace(entry, "<script src=\""+check+"\"></script>" + entry);
       bytes = html.getBytes(StandardCharsets.UTF_8);
      }
      return new WebResourceResponse(mime(asset), mime(asset).startsWith("font/") ? null : "UTF-8", 200, "OK", Collections.singletonMap("Cache-Control", "no-store"), new ByteArrayInputStream(bytes));

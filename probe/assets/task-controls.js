@@ -26,7 +26,8 @@
     const r=await Promise.race([kernelCall('android/threadRecovery',{threadId:c.kernelThread.id}),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('本地状态核对超时')),5000);})]);
     if(sessionOwned.has(c))return;const old=c.kernelThread.turns?.at(-1),send=c.pendingSend||c.recoverySend;const previousTurn=send?Array.isArray(send.baseTurnIds)&&send.baseTurnIds.includes(r.turnId)&&['preparing','dispatching'].includes(send.phase):old?.id===r.turnId;if(r.found&&r.terminal&&previousTurn&&['completed','interrupted'].includes(r.state)){
      c.pending=c.pending||c.recoveryPendingText||'';delete c.recoveryPendingText;restorePending(c);if(old?.id===r.turnId)old.status=r.state;delete c.pendingSend;delete c.recoverySend;delete c.recoveryState;delete c.recoveryNotice;repaintRecovery(c);
-    }else unresolved(c,send?'任务状态待核对；上次发送可能已被接收，待核对文字单独保留，不会自动重发。':'任务状态待核对；未确认的文字已保留为草稿，不会自动重发。');
+    }else if(r.found&&!send&&old?.id===r.turnId){await verifyRecovery(c);}
+    else unresolved(c,send?'任务状态待核对；上次发送可能已被接收，待核对文字单独保留，不会自动重发。':'任务状态待核对；未确认的文字已保留为草稿，不会自动重发。');
    }catch(e){unresolved(c,'任务状态待核对：'+e.message+'；草稿已保留，不会自动重发。');}finally{clearTimeout(timer);}
   })();recovering.set(c.id,work);try{return await work;}finally{recovering.delete(c.id);}
  }
@@ -36,8 +37,16 @@
   button.dataset.taskPrimary='true';const running=!!c?.running,hasText=!!input?.value.trim(),hasFiles=!!c?.attachments?.length;
   button.dataset.action=running?'kernel-steer':'kernel-send';button.textContent=running?(steering.has(c.id)?'发送中':'引导'):'发送';
   button.disabled=!!c?.recoveryState|| (running?(!hasText&&!hasFiles)||steering.has(c.id)||stopping.has(c.id)||!turnOf(c):kernelBusy||(!hasText&&!hasFiles));
-  let recovery=$('[data-task-recovery]');if(c?.recoveryState){if(!recovery){recovery=document.createElement('button');recovery.type='button';recovery.dataset.action='task-recovery';recovery.dataset.taskRecovery='true';button.after(recovery);}recovery.textContent=c.recoveryState==='checking'?'正在核对…':'核对任务状态';recovery.disabled=c.recoveryState==='checking';if($('.foot'))$('.foot').textContent=c.recoveryNotice||'正在核对本地任务记录；不会自动发送。';}else recovery?.remove();
+  let recovery=$('[data-task-recovery]');if(c?.recoveryState){if(!recovery){recovery=document.createElement('button');recovery.type='button';recovery.dataset.action='task-recovery';recovery.dataset.taskRecovery='true';const notice=document.createElement('div');notice.className='task-recovery-notice';notice.append(recovery);document.querySelector('.composer')?.before(notice);}recovery.textContent=c.recoveryState==='checking'?'正在核对…':'核对任务状态';recovery.disabled=c.recoveryState==='checking';if($('.foot'))$('.foot').textContent=c.recoveryNotice||'正在核对本地任务记录；不会自动发送。';}else if(recovery){recovery.parentElement.remove();}
   let stop=$('[data-task-stop]');if(running){if(!stop){stop=document.createElement('button');stop.type='button';stop.dataset.action='kernel-stop';stop.dataset.taskStop='true';stop.style.cssText='margin-left:8px;flex-shrink:0';button.after(stop);}stop.textContent=stopping.has(c.id)?'正在停止…':'停止';stop.disabled=interrupting.has(c.id);stop.setAttribute('aria-label','停止当前任务');}else stop?.remove();
+  const row=button.closest('.controls');
+  if(row){
+   let actions=row.querySelector('.composer-task-actions');
+   if(!actions){actions=document.createElement('div');actions.className='composer-task-actions';row.append(actions);}
+   if(button.parentElement!==actions)actions.append(button);
+   if(stop?.isConnected&&stop.parentElement!==actions)actions.append(stop);
+  }
+
  }
  const oldRefresh=refreshKernelControls;refreshKernelControls=function(){oldRefresh();controls();};
  const oldRender=render;render=function(){oldRender();if(['home','chat'].includes(route))controls();};
@@ -68,7 +77,7 @@
   }catch(e){window.evaDesktopSteering?.unknown(c.kernelThread.id,clientId,e);c.draft=[text,c.draft].filter(Boolean).join('\n');if(active()===c&&$('#prompt'))$('#prompt').value=c.draft;kernelNotice='引导未确认：'+e.message+'；内容已保留，请先核对执行过程，勿重复发送。';}
   finally{steering.delete(c.id);scheduleKernelSave();if(active()===c){updateKernelFlow(c);refreshKernelControls();}}
  }
- const oldEvent=kernelEvent;kernelEvent=function(e){oldEvent(e);const p=e.params||{},c=[...data.chats,...data.drafts].find(c=>c.kernelThread?.id===p.threadId);if(!c)return;if(e.method==='turn/started')sessionOwned.add(c);if(e.method==='turn/started'&&stopping.has(c.id))interrupt(c);if(e.method==='turn/completed'){if(stopping.has(c.id))kernelNotice=p.turn?.status==='interrupted'?'任务已停止':'任务已结束';stopping.delete(c.id);stopSent.delete(c.id);if(active()===c)refreshKernelControls();}};
+ const oldEvent=kernelEvent;kernelEvent=function(e){oldEvent(e);const p=e.params||{},c=[...data.chats,...data.drafts].find(c=>c.kernelThread?.id===p.threadId);if(!c)return;if(['turn/started','turn/completed'].includes(e.method)&&(!c.pendingSend||!c.pendingSend.baseTurnIds.includes(p.turn?.id))){delete c.recoveryState;delete c.recoveryNotice;restartCandidates.delete(c);if(active()===c)refreshKernelControls();}if(e.method==='turn/started')sessionOwned.add(c);if(e.method==='turn/started'&&stopping.has(c.id))interrupt(c);if(e.method==='turn/completed'){if(stopping.has(c.id))kernelNotice=p.turn?.status==='interrupted'?'任务已停止':'任务已结束';stopping.delete(c.id);stopSent.delete(c.id);if(active()===c)refreshKernelControls();}};
  window.taskTurnReady=c=>{sessionOwned.add(c);if(stopping.has(c.id)&&!stopSent.has(c.id))interrupt(c);};
  window.taskRecover=recover;
  const previousSend=kernelSend;kernelSend=function(){if(active()?.recoveryState){controls();return;}const eligible=!kernelBusy&&!active()?.running,result=previousSend();if(eligible&&active()?.running)sessionOwned.add(active());return result;};

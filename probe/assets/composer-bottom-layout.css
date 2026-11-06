@@ -44,3 +44,26 @@
 .attachment-menu .menu-item{display:flex;align-items:center;gap:11px;width:100%;min-height:42px;padding:9px 11px;border-radius:10px;text-align:left;line-height:20px}
 .attachment-menu .menu-item:hover,.attachment-menu .menu-item:active{background:var(--hover)}
 .attachment-menu .menu-item svg{width:19px;height:19px;flex:none;color:var(--muted)}
+
+/* Keep task actions at the same trailing edge in every running/input state. */
+.composer-task-actions{display:flex;align-items:center;justify-content:flex-end;gap:4px;margin-left:auto;flex:none;order:100}
+.composer-task-actions [data-task-stop]{margin-left:0!important}
+.task-recovery-notice{display:flex;justify-content:flex-end;margin:0 2px 4px;font-size:12px;color:var(--muted)}
+.task-recovery-notice button{padding:6px 8px;border-radius:8px}
+
+/* Stable footer, with changing runtime notices above the editor. */
+.dock>.foot,.composer-footer>.foot{display:none!important}
+.composer-footer{grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;margin-top:4px}
+.workspace-chip{max-width:none;height:auto;min-height:32px;align-items:flex-start;font-size:11px;line-height:18px;padding:4px 0}
+.workspace-chip svg{margin-top:2px}
+.workspace-chip span{white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere;text-align:left}
+.composer-status-strip{display:block;flex:none;width:100%;min-width:0;min-height:22px;max-height:24px;overflow:hidden;text-align:center;border:0;background:transparent;color:var(--muted);border-radius:7px;padding:3px 8px;margin:0 0 5px;font-size:11px;line-height:18px}
+.composer-status-strip[hidden]{display:none}
+.composer-status-strip span{display:block;width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:1;transition:opacity 160ms ease}
+.composer-status-strip.is-changing span{opacity:0}
+.composer-status-strip.expanded{max-height:120px;overflow:auto}
+.composer-status-strip.expanded span{white-space:normal;width:auto;animation:none;overflow-wrap:anywhere}
+.composer-status-strip.needs-attention{color:var(--ink)}
+@media(prefers-reduced-motion:reduce){.composer-status-strip span{transition:none}}
+
+.composer-footer>[data-context-controls]{max-width:140px}

@@ -1,0 +1,32 @@
+'use strict';
+const fs=require('fs'),assert=require('assert/strict'),{chromium,launchOptions}=require('./browser-test-env.cjs');
+(async()=>{const browser=await chromium.launch(launchOptions());try{const p=await browser.newPage({viewport:{width:390,height:844}}),errors=[];p.on('pageerror',e=>errors.push(e.message));await p.addInitScript(()=>{window.jobs=[];window.EvaHost={load:()=>JSON.stringify({projects:[],chats:[{id:'c',title:'上下文测试',draft:'',messages:[],providerId:'test',model:'test-model',kernelThread:{id:'t',turns:[{id:'old',status:'completed',items:[{id:'u',type:'userMessage',content:[{type:'inputText',text:'保留用户消息'}]},{id:'a',type:'agentMessage',text:'保留回答'}]}]}}],drafts:[],active:'c'}),save:()=>true,saveLater:()=>{},settings:()=>'{"theme":"light"}',providers:()=>JSON.stringify({providers:[{id:'test',name:'test',model:'test-model'}],active:'test'}),kernelDrain:()=>'[]',kernelCall:(ticket,method,params)=>jobs.push({ticket,method,params:JSON.parse(params)}),open:()=>{},tasks:()=>'[]'};});await p.route('https://eva.invalid/**',r=>{const name=new URL(r.request().url()).pathname.slice(1);return r.fulfill({body:fs.readFileSync('probe/assets/'+name),contentType:name.endsWith('.js')?'text/javascript':name.endsWith('.css')?'text/css':'text/html'});});await p.goto('https://eva.invalid/index.html');await p.evaluate(()=>{route='chat';render();});
+
+await p.evaluate(()=>{data.projects.push({id:'project',name:'这是需要完整显示的项目名称测试，长名称也不能被省略'});active().projectId='project';render();});
+const fixed='Eva可能会出错，请核查重要信息';
+assert.equal(await p.locator('.composer-disclaimer').count(),0);
+assert.equal(await p.locator('.composer-status-strip').innerText(),fixed);assert.equal(await p.locator('.composer-status-strip').evaluate(e=>getComputedStyle(e).backgroundColor),'rgba(0, 0, 0, 0)');assert.equal(await p.locator('.composer-status-strip span').evaluate(e=>getComputedStyle(e).animationName),'none');
+await p.evaluate(()=>{kernelNotice='开发警告与连接提示测试';refreshKernelControls();});
+await p.waitForFunction(()=>document.querySelector('.composer-status-strip span').textContent==='开发警告与连接提示测试');
+await p.waitForFunction(()=>document.querySelector('.composer-status-strip span').textContent==='Eva可能会出错，请核查重要信息',null,{timeout:6000});await p.evaluate(()=>{kernelNotice='';refreshKernelControls();});await p.waitForFunction(()=>document.querySelector('.composer-status-strip span').textContent==='Eva可能会出错，请核查重要信息');
+await p.evaluate(()=>{active().running=true;kernelNotice='正在发送…';refreshKernelControls();});
+await p.waitForTimeout(200);assert.equal(await p.locator('.composer-status-strip').innerText(),fixed);
+assert.equal(await p.locator('.composer-status-strip span').evaluate(e=>getComputedStyle(e).transform),'none');
+await p.evaluate(()=>{active().running=false;kernelNotice='';refreshKernelControls();});
+assert.equal(await p.locator('.composer-disclaimer').count(),0);
+for(const width of [320,390,844]){await p.setViewportSize({width,height:844});assert(await p.locator('.workspace-chip span').evaluate(e=>e.scrollWidth<=e.clientWidth+1));assert(await p.locator('.composer-footer').evaluate(e=>e.scrollWidth<=e.clientWidth+1));}
+await p.setViewportSize({width:390,height:844});
+assert.equal(await p.locator('.context-ring').count(),0);assert.equal(await p.locator('[data-action="context-compact"]').count(),1);
+await p.evaluate(()=>{window.compactCalls=0;kernelCall=async(method,params)=>{if(method==='thread/compact/start'){compactCalls++;return {};}if(method==='thread/resume')return {thread:{id:'t',turns:[]}};return {};};active().running=true;kernelEvent({method:'thread/tokenUsage/updated',params:{threadId:'t',tokenUsage:{last:{totalTokens:1000},modelContextWindow:1000}}});});
+assert.equal(await p.locator('.context-usage-label').innerText(),'100%');assert.equal(await p.evaluate(()=>compactCalls),0);
+await p.evaluate(()=>{kernelEvent({method:'turn/completed',params:{threadId:'t',turn:{id:'old',status:'completed',items:[]}}});});
+await p.waitForFunction(()=>compactCalls===1);
+await p.evaluate(()=>{refreshKernelControls();refreshKernelControls();kernelEvent({method:'thread/tokenUsage/updated',params:{threadId:'t',tokenUsage:{last:{totalTokens:1000},modelContextWindow:1000}}});});assert.equal(await p.evaluate(()=>compactCalls),1);
+await p.evaluate(()=>{kernelEvent({method:'item/started',params:{threadId:'t',turnId:'auto',item:{id:'auto-item',type:'contextCompaction'}}});kernelEvent({method:'item/completed',params:{threadId:'t',turnId:'auto',item:{id:'auto-item',type:'contextCompaction'}}});});
+assert.equal(await p.locator('.context-usage-label').innerText(),'—%');
+assert.equal(await p.locator('.composer-disclaimer').count(),0);
+assert.equal(await p.locator('.context-compaction-controls').count(),1);
+assert.deepEqual(errors,[]);
+fs.mkdirSync('artifacts/composer-footer',{recursive:true});await p.screenshot({path:'artifacts/composer-footer/fixture.png'});
+console.log('PASS upper default disclaimer and rotating status strip, full project label 320/390/844px, text usage and manual action, deferred single auto-compaction, usage reset');
+}finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1});

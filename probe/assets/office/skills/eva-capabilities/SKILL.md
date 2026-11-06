@@ -22,3 +22,9 @@ Python 扩展按能力创建独立 venv，Node 扩展按能力使用独立 npm p
 PRoot 的 root 是用户空间兼容层，不代表 Android root。需要内核模块、系统服务或特定 GPU 接口的软件应先做兼容性验证。禁止为消除安装报错而随意 chmod 整个系统、删除数据或关闭 Android 安全策略。权限失败应查明具体文件操作。
 
 文档渲染：`python3 /root/.eva-office/eva-render.py status`，再使用 render 子命令生成真实 PDF 和全部页面 PNG。原生浏览器任务继续使用 Eva 内置浏览器；Linux Chromium 仅作为本地制品的渲染后端。
+
+## Java 21 运行兼容
+
+需要 Java 21 的工具使用 `JAVA_HOME=/root/.eva-runtime/java21/current`，并将 `$JAVA_HOME/bin` 放在 PATH 首位。先运行 `python3 /root/.eva-runtime/eva-java21.py status`。首次安装先通过上述签名仓库入口安装 `openjdk21-jdk build-base`，再运行 `python3 /root/.eva-runtime/eva-java21.py install`。安装后执行 `selftest` 检查 javac、虚拟线程及解释/混合/强制编译模式。系统 JDK 更新后需重新安装和验证兼容入口。
+
+兼容层针对 OpenJDK 21 单页探测与线程栈 VMA 合并的失败，隔离探测页后重试原本的内存权限请求。失败会继续报告。Ghidra 与 REA 仍须完成真实样例反编译验收。现有 Java 17 APK 构建链继续沿用其固定环境。

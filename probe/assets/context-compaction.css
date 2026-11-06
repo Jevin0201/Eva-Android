@@ -4,3 +4,6 @@
 .context-compaction-row .compaction-summary{min-width:0;overflow-wrap:anywhere}
 .context-compaction-row .eva-thinking-text{color:inherit}
 .context-compaction-controls{display:inline-flex;align-items:center;gap:6px;margin-inline-start:6px}.context-compaction-controls button{font:inherit;color:inherit;border:0;background:transparent;padding:2px 4px;text-decoration:underline;cursor:pointer}.context-compaction-controls button:disabled{opacity:.5;cursor:default}
+
+.context-compaction-controls{display:flex;flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:4px 6px;margin:0;font-size:10px;color:var(--muted);max-width:100%}
+.context-usage-label{white-space:nowrap}

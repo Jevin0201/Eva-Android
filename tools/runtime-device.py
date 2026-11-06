@@ -3,6 +3,11 @@ import os,sys,subprocess,shlex,pathlib
 adb=os.environ.get('EVA_ADB') or os.path.expandvars(r'%LOCALAPPDATA%\Android\Sdk\platform-tools\adb.exe')
 pkg='ai.eva.android.probe';serial=os.environ.get('EVA_SERIAL','509655c7');base=[adb,'-s',serial]
 apk=subprocess.check_output(base+['shell','pm','path',pkg],text=True).strip().removeprefix('package:');lib=apk.rsplit('/',1)[0]+'/lib/arm64';private='/data/user/0/'+pkg+'/files'
+# Match Android Context.getFilesDir().getCanonicalFile() when both aliases exist.
+# PRoot's emulated hardlinks retain this host prefix in their persistent targets.
+canonical='/data/data/'+pkg+'/files'
+if subprocess.run(base+['shell','run-as',pkg,'test',canonical,'-ef',private],capture_output=True).returncode==0:
+ private=canonical
 subprocess.run(base+['shell','run-as',pkg,'ln','-sf',lib+'/liboperit_proot.so','files/proot'],check=True)
 args=['run-as',pkg,'env','PROOT_LOADER='+lib+'/liboperit_loader.so','PROOT_TMP_DIR='+private+'/tmp','PATH=/usr/bin:/bin:/usr/sbin:/sbin',private+'/proot','-0','--link2symlink','-r',private+'/alpine','-b','/dev','-b','/proc','-w','/root/eva-workspace','/usr/bin/python3','-']
 if os.environ.get('EVA_RUNTIME_PROC','1')=='1':

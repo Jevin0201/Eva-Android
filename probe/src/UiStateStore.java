@@ -69,6 +69,39 @@ final class UiStateStore {
   ContentValues values=new ContentValues();values.put("key",key);values.put("digest",hash);values.put("bytes",bytes.length);values.put("parts",parts);
   if(db.insertWithOnConflict("snapshots",null,values,SQLiteDatabase.CONFLICT_REPLACE)==-1)throw new IllegalStateException("会话记录写入失败");
  }
+ // Commit the current conversation and index without reading or transmitting other histories.
+ // Return false for an unsaved index entry so the caller can use a complete checkpoint.
+ static boolean checkpoint(Context context,String raw)throws Exception{
+  JSONObject request=new JSONObject(raw),state=request.getJSONObject("state");
+  JSONObject conversation=request.getJSONObject("conversation");
+  String selectedGroup=request.getString("group"),selectedId=conversation.getString("id");
+  if(!selectedGroup.equals("chats")&&!selectedGroup.equals("drafts"))throw new IOException("Invalid conversation group");
+  try(SQLiteDatabase db=open(context)){
+   db.beginTransaction();try{
+    boolean selected=false;
+    for(String group:new String[]{"chats","drafts"}){
+     JSONArray rows=state.getJSONArray(group),keys=new JSONArray();
+     java.util.Set<String> ids=new java.util.HashSet<>();
+     for(int index=0;index<rows.length();index++){
+      String id=rows.getJSONObject(index).getString("id");
+      if(!ids.add(id))return false;
+      String key=group+":"+digest(id.getBytes(java.nio.charset.StandardCharsets.UTF_8))+":0";
+      keys.put(key);
+      if(group.equals(selectedGroup)&&id.equals(selectedId)){
+       put(db,key,conversation.toString());selected=true;
+      }else{
+       try(Cursor cursor=db.rawQuery("SELECT 1 FROM snapshots WHERE key=?",new String[]{key})){
+        if(!cursor.moveToFirst())return false;
+       }
+      }
+     }
+     state.put(group,keys);
+    }
+    if(!selected)return false;
+    put(db,"metadata",state.toString());db.setTransactionSuccessful();return true;
+   }finally{db.endTransaction();}
+  }
+ }
  static void save(Context c,String raw)throws Exception{synchronized(ShellActivity.saveLock){
   JSONObject state=new JSONObject(raw);
   try(SQLiteDatabase db=open(c)){

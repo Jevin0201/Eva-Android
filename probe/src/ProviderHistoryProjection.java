@@ -21,20 +21,29 @@ public final class ProviderHistoryProjection {
   final JSONArray audit=new JSONArray();final Map<String,File> index=new HashMap<>();
  }
  public static JSONObject project(Context c,String id,String provider,boolean explicit)throws Exception{
+  return project(c,id,provider,explicit,null);
+ }
+ public static JSONObject project(Context c,String id,String provider,boolean explicit,JSONArray tools)throws Exception{
   File root=new File(c.getFilesDir(),"alpine/root").getCanonicalFile(),home=new File(root,".eva-codex").getCanonicalFile();String date=java.time.LocalDate.now(java.time.ZoneOffset.UTC).toString().replace('-','/');
   File destination=new File(home,"sessions/"+date).getCanonicalFile();if(!destination.toPath().startsWith(home.toPath()))throw new IOException("工作副本目录越界");
-  return project(home,destination,"/root/.eva-codex/sessions/"+date,id,provider,explicit);
+  return project(home,destination,"/root/.eva-codex/sessions/"+date,id,provider,explicit,tools);
  }
  static JSONObject project(File home,File output,String guest,String id,String provider,boolean explicit)throws Exception{
+  return project(home,output,guest,id,provider,explicit,null);
+ }
+ static JSONObject project(File home,File output,String guest,String id,String provider,boolean explicit,JSONArray tools)throws Exception{
   if(!id.matches(UUID)||provider==null||provider.isEmpty()||provider.length()>200)throw new IOException("会话或提供商编号无效");
   home=home.getCanonicalFile();Work work=new Work();work.target=provider;work.explicit=explicit;int[] count={0};
   for(String group:new String[]{"sessions","archived_sessions"})index(new File(home,group),work.index,count,0);
   if(!work.index.containsKey(id.toLowerCase(Locale.ROOT)))return new JSONObject().put("needed",false).put("reason","unmaterialized");
   resolve(work,id,null,null,0);
-  if(!explicit){boolean conflicting=false;for(Source source:work.sources)if(!source.provider.isEmpty()&&!source.provider.equals(provider)){conflicting=true;break;}
-   if(!conflicting)return new JSONObject().put("needed",false).put("reason","same-provider-lineage");
-  }
   Source current=work.sources.get(work.sources.size()-1);
+  JSONArray oldTools=current.meta.getJSONObject("payload").optJSONArray("dynamic_tools");
+  JSONArray newTools=tools==null?oldTools:upgradeTools(oldTools,tools);
+  boolean toolsChanged=tools!=null&&!sameJson(oldTools,newTools);
+  if(!explicit){boolean conflicting=false;for(Source source:work.sources)if(!source.provider.isEmpty()&&!source.provider.equals(provider)){conflicting=true;break;}
+   if(!conflicting&&!toolsChanged)return new JSONObject().put("needed",false).put("reason","same-provider-lineage");
+  }
   if(Files.isSymbolicLink(output.toPath()))throw new IOException("工作副本目录不能使用链接");
   output=output.getCanonicalFile();
   if(!output.isDirectory()&&!output.mkdirs())throw new IOException("无法创建提供商工作副本目录");
@@ -43,20 +52,42 @@ public final class ProviderHistoryProjection {
   if(!temp.createNewFile())throw new IOException("工作副本名称冲突");
   try(FileOutputStream stream=new FileOutputStream(temp);BufferedWriter writer=new BufferedWriter(new OutputStreamWriter(stream,StandardCharsets.UTF_8))){
    JSONObject meta=new JSONObject(current.meta.toString());JSONObject payload=meta.getJSONObject("payload");payload.put("id",copyId).put("model_provider",provider);payload.remove("history_base");
+   if(toolsChanged)payload.put("dynamic_tools",newTools);
    emit(work,writer,meta);
    for(Source source:work.sources)process(work,source,writer);
    writer.flush();stream.getFD().sync();
   }catch(Exception error){temp.delete();throw error;}
   int active=0;for(boolean conflicting:work.activeReasoning.values())if(conflicting)active++;
   JSONObject audit=new JSONObject().put("format","eva-provider-history-projection-v1").put("sourceThreadId",id).put("sourceProvider",current.provider).put("targetProvider",provider).put("explicitCrossProvider",explicit).put("projectedThreadId",copyId).put("sources",work.audit).put("removedReasoningItems",work.removed).put("removedCheckpointReasoningItems",work.checkpointRemoved).put("activeConflictingReasoningItems",active).put("sourceFilesUnchanged",true);
-  if(active==0){temp.delete();return new JSONObject().put("needed",false).put("audit",audit);}
+  audit.put("nativeToolsUpdated",toolsChanged);
+  if(active==0&&!toolsChanged){temp.delete();return new JSONObject().put("needed",false).put("audit",audit);}
   audit.put("projectedSha256",hash(temp,temp.length())).put("projectedBytes",temp.length());
   File auditTemp=new File(output,"."+name+".audit.tmp");
   try{
    try(FileOutputStream out=new FileOutputStream(auditTemp)){out.write(audit.toString().getBytes(StandardCharsets.UTF_8));out.getFD().sync();}
    Files.move(temp.toPath(),file.toPath(),StandardCopyOption.ATOMIC_MOVE);Files.move(auditTemp.toPath(),auditFile.toPath(),StandardCopyOption.ATOMIC_MOVE);
-   return new JSONObject().put("needed",true).put("path",guest+"/"+name).put("auditPath",guest+"/"+name+".audit.json").put("removedReasoningItems",work.removed).put("removedCheckpointReasoningItems",work.checkpointRemoved).put("audit",audit);
+   return new JSONObject().put("needed",true).put("path",guest+"/"+name).put("auditPath",guest+"/"+name+".audit.json").put("removedReasoningItems",work.removed).put("removedCheckpointReasoningItems",work.checkpointRemoved).put("nativeToolsUpdated",toolsChanged).put("audit",audit);
   }catch(Exception error){temp.delete();auditTemp.delete();file.delete();auditFile.delete();throw error;}
+ }
+ static JSONArray upgradeTools(JSONArray previous,JSONArray specs)throws Exception{
+  JSONArray result=previous==null?new JSONArray():new JSONArray(previous.toString());
+  for(int i=0;i<specs.length();i++){
+   JSONObject spec=specs.getJSONObject(i);int position=-1;
+   for(int n=0;n<result.length();n++)if(result.getJSONObject(n).optString("name").equals(spec.getString("name"))){position=n;break;}
+   JSONObject tool=position<0?new JSONObject():new JSONObject(result.getJSONObject(position).toString());
+   tool.put("name",spec.getString("name")).put("description",spec.getString("description")).put("input_schema",spec.getJSONObject("inputSchema"));
+   if(position<0)result.put(tool);else result.put(position,tool);
+  }
+  return result;
+ }
+ static boolean sameJson(Object left,Object right)throws JSONException{
+  if(left==null||right==null)return left==right;
+  if(left instanceof JSONObject&&right instanceof JSONObject){
+   JSONObject a=(JSONObject)left,b=(JSONObject)right;if(a.length()!=b.length())return false;
+   Iterator<String> keys=a.keys();while(keys.hasNext()){String key=keys.next();if(!b.has(key)||!sameJson(a.get(key),b.get(key)))return false;}return true;
+  }
+  if(left instanceof JSONArray&&right instanceof JSONArray){JSONArray a=(JSONArray)left,b=(JSONArray)right;if(a.length()!=b.length())return false;for(int i=0;i<a.length();i++)if(!sameJson(a.get(i),b.get(i)))return false;return true;}
+  return left.equals(right);
  }
  static void index(File directory,Map<String,File> result,int[] count,int depth)throws Exception{
   if(!directory.exists())return;if(depth>6||Files.isSymbolicLink(directory.toPath())||!directory.getCanonicalFile().equals(directory.getAbsoluteFile()))throw new IOException("历史目录结构无效");

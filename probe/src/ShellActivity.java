@@ -9,6 +9,7 @@ public class ShellActivity extends Activity {
  final Runnable eventSignal=this::signalKernel;
  void signalKernel(){if(!eventQueued.compareAndSet(false,true))return;eventHandler.postDelayed(()->{eventQueued.set(false);if(pageReady&&!isDestroyed()&&web!=null)web.evaluateJavascript("window.pollKernel&&pollKernel()",null);},32);}
 
+ static long persistedSaveRevision;
  static final Object saveLock=new Object();static final java.util.concurrent.atomic.AtomicLong saveRevision=new java.util.concurrent.atomic.AtomicLong();static final java.util.concurrent.ExecutorService storage=java.util.concurrent.Executors.newSingleThreadExecutor();
 
  void openRequestedPage(){if(!pageReady)return;String scheduled=getIntent().getStringExtra("scheduledThreadId");if(scheduled!=null){getIntent().removeExtra("scheduledThreadId");if(getSharedPreferences("eva-scheduled-routing",0).contains(scheduled))web.evaluateJavascript("window.evaScheduledTasks&&evaScheduledTasks.openThread("+JSONObject.quote(scheduled)+")",null);return;}if("scheduled-tasks".equals(getIntent().getStringExtra("page"))){getIntent().removeExtra("page");startActivity(new Intent(this,ScheduledTaskActivity.class));return;}if("network-capture".equals(getIntent().getStringExtra("page"))){getIntent().removeExtra("page");startActivity(new Intent(ShellActivity.this,NetworkCaptureActivity.class));return;}if("preview-ui-check".equals(getIntent().getStringExtra("page"))){String folder=getIntent().getStringExtra("preview-folder");getIntent().removeExtra("page");getIntent().removeExtra("preview-folder");DocumentPreviewUiProbe.start(this,folder);return;}if("preview-selfcheck".equals(getIntent().getStringExtra("page"))){String folder=getIntent().getStringExtra("preview-folder");getIntent().removeExtra("page");getIntent().removeExtra("preview-folder");DocumentPreviewProbe.check(this,folder);return;}if("file-preview".equals(getIntent().getStringExtra("page"))){String path=getIntent().getStringExtra("preview-path");getIntent().removeExtra("page");getIntent().removeExtra("preview-path");startActivity(new Intent(this,WorkspacePreviewActivity.class).putExtra("path",path));return;}if("generated-image-check".equals(getIntent().getStringExtra("page"))){getIntent().removeExtra("page");GeneratedImages.check(this);return;}if("git-native-check".equals(getIntent().getStringExtra("page"))){getIntent().removeExtra("page");WorkspaceGitProbe.check(this);return;}if("workspace-edit-check".equals(getIntent().getStringExtra("page"))){getIntent().removeExtra("page");WorkspaceEditingProbe.check(this);return;}if("workspace-editor-ui-check".equals(getIntent().getStringExtra("page"))){getIntent().removeExtra("page");WorkspaceEditorUiProbe.check(this);return;}if("office-runtime".equals(getIntent().getStringExtra("page"))){getIntent().removeExtra("page");startActivity(new Intent(this,OfficeActivity.class));return;}if("backup-probe".equals(getIntent().getStringExtra("page"))){getIntent().removeExtra("page");web.evaluateJavascript("saveKernel()",ignored->DataBackupProbe.check(this));return;}if("skill-import-check".equals(getIntent().getStringExtra("page"))){getIntent().removeExtra("page");SkillImportProbe.check(this);return;}if("browser-transfers-check".equals(getIntent().getStringExtra("page"))){getIntent().removeExtra("page");BrowserTransfersProbe.run(this);return;}if("extension-check".equals(getIntent().getStringExtra("page"))){getIntent().removeExtra("page");ExtensionCheck.run(this);return;}if("phone-performance-check".equals(getIntent().getStringExtra("page"))){getIntent().removeExtra("page");startActivity(new Intent(this,PhoneFixtureActivity.class).putExtra("performance-check",true));return;}if("phone-input-check".equals(getIntent().getStringExtra("page"))){getIntent().removeExtra("page");startActivity(new Intent(this,PhoneFixtureActivity.class).putExtra("focused-input-check",true));return;}if("voice".equals(getIntent().getStringExtra("page"))){getIntent().removeExtra("page");startActivity(new Intent(this,VoiceActivity.class));return;}String phoneThread=getIntent().getStringExtra("phone-thread");if(phoneThread!=null){getIntent().removeExtra("phone-thread");web.evaluateJavascript("window.openPhoneTask&&openPhoneTask("+JSONObject.quote(phoneThread)+")",null);return;}if("browser-check".equals(getIntent().getStringExtra("page"))){getIntent().removeExtra("page");showBrowser(new Intent().putExtra("browser-check",true));return;}if("browser".equals(getIntent().getStringExtra("page"))){getIntent().removeExtra("page");showBrowser(new Intent(getIntent()));return;}if("phone-report-preview".equals(getIntent().getStringExtra("page"))){getIntent().removeExtra("page");startActivity(new Intent(this,PhoneControlActivity.class).putExtra("report-preview",true));return;}if("phone-test".equals(getIntent().getStringExtra("page"))){getIntent().removeExtra("page");startActivity(new Intent(this,PhoneFixtureActivity.class));return;}if("phone-control".equals(getIntent().getStringExtra("page"))){getIntent().removeExtra("page");startActivity(new Intent(this,PhoneControlActivity.class));return;}String panel=getIntent().getStringExtra("panel");if(panel!=null){getIntent().removeExtra("panel");web.evaluateJavascript("models".equals(panel)?"openModelSheet()":"openAccountSheet()",null);}if("account".equals(getIntent().getStringExtra("page"))){getIntent().removeExtra("page");startActivity(new Intent(ShellActivity.this,AccountActivity.class));return;}if("settings".equals(getIntent().getStringExtra("page"))){getIntent().removeExtra("page");web.evaluateJavascript("settingsGo('settings')",null);}}
@@ -68,7 +69,41 @@ public class ShellActivity extends Activity {
  @JavascriptInterface public String setSetting(String key,String value){try{android.content.SharedPreferences.Editor e=getSharedPreferences("eva-settings",0).edit();if(key.equals("commandTimeout")){int n=Integer.parseInt(value);if(n!=30&&n!=60&&n!=120&&n!=300)throw new IllegalArgumentException("不支持的超时值");e.putInt(key,n);}else if(key.equals("browserHome")){if(value.length()>2048)throw new IllegalArgumentException("地址过长");e.putString(key,SettingsActivity.validateUrl(value));}else if(key.equals("browserDesktop")){if(!value.equals("true")&&!value.equals("false"))throw new IllegalArgumentException("无效浏览模式");e.putBoolean(key,Boolean.parseBoolean(value));}else if(key.equals("theme")){if(!value.equals("light")&&!value.equals("dark"))throw new IllegalArgumentException("不支持的主题");e.putString(key,value);}else throw new IllegalArgumentException("不支持的设置");if(!e.commit())throw new IOException("保存失败");return settings();}catch(Exception e){try{return new JSONObject().put("error",e.getMessage()).toString();}catch(Exception ignored){return "{}";}}}
  @JavascriptInterface public String load(){return UiStateStore.load(ShellActivity.this);}
  @JavascriptInterface public boolean save(String value){long revision=saveRevision.incrementAndGet();synchronized(saveLock){return saveValue(value,revision);}}
- boolean saveValue(String value,long revision){try{if(revision!=saveRevision.get())return true;UiStateStore.save(ShellActivity.this,value);return true;}catch(Exception ignored){return false;}}
+ boolean saveValue(String value,long revision){try{if(revision!=saveRevision.get())return true;UiStateStore.save(ShellActivity.this,value);persistedSaveRevision=revision;return true;}catch(Exception ignored){return false;}}
+ @JavascriptInterface public void saveConversationCheckpoint(String ticket,String value){
+  long revision=saveRevision.get();
+  storage.execute(()->{
+   JSONObject response=new JSONObject();
+   try{
+    boolean saved;
+    synchronized(saveLock){
+     saved=persistedSaveRevision>revision||UiStateStore.checkpoint(ShellActivity.this,value);
+    }
+    response.put("ticket",ticket).put("result",new JSONObject().put("needsFullSnapshot",!saved));
+   }catch(Exception error){
+    try{response.put("ticket",ticket).put("error","发送前保存失败，原文字已保留");}catch(JSONException ignored){}
+   }
+   KernelHost.get(ShellActivity.this).emit(response);
+  });
+ }
+ @JavascriptInterface public void saveCheckpoint(String ticket,String value){
+  long revision=saveRevision.incrementAndGet();
+  storage.execute(()->{
+   JSONObject response=new JSONObject();
+   try{
+    synchronized(saveLock){
+     if(persistedSaveRevision<revision){
+      UiStateStore.save(ShellActivity.this,value);
+      persistedSaveRevision=revision;
+     }
+    }
+    response.put("ticket",ticket).put("result",new JSONObject());
+   }catch(Exception error){
+    try{response.put("ticket",ticket).put("error","发送前保存失败，原文字已保留");}catch(JSONException ignored){}
+   }
+   KernelHost.get(ShellActivity.this).emit(response);
+  });
+ }
  @JavascriptInterface public void saveLater(String value){long revision=saveRevision.incrementAndGet();storage.execute(()->{boolean ok;synchronized(saveLock){ok=saveValue(value,revision);}if(!ok)try{KernelHost.get(ShellActivity.this).emit(new JSONObject().put("method","android/storageError"));}catch(Exception ignored){}});}
  @JavascriptInterface public String tasks(){JSONArray result=new JSONArray();File[] list=new File(getFilesDir(),"alpine/root/eva-tasks").listFiles();if(list!=null){java.util.Arrays.sort(list,(a,b)->Long.compare(b.lastModified(),a.lastModified()));for(File f:list){try{JSONObject t=new JSONObject(new String(Files.readAllBytes(new File(f,"state.json").toPath()),"UTF-8"));JSONObject item=new JSONObject();item.put("id",f.getName());item.put("state",t.optString("state"));item.put("command",t.getJSONArray("argv").optString(2));result.put(item);}catch(Exception ignored){}}}return result.toString();}
  @JavascriptInterface public String taskDetail(String id){try{
@@ -86,7 +121,7 @@ public class ShellActivity extends Activity {
  void showBrowser(Intent request){BrowserWindow.open(this,request,restoredBrowser);restoredBrowser=null;}
  protected void onSaveInstanceState(Bundle out){super.onSaveInstanceState(out);BrowserWindow b=BrowserWindow.live;if(b!=null&&b.host==this)out.putBundle("eva-browser",b.saveBrowserState());}
  protected void onResume(){super.onResume();BrowserWindow b=BrowserWindow.live;if(b!=null&&b.host==this)b.resumeBrowser();PhoneTaskService.restore(this);KernelHost.get(this).eventSignal=eventSignal;KernelHost.get(this).warm();KernelHost.get(this).refreshAccount();if(web!=null)web.evaluateJavascript("window.importVoiceThreads&&importVoiceThreads();window.kernelPollingEnabled=true;window.modelRefresh&&modelRefresh()",null);}
- protected void onPause(){BrowserWindow b=BrowserWindow.live;if(b!=null&&b.host==this)b.pauseBrowser();if(web!=null)web.evaluateJavascript("window.flushKernelSave&&flushKernelSave();window.kernelPollingEnabled=false",null);new Handler().postDelayed(()->{if(!isDestroyed()&&BrowserWindow.live!=null&&web!=null)web.evaluateJavascript("window.kernelPollingEnabled=true",null);},500);super.onPause();}
+ protected void onPause(){BrowserWindow b=BrowserWindow.live;if(b!=null&&b.host==this)b.pauseBrowser();if(web!=null)web.evaluateJavascript("window.flushKernelSave&&flushKernelSave(true);window.kernelPollingEnabled=false",null);new Handler().postDelayed(()->{if(!isDestroyed()&&BrowserWindow.live!=null&&web!=null)web.evaluateJavascript("window.kernelPollingEnabled=true",null);},500);super.onPause();}
  public void onBackPressed(){if(imeVisible){hideKeyboard();return;}web.evaluateJavascript("window.evaAndroidBack?evaAndroidBack():window.evaBack?evaBack():false",result->{if(!"true".equals(result))finish();});}
  protected void onDestroy(){BrowserWindow b=BrowserWindow.live;if(b!=null&&b.host==this)b.dismiss();KernelHost h=KernelHost.get(this);if(h.eventSignal==eventSignal)h.eventSignal=null;eventHandler.removeCallbacksAndMessages(null);web.removeJavascriptInterface("EvaHost");web.destroy();super.onDestroy();}
 }

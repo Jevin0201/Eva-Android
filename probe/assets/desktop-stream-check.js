@@ -43,7 +43,15 @@
     queue.push({method:'item/agentMessage/delta',params:{threadId,turnId,itemId:'live-agent',delta:content}});
     queue.push({method:'item/commandExecution/outputDelta',params:{threadId,turnId,itemId:'live-command',delta:'tool output '+i+'\n'}});
     if(performance.now()-lastFlush>=150)flush();
-    if(i===120){flush();flow.scrollTop=300;flow.dispatchEvent(new Event('scroll'));readingTop=flow.scrollTop;}
+    if(i===120){
+     flush();
+     const layoutDeadline=performance.now()+5000;
+     while(flow.scrollHeight-flow.clientHeight<600){
+      if(performance.now()>layoutDeadline)throw Error('History layout did not become scrollable');
+      await new Promise(resolve=>requestAnimationFrame(resolve));
+     }
+     flow.scrollTop=300;flow.dispatchEvent(new Event('scroll'));readingTop=flow.scrollTop;
+    }
     if(i===450){readingTop=null;document.querySelector('.chat-scroll-bottom')?.click();}
     await new Promise(resolve=>setTimeout(resolve,16));
    }

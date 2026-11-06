@@ -4,9 +4,9 @@ for(const asset of ['/chat-scroll.js','/chat-scroll.css','/desktop-thread-activi
 const gap=()=>p.evaluate(()=>{const f=document.querySelector('.flow');return f.scrollHeight-f.clientHeight-f.scrollTop});
 assert.ok(await gap()<=24,'entry opens latest');
 await p.evaluate(()=>kernelEvent({method:'turn/started',params:{threadId:active().kernelThread.id,turn:{id:'status-test',status:'inProgress',items:[]}}}));
-assert.equal(await p.locator('.tree-chat.is-active').getAttribute('data-runtime-status'),'loading');
+assert.equal(await p.locator('.tree-chat.is-active[aria-current="page"]').getAttribute('data-runtime-status'),'loading');
 await p.evaluate(()=>kernelEvent({method:'turn/completed',params:{threadId:active().kernelThread.id,turn:{id:'status-test',status:'completed',items:[]}}}));
-assert.equal(await p.locator('.tree-chat.is-active').getAttribute('data-runtime-status'),'idle');
+assert.equal(await p.locator('.tree-chat.is-active[aria-current="page"]').getAttribute('data-runtime-status'),'idle');
 await p.evaluate(()=>{active().kernelThread.turns=active().kernelThread.turns.filter(t=>t.id!=='status-test');updateKernelFlow(active());});
 
 await p.evaluate(()=>{const f=document.querySelector('.flow');f.scrollTop=300;f.dispatchEvent(new Event('scroll'))});
