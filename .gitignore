@@ -7,7 +7,7 @@ local.properties
 .env
 .env.*
 !.env.example
-runtime/
+/runtime/
 downloads/
 tmp/
 *.apk
@@ -25,3 +25,7 @@ research/codex-flow/rea-evidence.json
 
 # macOS Finder metadata
 .DS_Store
+
+# Local upstream research checkouts are preserved outside Git.
+/research/mika-wangzan101/
+/research/proot-termux/

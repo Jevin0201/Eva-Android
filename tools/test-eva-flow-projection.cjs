@@ -50,3 +50,31 @@ assert.equal(block(project([{id:'r',type:'reasoning',summary:[]},cmd('stable'),f
 const steering=project([{id:'u',type:'userMessage'},cmd('a'),{id:'s',type:'steeringUserMessage'},cmd('b'),final]);
 assert.equal(steering.mobileBlocks.map(b=>b.kind).join(','),'user,assistant,user,assistant');
 console.log('Eva native transcript migration: browser-script load and behavioral assertions passed');
+
+for(const [tool,running,completed,failed] of [
+ ['eva_phone_steps','正在执行手机步骤','执行了手机步骤','手机步骤未完成'],
+ ['eva_phone_route','正在处理手机路线','处理了手机路线','手机路线未完成'],
+ ['eva_wechat','正在操作微信','操作了微信','微信操作失败']
+]){
+ const item={id:tool,type:'dynamicToolCall',tool,status:'inProgress',arguments:tool==='eva_phone_steps'?{steps:[{action:'observe'},{action:'click',target:{text:'确定'}}]}:{action:'read'},contentItems:[{type:'inputText',text:'保留执行结果'}]};
+ assert.equal(block(project([item],'inProgress')).workGroups[0].label,running);
+ const finished={...item,status:'completed',success:true};
+ const turn={id:tool+'-history',status:'completed',items:[finished,final]};
+ const live=projectTurn(turn),restored=projectTurn(JSON.parse(JSON.stringify(turn)));
+ assert.equal(JSON.stringify(restored),JSON.stringify(live),'restart preserves '+tool+' presentation');
+ const result=block(restored);
+ assert.equal(result.workGroups[0].label,completed);
+ assert.equal(result.open,false);
+ assert.equal(result.work[0].output,'保留执行结果');
+ if(tool==='eva_phone_steps')assert.equal(result.work[0].command,'手机操作 · 2 个步骤');
+ if(tool==='eva_phone_route')assert.equal(result.work[0].command,'手机路线 · read');
+ assert(!result.work[0].command.includes('undefined'));
+ const unsuccessful=block(project([{...finished,success:false},final]));
+ assert.equal(unsuccessful.workGroups[0].label,failed);
+ assert.equal(unsuccessful.failureCount,1);
+ assert.equal(block(project([item],'interrupted')).open,true);
+}
+const registered=[];
+context.EvaFlowProjection.registerPhoneTools({registerDynamicTool:(namespace,tool,display)=>registered.push({namespace,tool,display})});
+assert.deepEqual(registered.map(value=>value.tool),['eva_phone','eva_phone_steps','eva_phone_route','eva_wechat','eva_browser']);
+console.log('PASS phone batch/route/WeChat native labels, step count, failure/interruption and serialized history restoration; modern registry replay');

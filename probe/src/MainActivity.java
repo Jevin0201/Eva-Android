@@ -18,7 +18,7 @@ public class MainActivity extends Activity {
                 f.write(report.toString(2).getBytes("UTF-8"));
             }
             final String text = report.toString(2);
-            runOnUiThread(() -> status.setText("Eva 环境验证（非完整代理）\n\n" + text));
+            runOnUiThread(() -> status.setText("Eva 运行环境诊断\n\n" + text));
         } catch (Exception e) { android.util.Log.e("EvaProbe", "record", e); }
     }
     String execute(String... args) throws Exception {
@@ -82,7 +82,7 @@ public class MainActivity extends Activity {
                     record("linuxBase", execute(proot, "-0", "-r", rootfs.getAbsolutePath(), "-b", "/dev", "-b", "/proc", "-w", "/root", "/bin/sh", "-c", "export PATH=/usr/bin:/bin:/usr/sbin:/sbin; cat /etc/alpine-release; uname -m; printf EVA_LINUX_OK"));
                 }
                 if (rootfs.isDirectory()) {
-                    record("linuxPackages", execute(proot, "-0", "-r", rootfs.getAbsolutePath(), "-b", "/dev", "-b", "/proc", "-w", "/root", "/bin/sh", "-c", "export PATH=/usr/bin:/bin:/usr/sbin:/sbin; set -e; apk --timeout 20 add python3 nodejs git; python3 --version; node --version; git --version; python3 /root/eva-smoke.py; python3 /root/test_task_runner.py"));
+                    record("linuxPackages", execute(proot, "-0", "-r", rootfs.getAbsolutePath(), "-b", "/dev", "-b", "/proc", "-w", "/root", "/bin/sh", "-c", "export PATH=/usr/bin:/bin:/usr/sbin:/sbin; set -e; python3 --version; node --version; git --version; python3 -c 'import ssl,sqlite3; print(\"EVA_PYTHON_OK\")'; node -e 'console.log(\"EVA_NODE_OK\")'; /root/eva-kernel/bin/codex --version"));
                 }
                 record("workerComplete", true);
             } catch (Exception e) { record("error", e.toString()); }

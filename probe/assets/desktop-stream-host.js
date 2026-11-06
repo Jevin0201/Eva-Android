@@ -4,6 +4,7 @@ import './desktop-stream/native-image-preview/common.js';
 /* Android services and paged history for the complete desktop transcript renderer. */
 (() => {
  if (window.EVA_STREAM_MODE === 'legacy') return;
+ EvaFlowProjection.registerPhoneTools(window.nativeTranscript);
  const workspace = '/root/eva-workspace/';
  const state = {
   productMode: 'codex', thread: null, activeThreadId: null, cwd: workspace,

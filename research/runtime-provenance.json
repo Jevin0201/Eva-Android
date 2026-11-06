@@ -1,16 +1,49 @@
 {
-  "repository": "https://github.com/AAswordman/OperitTerminalCore",
-  "commit": "e4442bc6a047b6165bf59103721ad143149c620d",
-  "submodules": [],
-  "scope": "Local compatibility experiment only; exact binary build provenance unresolved",
+  "format": "eva-proot-release-candidate-v1",
+  "source": {
+    "repository": "https://github.com/termux/proot",
+    "commit": "52d65a4dc140ca554d241a1438ddd4f6b00c9813",
+    "submodules": []
+  },
+  "ndk": "28.2.13676358",
+  "api": 28,
+  "abi": "arm64-v8a",
+  "maxPageSize": 16384,
+  "staticTalloc": "2.4.3",
+  "patches": [
+    {
+      "name": "proot-0001-android-string-header.patch",
+      "sha256": "0a0c879f9ee10168a14d3b6a67c1bea5d16382cb6653d3c3f46a480d429429db"
+    }
+  ],
   "files": [
     {
-      "file": "liboperit_loader.so",
-      "sha256": "F149774236DB1E69B36CC1E4ED3866C7094DB2EEE52DA0D4956AA63A9BB26929"
+      "name": "liboperit_loader.so",
+      "size": 17624,
+      "sha256": "2ab748a4c576d8befaccba9de1f92179659106d2c77105c1286d33f358143298"
     },
     {
-      "file": "liboperit_proot.so",
-      "sha256": "CB40A1CED11CEE76569B4008A9E478C87883CE831152BE4EB9570763B82E580D"
+      "name": "liboperit_proot.so",
+      "size": 279688,
+      "sha256": "a7085a4339e288009114b5e1dccc6404d2dd9b77bdd64160ca79079f8470d53f"
     }
-  ]
+  ],
+  "status": "rebuilt and verified in a fresh Android application UID",
+  "previousRuntime": {
+    "repository": "https://github.com/AAswordman/OperitTerminalCore",
+    "commit": "e4442bc6a047b6165bf59103721ad143149c620d",
+    "submodules": [],
+    "scope": "Local compatibility experiment only; exact binary build provenance unresolved",
+    "files": [
+      {
+        "file": "liboperit_loader.so",
+        "sha256": "F149774236DB1E69B36CC1E4ED3866C7094DB2EEE52DA0D4956AA63A9BB26929"
+      },
+      {
+        "file": "liboperit_proot.so",
+        "sha256": "CB40A1CED11CEE76569B4008A9E478C87883CE831152BE4EB9570763B82E580D"
+      }
+    ]
+  },
+  "sourceArchive": "outputs/runtime-sources/eva-proot-termux-52d65a4dc140-sources.tar.gz"
 }

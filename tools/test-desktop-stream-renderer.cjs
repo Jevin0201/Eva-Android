@@ -46,3 +46,36 @@ assert(!adapted.renderer.renderTurn({...changed,status:'inProgress'},false).incl
 adapted.state.diffs.set('net-empty','');
 assert(!adapted.renderer.renderTurn({...changed,id:'net-empty'},false).includes('turn-changes-summary'));
 console.log('PASS compact answer actions, direct change summary, no-change/running/empty-net-diff visibility');
+
+// The modern transcript installs its own registry after the legacy projection loads.
+vm.runInContext(fs.readFileSync('probe/assets/eva-flow-projection.js','utf8'),adapted);
+const hostSource=fs.readFileSync('probe/assets/desktop-stream-host.js','utf8');
+assert(hostSource.includes('EvaFlowProjection.registerPhoneTools(window.nativeTranscript)'));
+adapted.EvaFlowProjection.registerPhoneTools(adapted.nativeTranscript);
+for(const [tool,running,done,failed] of [
+ ['eva_phone_steps','正在执行手机步骤','执行了手机步骤','手机步骤未完成'],
+ ['eva_phone_route','正在处理手机路线','处理了手机路线','手机路线未完成'],
+ ['eva_wechat','正在操作微信','操作了微信','微信操作失败']
+]){
+ const item={id:tool,type:'dynamicToolCall',tool,status:'inProgress',arguments:{steps:[{action:'observe'}]},contentItems:[]};
+ const turn={id:tool,status:'inProgress',items:[item]};
+ adapted.models=[];
+ adapted.renderer.renderTurn(turn,false);
+ assert(adapted.models.some(model=>model.text===running),tool+' active native activity label');
+ const history={...turn,status:'completed',items:[{...item,status:'completed',success:true,contentItems:[{type:'inputText',text:'执行记录'}]},{id:'final-'+tool,type:'agentMessage',phase:'final_answer',text:'已处理'}]};
+ const collapsed=adapted.renderer.renderTurn(history,false);
+ const processKey=collapsed.match(/data-process="([^"]+)"/)?.[1];
+ assert(processKey,'completed tools retain a process disclosure');
+ adapted.state.expanded.add(processKey);
+ adapted.models=[];
+ const html=adapted.renderer.renderTurn(history,false),models=JSON.stringify(adapted.models);
+ assert(adapted.models.some(model=>model.text===done),tool+' completed label');
+ assert(models.includes('执行记录'),tool+' tool results retained');
+ adapted.models=[];
+ assert.equal(adapted.renderer.renderTurn(JSON.parse(JSON.stringify(history)),false),html,'serialized history restores HTML');
+ assert.equal(JSON.stringify(adapted.models),models,'serialized history restores native activity models');
+ adapted.models=[];
+ adapted.renderer.renderTurn({...history,items:[{...history.items[0],success:false},history.items[1]]},false);
+ assert(adapted.models.some(model=>model.text===failed),tool+' failure label');
+}
+console.log('PASS modern phone batch/route/WeChat dynamic-tool labels, native details and history restoration');

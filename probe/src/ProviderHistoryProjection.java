@@ -69,13 +69,46 @@ public final class ProviderHistoryProjection {
    return new JSONObject().put("needed",true).put("path",guest+"/"+name).put("auditPath",guest+"/"+name+".audit.json").put("removedReasoningItems",work.removed).put("removedCheckpointReasoningItems",work.checkpointRemoved).put("nativeToolsUpdated",toolsChanged).put("audit",audit);
   }catch(Exception error){temp.delete();auditTemp.delete();file.delete();auditFile.delete();throw error;}
  }
+ // Codex 0.166.0 SessionMeta uses the same tagged camelCase specs as the RPC.
+ // Mixing a legacy flat entry with canonical entries makes the entire metadata invalid.
+ static JSONArray canonicalTools(JSONArray previous)throws Exception{
+  JSONArray result=new JSONArray();Map<String,JSONObject> namespaces=new LinkedHashMap<>();
+  for(int i=0;previous!=null&&i<previous.length();i++){
+   JSONObject original=previous.getJSONObject(i);
+   if("namespace".equals(original.optString("type"))){
+    JSONObject namespace=new JSONObject(original.toString());
+    namespace.put("tools",canonicalTools(original.getJSONArray("tools")));
+    result.put(namespace);continue;
+   }
+   JSONObject tool=canonicalFunction(original);
+   String namespace=original.optString("namespace");
+   if(namespace.isEmpty()){result.put(tool);continue;}
+   JSONObject group=namespaces.get(namespace);
+   if(group==null){group=new JSONObject().put("type","namespace").put("name",namespace).put("description","").put("tools",new JSONArray());namespaces.put(namespace,group);result.put(group);}
+   group.getJSONArray("tools").put(tool);
+  }
+  return result;
+ }
+ static JSONObject canonicalFunction(JSONObject source)throws Exception{
+  JSONObject tool=new JSONObject(source.toString());
+  tool.put("type","function");
+  Object schema=tool.has("inputSchema")?tool.get("inputSchema"):tool.opt("input_schema");
+  if(schema==null||schema==JSONObject.NULL)throw new IOException("历史工具缺少 inputSchema");
+  tool.put("inputSchema",schema);tool.remove("input_schema");
+  if(!tool.has("deferLoading")){
+   if(tool.has("defer_loading"))tool.put("deferLoading",tool.getBoolean("defer_loading"));
+   else if(tool.has("exposeToContext"))tool.put("deferLoading",!tool.getBoolean("exposeToContext"));
+  }
+  tool.remove("defer_loading");tool.remove("exposeToContext");tool.remove("namespace");
+  return tool;
+ }
  static JSONArray upgradeTools(JSONArray previous,JSONArray specs)throws Exception{
-  JSONArray result=previous==null?new JSONArray():new JSONArray(previous.toString());
+  JSONArray result=canonicalTools(previous);
   for(int i=0;i<specs.length();i++){
    JSONObject spec=specs.getJSONObject(i);int position=-1;
-   for(int n=0;n<result.length();n++)if(result.getJSONObject(n).optString("name").equals(spec.getString("name"))){position=n;break;}
+   for(int n=0;n<result.length();n++)if("function".equals(result.getJSONObject(n).optString("type"))&&result.getJSONObject(n).optString("name").equals(spec.getString("name"))){position=n;break;}
    JSONObject tool=position<0?new JSONObject():new JSONObject(result.getJSONObject(position).toString());
-   tool.put("name",spec.getString("name")).put("description",spec.getString("description")).put("input_schema",spec.getJSONObject("inputSchema"));
+   tool.put("type","function").put("name",spec.getString("name")).put("description",spec.getString("description")).put("inputSchema",spec.getJSONObject("inputSchema"));
    if(position<0)result.put(tool);else result.put(position,tool);
   }
   return result;

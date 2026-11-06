@@ -26,11 +26,29 @@ public final class NativeToolsUpgradeTest {
   String name=new File(projected.getString("path")).getName();List<String> rows=Files.readAllLines(new File(output,name).toPath(),StandardCharsets.UTF_8);
   JSONArray tools=new JSONObject(rows.get(0)).getJSONObject("payload").getJSONArray("dynamic_tools");
   check(tools.length()==2&&tools.getJSONObject(1).getString("name").equals("custom_tool"),"custom tools retained");
-  check(!tools.getJSONObject(0).getBoolean("defer_loading"),"existing native tool metadata retained");
+  check(!tools.getJSONObject(0).getBoolean("deferLoading"),"existing native tool metadata retained");
   check(new JSONObject(rows.get(1)).getJSONObject("payload").toString().equals(user.getJSONObject("payload").toString()),"user content retained");
   JSONArray repeated=ProviderHistoryProjection.upgradeTools(tools,desired);
   check(ProviderHistoryProjection.sameJson(tools,repeated),"upgrade is idempotent");
   check(ProviderHistoryProjection.sameJson(new JSONObject("{\"a\":1,\"b\":2}"),new JSONObject("{\"b\":2,\"a\":1}")),"object key order does not cause repeated forks");
+  JSONObject newSpec=new JSONObject().put("name","eva_phone_route").put("description","route").put("inputSchema",new JSONObject().put("type","object"));
+  JSONArray canonical=ProviderHistoryProjection.upgradeTools(tools,new JSONArray().put(newSpec));
+  for(int i=0;i<canonical.length();i++){
+   JSONObject entry=canonical.getJSONObject(i);
+   check(entry.getString("type").equals("function"),"every native and custom tool has canonical function tag");
+   check(entry.has("inputSchema")&&!entry.has("input_schema"),"tool schema uses camelCase protocol field");
+  }
+  check(canonical.length()==3,"new route tool appended to canonical legacy upgrade");
+  JSONObject mixedOld=new JSONObject().put("type","function").put("name","eva_phone").put("description","old").put("inputSchema",new JSONObject()).put("input_schema",new JSONObject().put("obsolete",true));
+  JSONArray repaired=ProviderHistoryProjection.upgradeTools(new JSONArray().put(mixedOld).put(new JSONObject().put("name","eva_phone_route").put("description","route").put("input_schema",new JSONObject())),new JSONArray().put(newSpec));
+  check(repaired.getJSONObject(0).getJSONObject("inputSchema").length()==0,"canonical schema wins over stale snake_case field");
+  check(!repaired.toString().contains("input_schema")&&repaired.getJSONObject(1).getString("type").equals("function"),"mixed broken projection is repaired");
+  JSONObject legacyNamespaced=new JSONObject().put("namespace","custom").put("name","lookup").put("description","keep namespace").put("inputSchema",new JSONObject()).put("exposeToContext",false);
+  JSONArray grouped=ProviderHistoryProjection.canonicalTools(new JSONArray().put(legacyNamespaced));
+  check(grouped.getJSONObject(0).getString("type").equals("namespace"),"legacy namespace retained canonically");
+  JSONObject nested=grouped.getJSONObject(0).getJSONArray("tools").getJSONObject(0);
+  check(nested.getBoolean("deferLoading")&&!nested.has("namespace"),"legacy deferred visibility preserved");
+  check(ProviderHistoryProjection.sameJson(grouped,ProviderHistoryProjection.canonicalTools(grouped)),"canonical namespaces are idempotent");
   System.out.println("PASS native tool schema upgrade "+checks+" checks");
  }
 }

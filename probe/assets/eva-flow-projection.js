@@ -58,7 +58,12 @@
  function safeItem(i,text){
   if(i.type==='reasoning')return {id:i.id,type:i.type,status:i.status,summary:(Array.isArray(i.summary)?i.summary:[]).map(s=>typeof s==='string'?s:s?.text||'').filter(s=>s.trim())};
   if(i.type==='agentMessage')return {...i,text:text(i)};
-  if(i.type==='dynamicToolCall'&&['eva_phone','eva_browser'].includes(i.tool))return {...i,command:(i.tool==='eva_browser'?'浏览器操作 · ':'手机操作 · ')+(i.arguments?.action||''),output:(i.contentItems||[]).filter(x=>x.type==='inputText').map(x=>x.text).join('\n')||i.error||i.output};
+  if(i.type==='dynamicToolCall'&&['eva_phone','eva_phone_steps','eva_phone_route','eva_wechat','eva_browser'].includes(i.tool)){
+   const count=Array.isArray(i.arguments?.steps)?i.arguments.steps.length:0;
+   const operation=i.tool==='eva_phone_steps'?(count?`${count} 个步骤`:'多步操作'):(i.arguments?.action||'');
+   const title=i.tool==='eva_browser'?'浏览器操作':i.tool==='eva_wechat'?'微信操作':i.tool==='eva_phone_route'?'手机路线':'手机操作';
+   return {...i,command:title+(operation?' · '+operation:''),output:(i.contentItems||[]).filter(x=>x.type==='inputText').map(x=>x.text).join('\n')||i.error||i.output};
+  }
   return i;
  }
  function agentRows(items,turnId){
@@ -94,7 +99,13 @@
   nativeTranscript.beginRender(scope);
   try{for(const i of turn.items){if(activityDisposition(i)==='hidden')continue;if(user(i)){flush();blocks.push({kind:'user',item:i});}else segment.push(i);}flush();return {...turn,mobileBlocks:blocks};}finally{nativeTranscript.endRender(scope);}
  }
- nativeTranscript.registerDynamicTool('','eva_phone',{title:'手机控制',invoking:'正在操作手机',invoked:'操作了手机',failed:'手机操作失败'});
- nativeTranscript.registerDynamicTool('','eva_browser',{title:'Eva 浏览器',invoking:'正在操作浏览器',invoked:'操作了浏览器',failed:'浏览器操作失败'});
- return {projectTurn,activityDisposition,nativeActivityLabels,duration};
+ function registerPhoneTools(transcript=root.nativeTranscript){
+  transcript.registerDynamicTool('','eva_phone',{title:'手机控制',invoking:'正在操作手机',invoked:'操作了手机',failed:'手机操作失败'});
+  transcript.registerDynamicTool('','eva_phone_steps',{title:'手机多步操作',invoking:'正在执行手机步骤',invoked:'执行了手机步骤',failed:'手机步骤未完成'});
+  transcript.registerDynamicTool('','eva_phone_route',{title:'手机路线',invoking:'正在处理手机路线',invoked:'处理了手机路线',failed:'手机路线未完成'});
+  transcript.registerDynamicTool('','eva_wechat',{title:'微信操作',invoking:'正在操作微信',invoked:'操作了微信',failed:'微信操作失败'});
+  transcript.registerDynamicTool('','eva_browser',{title:'Eva 浏览器',invoking:'正在操作浏览器',invoked:'操作了浏览器',failed:'浏览器操作失败'});
+ }
+ registerPhoneTools(nativeTranscript);
+ return {projectTurn,activityDisposition,nativeActivityLabels,duration,registerPhoneTools};
 });

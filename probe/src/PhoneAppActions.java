@@ -79,7 +79,12 @@ final class PhoneAppActions {
   }
   Intent intent=context.getPackageManager().getLaunchIntentForPackage(packageName);
   if(intent==null)throw new IOException("找不到可启动的 App，请先 apps 查询");
-  context.startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+  intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+  if(PhoneAgentDisplay.active!=null){
+   PhoneAgentDisplay.active.launching();
+   android.app.ActivityOptions options=android.app.ActivityOptions.makeBasic();options.setLaunchDisplayId(PhoneAgentDisplay.displayId());
+   context.startActivity(intent,options.toBundle());
+  }else context.startActivity(intent);
   return new JSONObject().put("dispatched",true).put("package",packageName)
    .put("instruction","observe 验证前台页面；应用启动不代表任务完成");
  }

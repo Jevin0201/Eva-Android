@@ -1,0 +1,19 @@
+Eva Android 本地运行环境来源
+
+基础系统 Alpine Linux 3.22.7 aarch64。逐包名称、版本、许可证与来源保存在运行环境 /root/.eva-runtime/image-packages.json。
+代理内核来自官方 @openai/codex 0.166.0-linux-arm64 包，按原始 SHA-512 校验。Apache-2.0 完整许可保存在运行环境 /usr/share/licenses/eva/codex-LICENSE。
+ripgrep 使用 Alpine 签名仓库的 musl 版本，路径 /usr/bin/rg。
+Python、Node、Git 和办公库均由清单指定的签名包或校验后的官方 wheel 构建。
+
+PRoot 使用 termux/proot 提交 52d65a4dc140ca554d241a1438ddd4f6b00c9813，从源码构建，支持 link2symlink 与 sysvipc。
+talloc 版本 2.4.3。构建工具链 Android NDK 28.2.13676358，API 28，ARM64，16KB 对齐。
+GPL/LGPL 完整许可证和构建补丁随对应源码包提供。
+
+公开分发时，以下对应源码包应与 APK 一同提供。
+eva-proot-termux-52d65a4dc140-sources.tar.gz
+SHA-256 ec642a9a112e9382129a67566f492e8bce5c85316d152ec2af50c47915ed3dc7
+
+eva-alpine-3.22-aarch64-sources.tar.gz
+SHA-256 c41e374c73a6d03ce6f0a9c713609f752f5353eabfe1814f8115da152a3ec64a
+
+这些声明覆盖本地运行环境。应用界面和其他原生组件分别遵循其来源记录与许可证。
