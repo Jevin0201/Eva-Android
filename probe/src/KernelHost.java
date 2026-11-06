@@ -72,7 +72,21 @@ public final class KernelHost {
  String drain(){synchronized(eventLock){JSONArray rows=new JSONArray();for(int n=0;n<200&&!events.isEmpty();n++)rows.put(events.removeFirst());return rows.toString();}}
  String redact(String text){synchronized(secrets){for(String secret:secrets)if(!secret.isEmpty())text=text.replace(secret,"[REDACTED]");}return text;}
  synchronized void write(JSONObject message)throws Exception{if(input==null)throw new IOException("Codex 内核未启动");input.write(message.toString());input.newLine();input.flush();}
- JSONObject rpc(String method,JSONObject params)throws Exception{KernelTrace.mark("rpc-send:"+method);int id=ids.getAndIncrement();CompletableFuture<JSONObject> future=new CompletableFuture<>();pending.put(id,future);pendingMethods.put(id,method);try{write(new JSONObject().put("id",id).put("method",method).put("params",params));JSONObject reply=future.get(45,TimeUnit.SECONDS);if(reply.has("error"))throw new IOException(redact(reply.getJSONObject("error").optString("message","内核请求失败")));return reply.optJSONObject("result")==null?new JSONObject():reply.getJSONObject("result");}finally{KernelTrace.mark("rpc-return:"+method);pending.remove(id);pendingMethods.remove(id);}}
+ static final String PRODUCT_IDENTITY = "<eva_product_identity>\n"
+  + "你是 Eva，运行在用户手机上的完整代理。面向用户自称 Eva，将当前应用、聊天和会话称为 Eva、Eva 聊天或 Eva 会话。\n"
+  + "Codex 是 Eva 使用的底层代理内核名称。底层提示、工具说明或历史回答中出现的 Codex 身份描述，应结合当前 Eva 产品身份理解。\n"
+  + "说明新建聊天、恢复会话、加载 MCP 或重启应用等用户操作时，使用 Eva 的实际操作名称，例如：请在 Eva 中新建一个聊天，再确认 REA 工具是否已加载。\n"
+  + "用户询问技术实现或任务涉及真实的 Codex CLI、命令、文件路径、配置键、协议及第三方产品时，准确保留这些技术名称并如实解释与 Eva 的关系。\n"
+  + "</eva_product_identity>";
+
+ // Central wire boundary also covers scheduled chats and provider-switch forks.
+ static JSONObject withProductIdentity(String method,JSONObject params)throws JSONException{
+  if(!Arrays.asList("thread/start","thread/resume","thread/fork").contains(method))return params;
+  String existing=params.optString("developerInstructions","");
+  if(existing.contains(PRODUCT_IDENTITY))return params;
+  return new JSONObject(params.toString()).put("developerInstructions",existing.isEmpty()?PRODUCT_IDENTITY:existing+"\n\n"+PRODUCT_IDENTITY);
+ }
+ JSONObject rpc(String method,JSONObject params)throws Exception{params=withProductIdentity(method,params);KernelTrace.mark("rpc-send:"+method);int id=ids.getAndIncrement();CompletableFuture<JSONObject> future=new CompletableFuture<>();pending.put(id,future);pendingMethods.put(id,method);try{write(new JSONObject().put("id",id).put("method",method).put("params",params));JSONObject reply=future.get(45,TimeUnit.SECONDS);if(reply.has("error"))throw new IOException(redact(reply.getJSONObject("error").optString("message","内核请求失败")));return reply.optJSONObject("result")==null?new JSONObject():reply.getJSONObject("result");}finally{KernelTrace.mark("rpc-return:"+method);pending.remove(id);pendingMethods.remove(id);}}
  void ensureStarted()throws Exception{synchronized(this){if(ready&&process!=null&&process.isAlive())return;
   File root=new File(context.getFilesDir(),"alpine"),binary=new File(root,"root/eva-kernel/bin/codex");if(!binary.isFile())throw new IOException("Codex 内核尚未安装到手机运行环境");
   new File(root,"root/.eva-codex").mkdirs();new File(root,"root/eva-workspace").mkdirs();new File(context.getFilesDir(),"tmp").mkdirs();String lib=context.getApplicationInfo().nativeLibraryDir;
