@@ -1,0 +1,3 @@
+b11ed48038aacea455cde71fcd8f49873a314b932aed4c820c522177fb324307  eva-android-0.0.70-arm64.apk
+c41e374c73a6d03ce6f0a9c713609f752f5353eabfe1814f8115da152a3ec64a  eva-alpine-3.22-aarch64-sources.tar.gz
+ec642a9a112e9382129a67566f492e8bce5c85316d152ec2af50c47915ed3dc7  eva-proot-termux-52d65a4dc140-sources.tar.gz

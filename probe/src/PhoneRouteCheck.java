@@ -69,6 +69,20 @@ public final class PhoneRouteCheck extends Instrumentation {
             rejected = false;
             try { PhoneRouteTools.execute(context, save, request, 0, 0); } catch (IOException expected) { rejected = true; }
             check(rejected, "interrupted source candidate removed");
+            JSONObject ok = new JSONObject().put("completed", true).put("steps", new JSONArray("[{ok:true}]"));
+            JSONObject observed = new JSONObject().put("steps", new JSONArray("[{action:observe}]"));
+            PhoneRouteTools.candidate("route-check", "learn", observed, ok);
+            PhoneRouteTools.candidate("route-check", "learn", observed, ok);
+            check(ok.getJSONObject("routeLearning").getInt("candidateSteps") == 2, "contiguous batches accumulated");
+            JSONObject learned = PhoneRouteTools.execute(context, new JSONObject(save.toString()).put("success", true), request, 0, 0).getJSONObject("saved");
+            check(store.get(learned.getString("id")).getJSONArray("steps").length() == 2 && learned.getInt("successes") == 1, "verified learning persisted");
+            PhoneRouteTools.candidate("route-check", "learn", observed, ok);
+            PhoneRouteTools.candidate("route-check", "other-turn", observed, ok);
+            check(ok.getJSONObject("routeLearning").getInt("candidateSteps") == 1, "turns never merged");
+            PhoneRouteTools.candidate("route-check", "other-turn", observed, new JSONObject().put("completed", false));
+            rejected = false;
+            try { PhoneRouteTools.execute(context, save, request, 0, 0); } catch (IOException expected) { rejected = true; }
+            check(rejected, "failed batch invalidates learning chain");
             store.delete(id); check(store.list("open more").length() == 0, "delete");
             result.putString("stream", "PASS phone routes " + checks + " checks\n");
         } catch (Throwable error) { result.putString("stream", "FAIL phone routes " + error + "\n"); }

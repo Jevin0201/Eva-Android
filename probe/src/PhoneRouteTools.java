@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-/** Explicit save/replay of successful native batches, separate from preference memory. */
+/** Verified learning and replay of native navigation batches. */
 final class PhoneRouteTools {
     private static final ConcurrentHashMap<String, Candidate> candidates = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<String, Replay> replays = new ConcurrentHashMap<>();
@@ -19,19 +19,31 @@ final class PhoneRouteTools {
         Replay(String id, String turn) { this.id = id; this.turn = turn; token = java.util.UUID.randomUUID().toString(); }
     }
     static void candidate(String thread, String turn, JSONObject arguments, JSONObject output) {
-        candidates.remove(thread);
+        Candidate previous = candidates.remove(thread);
         try {
             if (!output.optBoolean("completed") || output.has("actionError")) return;
             JSONArray steps = arguments.getJSONArray("steps"), results = output.getJSONArray("steps");
             if (results.length() != steps.length()) return;
             for (int i = 0; i < results.length(); i++) if (!results.getJSONObject(i).optBoolean("ok")) return;
             PhoneRouteStore.validateSteps(steps);
+            // Only join contiguous batches from the same turn. A failed or unsafe batch
+            // invalidates the chain, so a later success cannot conceal a gap.
+            JSONArray combined = new JSONArray();
+            if (previous != null && previous.turn.equals(turn) &&
+                    System.currentTimeMillis() - previous.at <= 30 * 60 * 1000 &&
+                    previous.steps.length() + steps.length() <= 20) {
+                combined = new JSONArray(previous.steps.toString());
+            }
+            for (int i = 0; i < steps.length(); i++) combined.put(steps.getJSONObject(i));
+            steps = combined;
             if (candidates.size() >= 64) {
                 String oldest = null; long timestamp = Long.MAX_VALUE;
                 for (java.util.Map.Entry<String, Candidate> entry : candidates.entrySet()) if (entry.getValue().at < timestamp) { oldest = entry.getKey(); timestamp = entry.getValue().at; }
                 if (oldest != null) candidates.remove(oldest);
             }
             candidates.put(thread, new Candidate(turn, new JSONArray(steps.toString())));
+            output.put("routeLearning", new JSONObject().put("candidateSteps", steps.length())
+                .put("instruction", "核对当前 observation 已达到导航目标后，调用 eva_phone_route save，填写明确 goal、name 和 success=true，自动记住流程。未核验成功则不要保存。后续同类任务先 list 再 replay。"));
         } catch (Exception ignored) { /* Learning must never fail the completed operation. */ }
     }
     static void event(JSONObject row) {
@@ -50,12 +62,13 @@ final class PhoneRouteTools {
         Replay replay = replays.get(thread);
         if (replay != null && replay.turn.equals(turn)) replays.remove(thread, replay);
     }
+    static void invalidateCandidate(String thread) { candidates.remove(thread); }
     static void clear(String thread) { candidates.remove(thread); replays.remove(thread); }
     static JSONObject spec() throws Exception {
         JSONObject fields = new JSONObject().put("action", new JSONObject().put("type", "string").put("enum", new JSONArray(new String[]{"list", "save", "replay", "confirm", "delete"})));
         for (String key : new String[]{"id", "goal", "name", "receipt"}) fields.put(key, new JSONObject().put("type", "string"));
         fields.put("success", new JSONObject().put("type", "boolean"));
-        return new JSONObject().put("name", "eva_phone_route").put("description", "Manage reusable phone navigation routes. list optionally filters by exact goal. save requires explicit user instruction to save this successful route, name and goal; copies only the latest actually successful eva_phone_steps receipt in this conversation (within 30 minutes), never invent steps. replay requires id and the exact saved goal, only for the user's currently authorized task; routes reject input, opaque clicks and sensitive actions. Replay uses live target matching, conditions and interruption, stops on divergence and returns current observation for model verification. It does NOT prove task completion. After verifying the replay actually achieved the goal against current observation, call confirm with its receipt and success=true to record success; success=false records failed verification. Never confirm based only on dispatched/completed flags. Same-step divergence twice disables the route. delete requires user request. No user preferences are learned.")
+        return new JSONObject().put("name", "eva_phone_route").put("description", "Manage reusable phone navigation routes. list optionally filters by exact goal. Learn successful navigation as part of the authorized task without asking for a separate save request. At the start of a phone task call list to find a reusable route, reuse its exact goal for replay. Prefer eva_phone_steps for newly explored navigation so it can be learned. After checking the current observation proves the navigation goal, save with name, goal and success=true. save copies contiguous successful eva_phone_steps batches from the same turn (up to 20 steps, within 30 minutes), never invent steps. Legacy save without success remains an unverified candidate. Do not save if the user asks not to remember. Keep goals specific to the App and destination. Input and external side effects remain live actions outside routes. replay requires id and the exact saved goal, only for the user's currently authorized task; routes reject input, opaque clicks and sensitive actions. Replay uses live target matching, conditions and interruption, stops on divergence and returns current observation for model verification. It does NOT prove task completion. After verifying the replay actually achieved the goal against current observation, call confirm with its receipt and success=true to record success; success=false records failed verification. Never confirm based only on dispatched/completed flags. Same-step divergence twice disables the route. delete requires user request. No user preferences are learned.")
             .put("inputSchema", new JSONObject().put("type", "object").put("properties", fields).put("required", new JSONArray().put("action")).put("additionalProperties", false));
     }
     static JSONObject execute(Context context, JSONObject args, JSONObject request, long epoch, long revision) throws Exception {
@@ -66,7 +79,9 @@ final class PhoneRouteTools {
         if (action.equals("save")) {
             Candidate candidate = candidates.get(thread);
             if (candidate == null || System.currentTimeMillis() - candidate.at > 30 * 60 * 1000) throw new IOException("没有可保存的近期成功批处理");
+            if (args.has("success") && (!(args.get("success") instanceof Boolean) || !args.getBoolean("success"))) throw new IOException("仅可学习已核验成功的流程");
             JSONObject saved = store.create(args.getString("goal"), args.getString("name"), candidate.steps, candidate.turn);
+            if (args.optBoolean("success")) saved = store.success(saved.getString("id"));
             candidates.remove(thread, candidate); saved.remove("steps"); return new JSONObject().put("saved", saved);
         }
         if (action.equals("delete")) { store.delete(args.getString("id")); return new JSONObject().put("deleted", true); }
@@ -82,6 +97,7 @@ final class PhoneRouteTools {
         }
         if (!action.equals("replay")) throw new IOException("未知路线操作");
         replays.remove(thread);
+        candidates.remove(thread);
         JSONObject route = store.get(args.getString("id"));
         if (!route.getString("goal").equals(args.getString("goal"))) throw new IOException("任务目标未精确匹配路线");
         if (route.optBoolean("disabled")) throw new IOException("路线因重复偏离已停用，请重新完成流程再保存");
