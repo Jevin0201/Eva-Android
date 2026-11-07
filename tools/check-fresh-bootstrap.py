@@ -9,22 +9,25 @@ import xml.etree.ElementTree as ET
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--package', default='ai.eva.android.bootstrapcheck')
+parser.add_argument('--isolated-root', action='store_true')
 args = parser.parse_args()
-adb = os.path.expandvars(r'%LOCALAPPDATA%\Android\Sdk\platform-tools\adb.exe')
+adb = os.environ.get('EVA_ADB', os.path.expandvars(r'%LOCALAPPDATA%\Android\Sdk\platform-tools\adb.exe'))
 pkg = args.package
-out = Path('artifacts/bootstrap-fresh-acceptance')
+relative = 'files/distribution-firstinstall-check' if args.isolated_root else 'files'
+pref = 'firstinstall-check-eva-runtime-bootstrap.xml' if args.isolated_root else 'eva-runtime-bootstrap.xml'
+out = Path('artifacts/bootstrap-fresh-acceptance-isolated' if args.isolated_root else 'artifacts/bootstrap-fresh-acceptance')
 out.mkdir(parents=True, exist_ok=True)
 
 def shell(*words, timeout=120):
     return subprocess.check_output([adb, 'shell', shlex.join(list(words))], timeout=timeout)
 
-state = shell('run-as', pkg, 'cat', 'shared_prefs/eva-runtime-bootstrap.xml')
+state = shell('run-as', pkg, 'cat', 'shared_prefs/' + pref)
 values = {node.get('name'): node.get('value', node.text) for node in ET.fromstring(state)}
 if values.get('ready') != 'true':
     raise RuntimeError('Clean installation did not reach ready: ' + json.dumps(values))
 apk = shell('pm', 'path', pkg).decode().strip().removeprefix('package:')
 native = apk.rsplit('/', 1)[0] + '/lib/arm64'
-private = shell('run-as', pkg, 'readlink', '-f', 'files').decode().strip()
+private = shell('run-as', pkg, 'readlink', '-f', relative).decode().strip()
 script = r'''
 import ctypes, json, os, pathlib, runpy, selectors, shutil, subprocess, tempfile, time
 assert subprocess.check_output(['node', '-e', 'console.log(6*7)'], text=True).strip() == '42'
@@ -72,17 +75,20 @@ source.write_text(script, encoding='utf-8')
 remote = '/data/local/tmp/eva-bootstrap-build/acceptance.py'
 shell('mkdir', '-p', '/data/local/tmp/eva-bootstrap-build')
 subprocess.run([adb, 'push', str(source), remote], check=True, stdout=subprocess.DEVNULL)
-shell('run-as', pkg, 'cp', remote, 'files/alpine/root/.eva-bootstrap-acceptance.py')
-shell('run-as', pkg, 'ln', '-sf', native + '/liboperit_proot.so', 'files/bootstrap-test-proot')
+shell('run-as', pkg, 'cp', remote, relative + '/alpine/root/.eva-bootstrap-acceptance.py')
+shell('run-as', pkg, 'ln', '-sf', native + '/liboperit_proot.so', relative + '/bootstrap-test-proot')
 command = ['run-as', pkg, 'env', 'PROOT_LOADER=' + native + '/liboperit_loader.so', 'PROOT_TMP_DIR=' + private + '/tmp',
            'HOME=/root', 'PATH=/usr/bin:/bin:/usr/sbin:/sbin', private + '/bootstrap-test-proot', '-0', '--link2symlink', '--sysvipc',
            '-r', private + '/alpine', '-b', '/dev', '-b', '/proc', '-b', private + '/runtime-bindings/proc-version:/proc/version',
            '-w', '/root/eva-workspace', '/usr/bin/python3', '/root/.eva-bootstrap-acceptance.py']
-result = subprocess.run([adb, 'shell', shlex.join(command)], capture_output=True, timeout=150)
-text = (result.stdout + result.stderr).decode('utf-8', errors='replace')
-(out / 'result.txt').write_text(text, encoding='utf-8')
-print(text)
-if result.returncode or '"noImportedAccount": true' not in text:
-    raise RuntimeError('Clean installed runtime acceptance failed')
-(out / 'deployment-state.xml').write_bytes(state)
-shell('run-as', pkg, 'rm', '-f', 'files/alpine/root/.eva-bootstrap-acceptance.py', 'files/bootstrap-test-proot')
+try:
+    result = subprocess.run([adb, 'shell', shlex.join(command)], capture_output=True, timeout=150)
+    text = (result.stdout + result.stderr).decode('utf-8', errors='replace')
+    (out / 'result.txt').write_text(text, encoding='utf-8')
+    print(text)
+    if result.returncode or '"noImportedAccount": true' not in text:
+        raise RuntimeError('Clean installed runtime acceptance failed')
+    (out / 'deployment-state.xml').write_bytes(state)
+finally:
+    shell('run-as', pkg, 'rm', '-f', relative + '/alpine/root/.eva-bootstrap-acceptance.py', relative + '/bootstrap-test-proot')
+    shell('rm', '-f', remote)

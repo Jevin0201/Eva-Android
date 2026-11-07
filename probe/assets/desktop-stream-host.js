@@ -100,13 +100,18 @@ import './desktop-stream/native-image-preview/common.js';
   if (active() && flow) updateKernelFlow(active());
  }});
 
- function pendingMessage(chat) {
-  if (!chat.pending) return '';
+ function pendingUserMessage(chat) {
+  if (!chat.pending) return null;
   const display = chat.pendingAttachmentDisplay?.pending === chat.pending ? chat.pendingAttachmentDisplay : null;
   const attachments = display?.attachments || chat.attachments || [];
   const text = display?.text ?? chat.pending;
   const content = [{type: 'text', text: localAttachmentText(text, attachments)}];
-  return renderer.renderUserMessage({id: 'pending:' + chat.id, content}, {id: 'pending:' + chat.id}) +
+  return {id: 'pending:' + chat.id, type: 'userMessage', content};
+ }
+ function pendingMessage(chat) {
+  const item = pendingUserMessage(chat);
+  if (!item) return '';
+  return renderer.renderUserMessage(item, {id: 'pending:' + chat.id}) +
    '<div class="turn-progress" role="status">正在发送…</div>';
  }
  function render(chat, flow) {
@@ -137,17 +142,27 @@ import './desktop-stream/native-image-preview/common.js';
   const turns = state.thread.turns || [];
   const limit = flowHistoryLimits.get(chat) || 20;
   const chunks = [];
+  const pendingUser = pendingUserMessage(chat);
+  // The accepted turn can arrive before its userMessage echo. Render the local
+  // message inside that turn so desktop thinking/activity follows the prompt.
+  const pendingTurn = pendingUser ? turns.findLast(turn => {
+   if (chat.pendingSend?.turnId) return turn.id === chat.pendingSend.turnId;
+   if (chat.pendingSend?.baseTurnIds) return !chat.pendingSend.baseTurnIds.includes(turn.id);
+   return turn.status === 'inProgress' && !(turn.items || []).some(item => item.type === 'userMessage');
+  }) : null;
   if(state.thread.androidTurnsCursor)chunks.push('<button class="load-older" data-action="kernel-history-older">加载更早回合</button>');
   if (turns.length > limit) chunks.push('<button class="load-older" data-action="kernel-history-more">加载更早回合</button>');
   for (const turn of turns.slice(-limit)) {
-   let html = renderer.renderTurn(turn, false);
+   const needsUserEcho = turn === pendingTurn && !(turn.items || []).some(item => item.type === 'userMessage');
+   const visibleTurn = needsUserEcho ? {...turn, items: [pendingUser, ...(turn.items || [])]} : turn;
+   let html = renderer.renderTurn(visibleTurn, false);
    if (turn.androidSummary && turn.androidActivity?.hasActivity === true &&
        !(turn.items || []).some(item => !['userMessage', 'steeringUserMessage', 'agentMessage', 'reasoning'].includes(item.type))) {
     html += '<button class="load-older" data-desktop-history-turn="' + esc(turn.id) + '">查看执行过程</button>';
    }
    chunks.push(html);
   }
-  chunks.push(pendingMessage(chat));
+  if (!pendingTurn) chunks.push(pendingMessage(chat));
   for (const [key, approval] of kernelApprovals) if (approval.params?.threadId === state.thread.id) {
    chunks.push('<article class="kernel-approval"><b>操作需要确认</b><pre>' +
     esc(approval.params.command || approval.params.reason || approval.method) + '</pre>' +

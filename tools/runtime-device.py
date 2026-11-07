@@ -1,7 +1,7 @@
 """Run a project-owned diagnostic inside Eva's private Linux rootfs."""
 import os,sys,subprocess,shlex,pathlib
 adb=os.environ.get('EVA_ADB') or os.path.expandvars(r'%LOCALAPPDATA%\Android\Sdk\platform-tools\adb.exe')
-pkg='ai.eva.android.probe';serial=os.environ.get('EVA_SERIAL','509655c7');base=[adb,'-s',serial]
+pkg=os.environ.get('EVA_PACKAGE','ai.eva.android.probe');serial=os.environ.get('EVA_SERIAL','509655c7');base=[adb,'-s',serial]
 apk=subprocess.check_output(base+['shell','pm','path',pkg],text=True).strip().removeprefix('package:');lib=apk.rsplit('/',1)[0]+'/lib/arm64';private='/data/user/0/'+pkg+'/files'
 # Match Android Context.getFilesDir().getCanonicalFile() when both aliases exist.
 # PRoot's emulated hardlinks retain this host prefix in their persistent targets.

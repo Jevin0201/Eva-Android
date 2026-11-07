@@ -6,7 +6,7 @@ import subprocess
 import time
 import xml.etree.ElementTree as ET
 
-adb = os.path.expandvars(r'%LOCALAPPDATA%\Android\Sdk\platform-tools\adb.exe')
+adb = os.environ.get('EVA_ADB', os.path.expandvars(r'%LOCALAPPDATA%\Android\Sdk\platform-tools\adb.exe'))
 pkg = 'ai.eva.android.bootstrapcheck'
 component = pkg + '/ai.eva.android.probe.ShellActivity'
 out = Path('artifacts/bootstrap-fresh-acceptance')

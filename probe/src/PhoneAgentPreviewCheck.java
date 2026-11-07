@@ -61,8 +61,8 @@ public final class PhoneAgentPreviewCheck extends Instrumentation {
             began = true;
             PhoneAccessibility.armed = true;
             String enabled = android.provider.Settings.Secure.getString(getTargetContext().getContentResolver(), "enabled_accessibility_services");
-            if (PhoneAccessibility.live == null && enabled != null && enabled.contains("ai.eva.android.probe"))
-                PhoneShell.execute(getTargetContext(), PhoneShellService.restoreCommand(), PhoneAccessibility.generation);
+            if (PhoneAccessibility.live == null && enabled != null && enabled.contains(getTargetContext().getPackageName()))
+                PhoneShell.execute(getTargetContext(), PhoneShellService.restoreCommand(new android.content.ComponentName(getTargetContext(),PhoneAccessibility.class)), PhoneAccessibility.generation);
             await(() -> PhoneAccessibility.live != null, "Accessibility did not reconnect");
             PhoneAccessibility.armed = true;
             PhoneAgentDisplay.setEnabled(getTargetContext(), true);
@@ -82,7 +82,7 @@ public final class PhoneAgentPreviewCheck extends Instrumentation {
             await(() -> ui(() -> {
                 if (!(image.getDrawable() instanceof BitmapDrawable)) return false;
                 Bitmap bitmap = ((BitmapDrawable) image.getDrawable()).getBitmap();
-                return root.isAttachedToWindow() && !bitmap.isRecycled() && bitmap.getWidth() > 0 && Math.min(bitmap.getWidth(), bitmap.getHeight()) <= 360;
+                return root.isAttachedToWindow() && !bitmap.isRecycled() && bitmap.getWidth() > 0 && Math.min(bitmap.getWidth(), bitmap.getHeight()) <= 480;
             }), "No scaled live bitmap in attached overlay");
             int beforeFrame = ui(() -> {
                 Bitmap frame = ((BitmapDrawable)image.getDrawable()).getBitmap();
@@ -104,14 +104,17 @@ public final class PhoneAgentPreviewCheck extends Instrumentation {
                 frame.getPixels(pixels,0,frame.getWidth(),0,0,frame.getWidth(),frame.getHeight());
                 return java.util.Arrays.hashCode(pixels)!=beforeFrame;
             }),"Preview did not update after real background operation");
+            check(ui(() -> Math.abs((double) image.getHeight() / image.getWidth() - (double) display.height / display.width) < 0.01), "Preview view does not preserve the physical screen ratio");
+            android.os.HandlerThread renderer = (android.os.HandlerThread) field(overlay, "renderer");
+            check(renderer.isAlive() && renderer.getLooper() != android.os.Looper.getMainLooper(), "Preview scaling must run off the UI thread");
             LinearLayout header = ui(() -> (LinearLayout) root.getChildAt(0));
             TextView title = ui(() -> (TextView) header.getChildAt(0));
             TextView fold = ui(() -> (TextView) header.getChildAt(1));
             TextView close = ui(() -> (TextView) header.getChildAt(2));
             ui(() -> { fold.performClick(); return null; });
-            check(ui(() -> image.getVisibility() == View.GONE && "展开".contentEquals(fold.getText())), "Collapse did not hide preview");
+            check(ui(() -> image.getVisibility() == View.GONE && "+".contentEquals(fold.getText())), "Collapse did not hide preview");
             ui(() -> { fold.performClick(); return null; });
-            check(ui(() -> image.getVisibility() == View.VISIBLE && "收起".contentEquals(fold.getText())), "Expand did not restore preview");
+            check(ui(() -> image.getVisibility() == View.VISIBLE && "−".contentEquals(fold.getText())), "Expand did not restore preview");
             int[] before = ui(() -> { WindowManager.LayoutParams params = (WindowManager.LayoutParams) field(overlay, "params"); return new int[]{params.x, params.y}; });
             ui(() -> { drag(title); return null; });
             check(ui(() -> { WindowManager.LayoutParams params = (WindowManager.LayoutParams) field(overlay, "params"); return params.x != before[0] || params.y != before[1]; }), "Drag did not move overlay");
@@ -127,7 +130,7 @@ public final class PhoneAgentPreviewCheck extends Instrumentation {
             await(PhoneAgentPreview::isShowing, "Overlay could not reopen");
             PhoneAgentDisplay.stop();
             await(() -> !PhoneAgentPreview.isShowing(), "Stopping display left overlay visible");
-            result.putString("result", "PASS live scaled overlay bitmap updates after real background click, collapse/expand, drag, cross-App attachment, close preserves background execution, image cleanup, display stop removes overlay");
+            result.putString("result", "PASS live scaled overlay bitmap updates after real background click, collapse/expand, drag, cross-App attachment, close preserves background execution, physical screen aspect, background scaling, image cleanup, display stop removes overlay");
         } catch (Throwable error) { result.putString("result", "FAIL " + error); }
         finally {
             if (began) {

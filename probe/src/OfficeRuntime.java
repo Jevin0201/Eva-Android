@@ -29,6 +29,8 @@ final class OfficeRuntime {
   copyAsset(c,"office/eva-presentations.py",new File(root,".eva-office/eva-presentations.py"),root);
   copyAsset(c,"office/eva-capabilities.py",new File(root,".eva-runtime/eva-capabilities.py"),root);
   copyAsset(c,"office/eva-android-build.py",new File(root,".eva-runtime/eva-android-build.py"),root);
+  copyAsset(c,"office/eva-distribution-check.py",new File(root,".eva-runtime/eva-distribution-check.py"),root);
+  copyAsset(c,"office/eva-distribution.py",new File(root,".eva-runtime/eva-distribution.py"),root);
   copyAsset(c,"office/eva-java21.py",new File(root,".eva-runtime/eva-java21.py"),root);
   copyAsset(c,"office/eva-java21-memory.c",new File(root,".eva-runtime/eva-java21-memory.c"),root);
   for(String skill:new String[]{"eva-ppt","eva-capabilities","eva-android-build"}){File folder=new File(root,".eva-codex/skills/"+skill),file=new File(folder,"SKILL.md");if(file.isFile()&&!new String(Files.readAllBytes(file.toPath()),"UTF-8").contains("# Eva Android managed skill"))continue;if(copyTree(c,"office/skills/"+skill,folder,root))skillsRevision++;}

@@ -48,10 +48,11 @@ const {chromium,launchOptions}=require('./browser-test-env.cjs');
   for(const scenario of [{width:390,height:844,ime:false},{width:844,height:390,ime:false},{width:390,height:560,ime:true},{width:390,height:844,large:true}]){
    await page.setViewportSize({width:scenario.width,height:scenario.height});
    await page.evaluate(scenario=>{document.querySelector('#prompt').style.fontSize=scenario.large?'24px':'';evaKeyboardState({visible:!!scenario.ime});kernelNotice='引导信息已接收';refreshKernelControls();},scenario);
+   await page.waitForFunction(()=>document.querySelector('.composer-status-strip span').textContent==='引导信息已接收');
    const geometry=await page.evaluate(()=>{
-    const composer=document.querySelector('.composer').getBoundingClientRect(),dock=document.querySelector('.dock').getBoundingClientRect(),foot=document.querySelector('.foot').getBoundingClientRect(),controls=document.querySelector('.controls').getBoundingClientRect(),permission=document.querySelector('[data-action=kernel-permissions]').getBoundingClientRect(),model=document.querySelector('.controls .model').getBoundingClientRect();
+    const composer=document.querySelector('.composer').getBoundingClientRect(),dock=document.querySelector('.dock').getBoundingClientRect(),foot=document.querySelector('.composer-status-strip').getBoundingClientRect(),controls=document.querySelector('.controls').getBoundingClientRect(),permission=document.querySelector('[data-action=kernel-permissions]').getBoundingClientRect(),model=document.querySelector('.controls .model').getBoundingClientRect();
     const workspace=document.querySelector('.workspace-chip').getBoundingClientRect(),flow=document.querySelector('.flow').getBoundingClientRect();
-    return {dockChildren:[...document.querySelector('.dock').children].map(e=>({class:e.className,height:e.getBoundingClientRect().height,margin:getComputedStyle(e).margin,top:e.getBoundingClientRect().top})),footCenter:(foot.left+foot.right)/2,footFont:getComputedStyle(document.querySelector('.foot')).fontSize,composerCenter:(composer.left+composer.right)/2,workspaceBottom:workspace.bottom,workspaceTop:workspace.top,workspaceLeft:workspace.left,workspaceWidth:workspace.width,flowBottom:flow.bottom,dockTop:dock.top,width:innerWidth,height:innerHeight,composerLeft:composer.left,composerTop:composer.top,composerBottom:composer.bottom,composerHeight:composer.height,inputHeight:document.querySelector('#prompt').getBoundingClientRect().height,dockBottom:dock.bottom,bottomGap:dock.bottom-foot.bottom,controlsBottom:controls.bottom,permissionInside:permission.left>=composer.left&&permission.right<=composer.right,modelInside:model.right<=composer.right,footText:document.querySelector('.foot').textContent,hasOldPermissionRow:!!document.querySelector('.permission-row')};
+    return {dockChildren:[...document.querySelector('.dock').children].map(e=>({class:e.className,height:e.getBoundingClientRect().height,margin:getComputedStyle(e).margin,top:e.getBoundingClientRect().top})),footCenter:(foot.left+foot.right)/2,footFont:getComputedStyle(document.querySelector('.composer-status-strip')).fontSize,composerCenter:(composer.left+composer.right)/2,workspaceBottom:workspace.bottom,workspaceTop:workspace.top,workspaceLeft:workspace.left,workspaceWidth:workspace.width,flowBottom:flow.bottom,dockTop:dock.top,width:innerWidth,height:innerHeight,composerLeft:composer.left,composerTop:composer.top,composerBottom:composer.bottom,composerHeight:composer.height,inputHeight:document.querySelector('#prompt').getBoundingClientRect().height,dockBottom:dock.bottom,bottomGap:dock.bottom-document.querySelector('.composer-footer').getBoundingClientRect().bottom,statusBottom:foot.bottom,controlsBottom:controls.bottom,permissionInside:permission.left>=composer.left&&permission.right<=composer.right,modelInside:model.right<=composer.right,footText:document.querySelector('.composer-status-strip').textContent,hasOldPermissionRow:!!document.querySelector('.permission-row')};
    });
    metrics.push(geometry);
    assert.ok(geometry.dockBottom<=scenario.height+1,JSON.stringify(geometry));
@@ -62,8 +63,10 @@ const {chromium,launchOptions}=require('./browser-test-env.cjs');
    assert.ok(geometry.workspaceTop>=geometry.composerBottom&&Math.abs(geometry.workspaceLeft-geometry.composerLeft)<8,'folder chip stays at composer lower-left edge');
    assert.ok(geometry.flowBottom<=geometry.dockTop+1,'content area ends at dock without a workspace overlay');
    assert.ok(Math.abs(geometry.footCenter-geometry.composerCenter)<1,'status stays centered on the full composer');
-   assert.equal(geometry.footFont,'9px');
-   assert.ok(geometry.workspaceWidth<scenario.width*.4,'long workspace labels remain compact');
+   assert.equal(geometry.footFont,'11px');
+   assert.ok(geometry.statusBottom<=geometry.composerTop,'status occupies its own row above the editor');
+   assert.ok(geometry.workspaceWidth<=scenario.width,'workspace stays within the available footer width');
+   assert.ok(await page.locator('.composer-footer').evaluate(e=>e.scrollWidth<=e.clientWidth+1),'footer has no horizontal overflow');
    assert.ok(geometry.permissionInside&&geometry.modelInside,JSON.stringify(geometry));
    assert.ok(geometry.footText.includes('引导信息已接收'));
    assert.equal(geometry.hasOldPermissionRow,false);

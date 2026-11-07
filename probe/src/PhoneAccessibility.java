@@ -29,8 +29,11 @@ public class PhoneAccessibility extends AccessibilityService {
  }
 
  public void onInterrupt(){clearNodes();}
- public void onDestroy(){if(live==this){PhoneTaskReport.close(this);stopControl();clearNodes();live=null;PhoneTaskService.reason(this,"无障碍连接已断开，等待系统重连");}super.onDestroy();}
- static void stopControl(){armed=false;generation++;PhoneShell.cancel();PhoneAgentDisplay.stop();PhoneAccessibility s=live;if(s!=null)new Handler(s.getMainLooper()).post(s::clearNodes);}
+ public void onDestroy(){if(live==this){PhoneTaskReport.close(this);suspendControl();clearNodes();live=null;PhoneTaskService.reason(this,"无障碍连接已断开，等待系统重连");}super.onDestroy();}
+ static void stopControl(){invalidateControl();PhoneShell.cancel();}
+ // A lifecycle interruption must invalidate UI work while allowing its own reconnect RPC to finish.
+ static void suspendControl(){invalidateControl();if(!PhoneTaskService.recovering.get())PhoneShell.cancel();}
+ private static void invalidateControl(){armed=false;generation++;PhoneAgentDisplay.stop();PhoneAccessibility s=live;if(s!=null)new Handler(s.getMainLooper()).post(s::clearNodes);}
  void clearNodes(){for(AccessibilityNodeInfo n:nodes.values())n.recycle();nodes.clear();snapshot="";}
  void guard()throws Exception{if(!armed)throw new IOException("手机控制已停止，请在 Eva 的手机控制页开启");if(((KeyguardManager)getSystemService(KEYGUARD_SERVICE)).isKeyguardLocked())throw new IOException("手机已锁定，请解锁后继续");PhoneAgentDisplay.guard(this);}
  JSONObject observe()throws Exception{guard();clearNodes();if(Build.VERSION.SDK_INT>=33)clearCache();AccessibilityNodeInfo root=readableRoot();observedAt=SystemClock.elapsedRealtime();snapshot=UUID.randomUUID().toString();observedRevision=windowRevision;snapshotWindow=root==null?-1:root.getWindowId();snapshotPackage=root==null?foregroundPackage:String.valueOf(root.getPackageName());JSONArray list=new JSONArray();visited=0;scanDeadline=SystemClock.elapsedRealtime()+180;if(root!=null){walk(root,list,0);root.recycle();}android.util.DisplayMetrics dm=PhoneAgentDisplay.metrics(this);return new JSONObject().put("displayId",PhoneAgentDisplay.displayId()).put("snapshot",snapshot).put("expiresInMs",15000).put("package",snapshotPackage).put("width",dm.widthPixels).put("height",dm.heightPixels).put("nodes",list).put("focusedInputAvailable",focusedInputAvailable()).put("truncated",list.length()>=200||visited>=1500||SystemClock.elapsedRealtime()>scanDeadline).put("recognition",list.length()==0?"visual-fallback-needed":"accessibility").put("instruction","核对本次观察；操作返回新 snapshot 后直接使用，无须重复 observe。省略布尔字段为 false，enabled 默认 true。未找到目标时可截图或使用 App 搜索入口。");}

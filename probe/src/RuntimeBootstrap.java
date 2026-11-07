@@ -27,7 +27,7 @@ final class RuntimeBootstrap {
  static boolean present(File root){if(Files.isSymbolicLink(root.toPath())||!root.isDirectory())return false;for(String name:REQUIRED)if(!Files.exists(new File(root,name).toPath(),LinkOption.NOFOLLOW_LINKS))return false;return true;}
  static JSONObject status(Context context) {
   try {
-   android.content.SharedPreferences p=prefs(context);File root=new File(context.getFilesDir(),"alpine");boolean exists=root.isDirectory(),complete=present(root),ready=p.getBoolean("ready",false)&&complete;
+   android.content.SharedPreferences p=prefs(context);File root=new File(context.getFilesDir(),"alpine");boolean exists=root.isDirectory(),complete=present(root),ready=p.getBoolean("ready",false)&&complete&&new File(root,"root/.eva-runtime/distribution/ready.json").isFile();
    boolean running=active.get();String stage=p.getString("stage",complete?"checking":"idle"),message=p.getString("message",complete?"已有环境等待兼容检查":"准备首次部署");
    if(p.getBoolean("running",false)&&!running&&!ready){stage="interrupted";message="上次部署中断，正在准备继续";}
    if(!exists&&ready)ready=false;
@@ -59,7 +59,7 @@ final class RuntimeBootstrap {
  static void ensure(Context context)throws Exception {
   if(android.os.Looper.myLooper()==android.os.Looper.getMainLooper())throw new IOException("运行环境部署必须在后台执行");
   synchronized(LOCK) {
-   if(prefs(context).getBoolean("ready",false)&&present(new File(context.getFilesDir(),"alpine")))return;
+   if(status(context).optBoolean("ready"))return;
    synchronized(active){check(context);active.set(true);}
    File stage=null;
    try {
@@ -69,7 +69,7 @@ final class RuntimeBootstrap {
     if(Files.exists(root.toPath(),LinkOption.NOFOLLOW_LINKS)) {
      if(Files.isSymbolicLink(root.toPath())||!root.isDirectory())throw new IOException("已有运行环境路径无效，请保留数据并检查");
      if(!present(root))throw new IOException("已有环境缺少必要组件，已保留全部数据；需要兼容修复后继续");
-     verify(context,root);state(context,"ready",100,"现有运行环境检查通过","");return;
+     verify(context,root);completeDistribution(context);state(context,"ready",100,"现有运行环境和完整依赖检查通过","");return;
     }
     JSONObject manifest=readManifest(context);JSONObject component=manifest.getJSONArray("components").getJSONObject(0);
     File base=new File(context.getFilesDir(),"bootstrap");safeDirectory(base);File cache=new File(base,"cache");safeDirectory(cache);
@@ -94,7 +94,8 @@ final class RuntimeBootstrap {
     if(Files.exists(root.toPath(),LinkOption.NOFOLLOW_LINKS))throw new IOException("已有环境在部署期间出现，已停止以保护数据");
     try{Files.move(stage.toPath(),root.toPath(),StandardCopyOption.ATOMIC_MOVE);}catch(AtomicMoveNotSupportedException error){throw new IOException("当前文件系统不支持安全原子部署",error);}
     stage=null;prefs(context).edit().putString("installedId",manifest.getString("id")).putString("installedSha256",component.getString("sha256")).commit();
-    state(context,"ready",100,"运行环境部署完成并通过自检","");
+    completeDistribution(context);
+    state(context,"ready",100,"运行环境与依赖部署完成并通过自检","");
    }catch(Exception error){boolean stop=cancelled.get()||error instanceof InterruptedIOException||prefs(context).getBoolean("cancelled",false);state(context,stop?"cancelled":"error",0,stop?"部署已取消，可重试":"部署未完成，可重试",error.getMessage()==null?error.toString():error.getMessage());throw error;}
    finally{active.set(false);prefs(context).edit().putBoolean("running",false).commit();}
   }
@@ -150,6 +151,25 @@ final class RuntimeBootstrap {
    String text;synchronized(output){text=output.toString("UTF-8");}
    if(process.exitValue()!=0||!text.contains("Python ")||!text.contains("git version")||!text.contains("codex-cli"))throw new IOException("运行环境兼容自检失败，请保留现有数据并重试。"+text.substring(0,Math.min(1500,text.length())));
   }finally{process.destroyForcibly();smoke=null;}
+ }
+ private static void completeDistribution(Context context)throws Exception {
+  check(context);state(context,"dependencies",92,"正在部署办公、Java、Android SDK 和分析工具，首次需要联网","");
+  OfficeRuntime.deploy(context);
+  ProcessBuilder builder=OfficeRuntime.process(context);java.util.List<String> command=builder.command();
+  command.set(command.size()-1,"/root/.eva-runtime/eva-distribution.py");
+  KernelNetwork network=new KernelNetwork();
+  for(String key:new String[]{"HTTP_PROXY","HTTPS_PROXY","http_proxy","https_proxy","npm_config_proxy","npm_config_https_proxy"})builder.environment().put(key,network.proxyUrl);
+  Process process;
+  try{process=LinuxRuntime.start(context,builder);}catch(Exception error){network.listener.close();network.threads.shutdownNow();throw error;}
+  smoke=process;StringBuilder output=new StringBuilder();
+  Thread reader=new Thread(()->{try(BufferedReader in=new BufferedReader(new InputStreamReader(process.getInputStream(),"UTF-8"))){String line;while((line=in.readLine())!=null){synchronized(output){if(output.length()>16000)output.delete(0,8000);output.append(line.replace(network.proxyUrl,"[local proxy]").replace(network.credential,"[redacted]")).append('\n');}try{JSONObject row=new JSONObject(line);if(row.has("progress"))state(context,"dependencies",95,row.getString("progress"),"");}catch(Exception ignored){}}}catch(IOException ignored){}});reader.start();
+  try{
+   long deadline=SystemClock.elapsedRealtime()+25*60*1000;
+   while(!process.waitFor(200,TimeUnit.MILLISECONDS)){check(context);if(SystemClock.elapsedRealtime()>deadline)throw new IOException("完整依赖部署超时，可重试继续");}
+   reader.join(2000);check(context);
+   if(process.exitValue()!=0){String text;synchronized(output){text=output.toString();}throw new IOException("依赖部署未完成，可重试。"+text);}
+   if(!new File(context.getFilesDir(),"alpine/root/.eva-runtime/distribution/ready.json").isFile())throw new IOException("依赖部署自检记录缺失");
+  }finally{process.destroyForcibly();smoke=null;network.listener.close();network.threads.shutdownNow();}
  }
  private static void safeDirectory(File directory)throws IOException {if(Files.isSymbolicLink(directory.toPath()))throw new IOException("部署目录不能使用链接");if(!directory.isDirectory()&&!directory.mkdirs())throw new IOException("无法创建部署目录");}
  private static void deleteStage(File base,File stage)throws IOException {

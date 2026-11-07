@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.Looper;
 import android.provider.Settings;
 import android.view.Gravity;
@@ -28,12 +29,18 @@ final class PhoneAgentPreview {
     private final TextView message, fold;
     private final WindowManager.LayoutParams params;
     private Bitmap bitmap;
-    private boolean collapsed, closed;
+    private boolean collapsed;
+    private volatile boolean closed;
+    private boolean rendering;
+    private long lastFrameAt;
+    private PhoneAgentDisplay source;
+    private final HandlerThread renderer = new HandlerThread("eva-preview-scale");
+    private final Handler frames;
     private float downX, downY;
     private int originX, originY;
 
     static boolean enabled(Context context) {
-        return context.getSharedPreferences("eva-phone", 0).getBoolean("previewEnabled", true);
+        return context.getSharedPreferences("eva-phone", 0).getBoolean("previewEnabled", false);
     }
     static boolean isShowing() { return displaying; }
     static String state(Context context) {
@@ -55,14 +62,16 @@ final class PhoneAgentPreview {
             if (((KeyguardManager) app.getSystemService(Context.KEYGUARD_SERVICE)).isKeyguardLocked()) { reason = "实时悬浮预览等待手机解锁"; remove(); return; }
             if (!PhoneAgentDisplay.connected(app, PhoneAgentDisplay.active)) { reason = "实时悬浮预览等待后台屏连接"; remove(); return; }
             if (current != null) return;
+            PhoneAgentPreview next = null;
             try {
-                PhoneAgentPreview next = new PhoneAgentPreview(app);
+                next = new PhoneAgentPreview(app);
                 next.manager.addView(next.root, next.params);
                 current = next;
                 displaying = true;
                 reason = "";
                 main.post(next.refresh);
             } catch (Exception error) {
+                if (next != null) next.close();
                 reason = "悬浮预览未显示，请检查悬浮窗权限与系统限制";
                 android.util.Log.w("EvaPreview", "Unable to attach preview", error);
             }
@@ -90,18 +99,19 @@ final class PhoneAgentPreview {
         root.setElevation(dp(8)); root.setPadding(dp(3), dp(3), dp(3), dp(3));
         root.setContentDescription("Eva 后台屏实时预览，仅查看");
         LinearLayout header = new LinearLayout(app); header.setGravity(Gravity.CENTER_VERTICAL);
-        TextView title = text("Eva · 后台", 12); title.setContentDescription("拖动移动实时预览");
+        TextView title = text("Eva", 12); title.setContentDescription("拖动移动实时预览");
         header.addView(title, new LinearLayout.LayoutParams(0, -2, 1));
-        fold = text("收起", 11); fold.setContentDescription("收起或展开实时画面");
+        fold = text("−", 18); fold.setContentDescription("收起或展开实时画面");
         fold.setOnClickListener(view -> toggleCollapsed());
         header.addView(fold);
-        TextView close = text("关闭", 11); close.setContentDescription("关闭实时预览，后台任务继续");
+        TextView close = text("×", 18); close.setContentDescription("关闭实时预览，后台任务继续");
         close.setOnClickListener(view -> setEnabled(app, false)); header.addView(close);
         root.addView(header, new LinearLayout.LayoutParams(-1, -2));
         image = new ImageView(app); image.setScaleType(ImageView.ScaleType.FIT_CENTER);
         image.setContentDescription("后台屏实时画面"); image.setAdjustViewBounds(true);
-        root.addView(image, new LinearLayout.LayoutParams(-1, dp(260)));
-        message = text("等待后台屏首帧", 11); root.addView(message, new LinearLayout.LayoutParams(-1, -2));
+        root.addView(image, new LinearLayout.LayoutParams(-1, 1));
+        image.setVisibility(View.GONE);
+        message = text("等待打开 App", 11); root.addView(message, new LinearLayout.LayoutParams(-1, -2));
         params = new WindowManager.LayoutParams(dp(200), -2, WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL, PixelFormat.TRANSLUCENT);
         params.gravity = Gravity.TOP | Gravity.LEFT;
@@ -122,16 +132,30 @@ final class PhoneAgentPreview {
             }
             return true;
         });
+        renderer.start();
+        frames = new Handler(renderer.getLooper());
     }
     private void toggleCollapsed() {
         collapsed = !collapsed;
-        image.setVisibility(collapsed ? View.GONE : View.VISIBLE);
+        image.setVisibility(collapsed || bitmap == null ? View.GONE : View.VISIBLE);
         message.setVisibility(collapsed ? View.GONE : View.VISIBLE);
-        fold.setText(collapsed ? "展开" : "收起");
+        fold.setText(collapsed ? "+" : "−");
     }
     private void clamp() {
         android.graphics.Point size = new android.graphics.Point(); manager.getDefaultDisplay().getRealSize(size);
-        params.width = Math.min(dp(200), Math.max(dp(120), size.x - dp(16)));
+        PhoneAgentDisplay display = PhoneAgentDisplay.active;
+        float aspect = display == null ? (float) size.y / size.x : (float) display.height / display.width;
+        // Match the phone's pixels and density on the execution display, then scale
+        // only this viewer. Reserve space for the title, status and system bars.
+        int maxImageHeight = Math.max(dp(80), size.y - dp(180));
+        int widthForHeight = Math.round(maxImageHeight / aspect) + dp(6);
+        params.width = Math.min(dp(128), Math.min(size.x - dp(16), widthForHeight));
+        int imageHeight = Math.max(1, Math.round((params.width - dp(6)) * aspect));
+        android.view.ViewGroup.LayoutParams imageParams = image.getLayoutParams();
+        if (imageParams.height != imageHeight) {
+            imageParams.height = imageHeight;
+            image.setLayoutParams(imageParams);
+        }
         params.x = Math.max(0, Math.min(size.x - params.width, params.x));
         int height = root.getHeight() > 0 ? root.getHeight() : dp(330);
         params.y = Math.max(dp(24), Math.min(Math.max(dp(24), size.y - Math.min(height, size.y) - dp(24)), params.y));
@@ -146,26 +170,46 @@ final class PhoneAgentPreview {
             PhoneAgentDisplay display = PhoneAgentDisplay.active;
             if (!enabled(context) || !Settings.canDrawOverlays(context) || !PhoneAgentDisplay.connected(context, display)) { reason = "实时悬浮预览等待后台屏连接"; remove(); return; }
             if (((KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE)).isKeyguardLocked()) { reason = "实时悬浮预览等待手机解锁"; remove(); return; }
-            if (!collapsed) {
-                try {
-                    Bitmap next = display.previewBitmap(360);
-                    if (next == null) throw new java.io.IOException("等待首帧");
-                    if (display != PhoneAgentDisplay.active) { next.recycle(); remove(); return; }
-                    Bitmap previous = bitmap; bitmap = next; image.setImageBitmap(next);
-                    if (previous != null && previous != next) previous.recycle();
-                    message.setText("实时画面 · 仅查看");
-                } catch (Exception error) { message.setText("等待后台屏画面"); }
+            if (!collapsed && !rendering) {
+                rendering = true;
+                if (source != display) { source = display; lastFrameAt = 0; }
+                final long previousFrameAt = lastFrameAt;
+                final int previewPixels = Math.max(120, Math.min(480, Math.min(image.getWidth(), image.getHeight())));
+                frames.post(() -> {
+                    PhoneAgentDisplay.PreviewFrame next = null;
+                    try { next = display.previewFrame(previewPixels, previousFrameAt); }
+                    catch (Exception ignored) { }
+                    final PhoneAgentDisplay.PreviewFrame ready = next;
+                    main.post(() -> {
+                        rendering = false;
+                        if (closed || current != PhoneAgentPreview.this || display != PhoneAgentDisplay.active || collapsed) {
+                            if (ready != null) ready.bitmap.recycle();
+                            return;
+                        }
+                        if (ready != null) {
+                            lastFrameAt = ready.capturedAt;
+                            bitmap = ready.bitmap;
+                            image.setImageBitmap(bitmap);
+                            image.setVisibility(View.VISIBLE);
+                            // ImageView/RenderThread can still hold the preceding frame. Let
+                            // Android release it after drawing instead of recycling it here.
+                            if (!"实时画面 · 仅查看".contentEquals(message.getText())) message.setText("实时画面 · 仅查看");
+                        } else if (bitmap == null) message.setText("等待打开 App");
+                    });
+                });
             }
             int x = params.x, y = params.y, width = params.width;
             clamp(); if (x != params.x || y != params.y || width != params.width) updatePosition();
-            if (!closed) main.postDelayed(this, 200);
+            if (!closed) main.postDelayed(this, 66);
         }
     };
     private void close() {
         closed = true;
         main.removeCallbacks(refresh);
         image.setImageDrawable(null);
-        if (bitmap != null) { bitmap.recycle(); bitmap = null; }
+        bitmap = null;
+        frames.removeCallbacksAndMessages(null);
+        renderer.quitSafely();
         try { manager.removeViewImmediate(root); } catch (Exception ignored) { }
     }
 }

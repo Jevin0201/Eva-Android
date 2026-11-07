@@ -29,3 +29,6 @@ research/codex-flow/rea-evidence.json
 # Local upstream research checkouts are preserved outside Git.
 /research/mika-wangzan101/
 /research/proot-termux/
+
+# Maintainer-only release signing material.
+/.release-signing/

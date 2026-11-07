@@ -14,6 +14,7 @@ import shutil
 import signal
 import subprocess
 import tempfile
+import urllib.parse
 import urllib.request
 import zipfile
 
@@ -306,7 +307,14 @@ def build(project, output, task):
                 if wrapper.exists():
                     wrapper.resolve(strict=True).relative_to(project)
                 command = ['sh', str(wrapper)] if wrapper.is_file() else ['gradle']
-                run([*command, '--no-daemon', '--no-watch-fs', '-Dorg.gradle.native=false',
+                proxy = urllib.parse.urlsplit(env.get('HTTPS_PROXY', env.get('https_proxy', '')))
+                network_options = []
+                if proxy.hostname == '127.0.0.1' and proxy.port:
+                    network_options = ['-Dhttps.proxyHost=' + proxy.hostname, '-Dhttps.proxyPort=' + str(proxy.port)]
+                    if proxy.username is not None:
+                        network_options += ['-Dhttps.proxyUser=' + urllib.parse.unquote(proxy.username),
+                                            '-Dhttps.proxyPassword=' + urllib.parse.unquote(proxy.password or '')]
+                run([*command, *network_options, '--no-daemon', '--no-watch-fs', '-Dorg.gradle.native=false',
                      '-Dorg.gradle.java.home=' + str(JAVA_HOME),
                      '-Porg.gradle.java.installations.auto-detect=false',
                      '-Porg.gradle.java.installations.auto-download=false',

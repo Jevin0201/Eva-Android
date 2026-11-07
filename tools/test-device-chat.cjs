@@ -24,8 +24,9 @@ const fs=require('fs');
   const report=await page.evaluate(()=>({chatId:active()?.id,model:active()?.model,notice:kernelNotice,running:kernelBusy||!!active()?.running,timing:window.evaTiming,nativeTiming:EvaHost.kernelTrace?JSON.parse(EvaHost.kernelTrace(false)):null,
    turns:active()?.kernelThread?.turns.map(t=>({id:t.id,status:t.status,error:t.error,
     items:t.items.filter(i=>['agentMessage','dynamicToolCall','commandExecution','fileChange'].includes(i.type)).map(i=>({type:i.type,phase:i.phase,text:i.text,tool:i.tool,status:i.status,success:i.success,command:i.command,exitCode:i.exitCode,contentItems:i.contentItems?.filter(c=>c.type==='inputText')}))}))}));
-  fs.mkdirSync('artifacts/acceptance-0.0.28',{recursive:true});
-  fs.writeFileSync('artifacts/acceptance-0.0.28/'+report.chatId+'.json',JSON.stringify(report,null,2));
+  const output=process.env.EVA_TEST_OUTPUT||'artifacts/acceptance-0.0.28';
+  fs.mkdirSync(output,{recursive:true});
+  fs.writeFileSync(output+'/'+report.chatId+'.json',JSON.stringify(report,null,2));
   console.log(JSON.stringify({chatId:report.chatId,model:report.model,notice:report.notice,running:report.running,timing:report.timing,nativeTiming:report.nativeTiming,turns:report.turns?.map(t=>({status:t.status,error:t.error,items:t.items.map(i=>({type:i.type,tool:i.tool,success:i.success,status:i.status,text:i.text,exitCode:i.exitCode}))}))},null,2));
  }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1});
