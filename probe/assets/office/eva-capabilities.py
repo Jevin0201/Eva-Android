@@ -1,21 +1,46 @@
 """Package installation preflight, signed Alpine packages, inventory and capability checks."""
-import argparse, fcntl, json, os, pathlib, platform, re, shutil, subprocess, tarfile, tempfile, time
+import argparse, fcntl, json, os, pathlib, platform, re, runpy, shutil, subprocess, tarfile, tempfile, time
 
 BASE = pathlib.Path('/root/.eva-runtime')
 PROFILES = {
     'utilities': ['ripgrep', 'findutils', 'coreutils', 'file', 'jq', 'zip', 'unzip'],
     'office-render': ['libreoffice-impress', 'libreoffice-writer', 'libreoffice-calc',
                       'libreoffice-draw', 'poppler-utils', 'font-noto-cjk'],
+    'office-authoring': [],  # Installed by the pinned managed office adapter.
     'html-render': ['chromium', 'font-noto-cjk'],
     'development': ['build-base', 'python3-dev', 'py3-pip', 'nodejs', 'npm', 'git', 'pkgconf'],
     'media': ['ffmpeg', 'imagemagick'],
 }
 
 def command(args, timeout=600):
-    result = subprocess.run(args, capture_output=True, text=True, timeout=timeout)
-    if result.returncode:
-        raise RuntimeError((result.stdout + result.stderr)[-5000:])
-    return result.stdout + result.stderr
+    def attempt(command):
+        transaction = command and command[0] == 'apk' and 'add' in command and '--simulate' not in command
+        result = subprocess.run(command, capture_output=True, text=True, timeout=None if transaction else timeout)
+        if result.returncode:
+            raise RuntimeError((result.stdout + result.stderr)[-5000:])
+        return result.stdout + result.stderr
+    if args and args[0] == 'apk':
+        policy = runpy.run_path(str(pathlib.Path(__file__).with_name('eva-download-policy.py')))
+        return policy['apk_command'](args, attempt, BASE / 'download-attempts')
+    return attempt(args)
+
+def office_status():
+    entry = pathlib.Path('/root/eva-office.py')
+    if not entry.is_file():
+        return {'ready': False, 'error': '办公入口缺失，请通过 eva_components ensure office 恢复资源'}
+    try:
+        return json.loads(command(['python3', str(entry), 'status'], timeout=60))
+    except Exception as error:
+        return {'ready': False, 'error': str(error)}
+
+def repair_office():
+    # Reuse signed Alpine dependencies and SHA-pinned pure-Python wheels. This
+    # path does not require pip or replace the system Python installation.
+    log = command(['python3', '/root/eva-office.py', 'install'], timeout=1200)
+    result = office_status()
+    if not result.get('ready'):
+        raise RuntimeError('办公库修复尚未就绪：' + json.dumps(result, ensure_ascii=False) + '\n' + log[-3000:])
+    return {'ready': True, 'profile': 'office-authoring', 'status': result}
 
 def preflight():
     BASE.mkdir(parents=True, exist_ok=True)
@@ -28,6 +53,7 @@ def preflight():
             'architecture': platform.machine(), 'hardlinks': True,
             'freeBytes': shutil.disk_usage(BASE).free,
             'tools': {name: shutil.which(name) for name in ['apk', 'python3', 'pip3', 'node', 'npm', 'git', 'cc', 'libreoffice', 'chromium-browser']},
+            'officeAuthoring': office_status(),
             'profiles': PROFILES}
 
 def records():
@@ -45,6 +71,8 @@ def install(profile=None, packages=()):
     state = preflight()
     if not state['distribution'].startswith('3.22.') or state['architecture'] != 'aarch64':
         raise RuntimeError('此安装入口只验证 Alpine 3.22 aarch64，请先适配当前环境')
+    if profile == 'office-authoring':
+        return repair_office()
     selected = list(dict.fromkeys(PROFILES.get(profile, []) + list(packages)))
     if not selected or any(not re.fullmatch(r'[a-z0-9][a-z0-9+_.-]*', p) for p in selected):
         raise ValueError('提供能力名称或合法 Alpine 软件包名；不接受命令或安装选项')

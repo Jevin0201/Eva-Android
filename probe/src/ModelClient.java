@@ -8,8 +8,9 @@ public final class ModelClient {
  static JSONObject request(JSONObject provider,String key,String resource,JSONObject body,Job job)throws Exception{
   return exchange((HttpURLConnection)new URL(provider.getString("url")+"/"+resource).openConnection(),key,body,job);
  }
- static JSONObject exchange(HttpURLConnection c,String key,JSONObject body,Job job)throws Exception{job.connection=c;
-  try{if(job.cancelled)throw new IOException("请求已取消");c.setInstanceFollowRedirects(false);c.setConnectTimeout(20000);c.setReadTimeout(120000);c.setRequestMethod(body==null?"GET":"POST");c.setRequestProperty("Authorization","Bearer "+key);c.setRequestProperty("Content-Type","application/json");c.setRequestProperty("Accept","application/json");
+ static JSONObject exchange(HttpURLConnection c,String key,JSONObject body,Job job)throws Exception{return exchange(c,key,body,job,20000,120000);}
+ static JSONObject exchange(HttpURLConnection c,String key,JSONObject body,Job job,int connectMs,int readMs)throws Exception{job.connection=c;
+  try{if(job.cancelled)throw new IOException("请求已取消");c.setInstanceFollowRedirects(false);c.setConnectTimeout(connectMs);c.setReadTimeout(readMs);c.setRequestMethod(body==null?"GET":"POST");c.setRequestProperty("Authorization","Bearer "+key);c.setRequestProperty("Content-Type","application/json");c.setRequestProperty("Accept","application/json");
    if(body!=null){byte[] bytes=body.toString().getBytes("UTF-8");c.setDoOutput(true);c.setFixedLengthStreamingMode(bytes.length);try(OutputStream out=c.getOutputStream()){out.write(bytes);}}
    int status=c.getResponseCode();if(status<200||status>=300)throw new IOException("HTTP "+status+"："+(status==401||status==403?"认证失败，请检查 API Key 与权限":status==429?"请求过多或额度不足，请稍后检查":status>=300&&status<400?"服务发生重定向，已停止以保护凭据":"请求失败，请检查地址、模型与 Responses 支持"));
    ByteArrayOutputStream bytes=new ByteArrayOutputStream();try(InputStream in=c.getInputStream()){byte[] buffer=new byte[8192];int n;while((n=in.read(buffer))!=-1){if(job.cancelled)throw new IOException("请求已取消");if(bytes.size()+n>2*1024*1024)throw new IOException("响应超过 2 MB，请缩短任务");bytes.write(buffer,0,n);}}

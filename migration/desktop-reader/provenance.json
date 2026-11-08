@@ -1,0 +1,333 @@
+{
+  "files": [
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/cloud-docx-frame.html",
+      "sha256": "bd641811023c56b7a5168e8cdba713245c1175854c2705dc859e883678d00ef3"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/cloud-docx-frame.js",
+      "sha256": "1f34807249fd09ac38988632bc6647b6edbf62477fa5296aef36c35fe4a7fddb"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/cloud-pdf-frame.html",
+      "sha256": "5362b9be0518bd6aa94f7a4c01b31fe7483256e549c4a683b2a40f954c235bde"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/cloud-pdf-frame.mjs",
+      "sha256": "cc8e8442b755b6d533537d016ed3a7349bd1206e5faa8e924041912b5935cbb6"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/cloud-pdf-continuous.mjs",
+      "sha256": "492e41c5681c000a0502f0ebb2585d13979c2c83cf91aeb8ce0e9161ad63b69f"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/cloud-pdf-annotations.mjs",
+      "sha256": "dc9e4829469a35f34afa967f8c60b5c815b8b2171315b24d0315c23b639608ec"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/cloud-pdf-search.mjs",
+      "sha256": "db7b5f17337f67848537760893f9031ec9379e4440fc532af4318f3d0383ff44"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/cloud-pdf-layer.css",
+      "sha256": "87ea3bc8a88c37777595da9aaedc78e1aac666d4bb45d8dfa83eaa361a452457"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/office-preview.js",
+      "sha256": "9af8e0afdcce52c4f6ba69009d464876badf5f7d56145d1df7c26f05dc7b1f1c"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/cloud-markdown.js",
+      "sha256": "699b3f4917f77e916a98a651983314566035c48a316cfad6657745f7396bfb58"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/vendor/docx-current.mjs",
+      "sha256": "65a7a3494be03f25cee05ecd5a00d93665401e46f29811ed9c5fcd1694b5017f"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/vendor/pdf-current.mjs",
+      "sha256": "1d8c0d2dcece50d83b44a9caa798a98ca3e0295fc030803b086734e6565e29ba"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/vendor/pdf-viewer-current.mjs",
+      "sha256": "78d07baf0c6d9a84fb9b1bc29c09cb52eb96a628431ed1479bd84e3e8279b292"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/vendor/pdf.worker.mjs",
+      "sha256": "90b49a1bf7b6c4d689d7d7bc0a52869bb3b1bc5935a0fa0ea6413b49f85ac8de"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/vendor/rolldown-runtime-428824ca0286.js",
+      "sha256": "f85e715d54a11fa37b7774ad77b536896ed01bfdfc98f485b678c81859fc8e2e"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/vendor/app-shared-b9a49a97ca55.js",
+      "sha256": "a0501b87617a2c93a149761a35d356a88fde609f64f8e975cbdddf327d266a9f"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/html-provenance.json",
+      "sha256": "b56cef35fa0326e484172403532d9a6eecee1edc5abacdd69347e46fc9a2ece9"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/notebook.mjs",
+      "sha256": "34de480e3d95fe6e23ca88a26a1b449c669c466383cbf7924ff55a3478464185"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/audio.mjs",
+      "sha256": "4296d7f2053dbcafd614de79573c48c7036ca534c624824c8427db0f6027c0fc"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/original-rolldown-runtime.mjs",
+      "sha256": "f85e715d54a11fa37b7774ad77b536896ed01bfdfc98f485b678c81859fc8e2e"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/classify-library.mjs",
+      "sha256": "28c28189128baae6a8398ff61f4374e3ca9482d7545b252883e7fb4fb0453ad4"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/provenance.json",
+      "sha256": "e994ae9d48f6453544f747cf8638672e4ead16025b966f9ba788e9ff1c0910ed"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/adapter.jsx",
+      "sha256": "d9ffbcec98cb19cc90952082a6f45f1b41e1052739dd7b66ca02fab13c523ae9"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/html.mjs",
+      "sha256": "14e28d26c00a92bab655c946836c9502a5d44d10e048bcbeb9b871ae96ce0688"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/bundle.js",
+      "sha256": "22bca464637526584c4f20ba0985925f8587b34f743f95c7c727212455b0bde6"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/player.mjs",
+      "sha256": "b52c95da9b7676e37a06c854ebb15cee1130bb398f8d7e40baffa3dde8e45f5a"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/html-current-provenance.json",
+      "sha256": "d94c0e368917068c66eda1de5d1458e2d31eb17d25cca67c7dcfdabb558048a5"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/shared-player-runtime.mjs",
+      "sha256": "3bf46a616d26496ecf657bc0f8fb3e51a4a4fc3f24b56a4edd1692fb43f1df26"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/html-bindings.json",
+      "sha256": "2c96ad62c8440adfdcdd8ed669e92a8a2e0ba7bc0459beea425a99205318941a"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/shared-player-ranges.json",
+      "sha256": "5a26a67e24e3b0ecd67db5a4e1ab917e3ab2186d77e6591c492d57705126d67e"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/notebook-provenance.json",
+      "sha256": "7786722796291b2bc9f66b4761d2362b081eefb6a495d46bfa63c5f3faeda22f"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/coverage.json",
+      "sha256": "5b79ba1bce3ff0d016232e3014d8b9b9ffc0d0215ed02ff9df40ccc5ada7815a"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/player.css",
+      "sha256": "5d4be2869aa8231421e038518953831adffe740afcfd9a6f99a2a2e0fa18e8f7"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/lazy-provenance.json",
+      "sha256": "77823449a68455314f26aac6f222327c40dc1d1c7617ab4921e063e3f2703bfa"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/shared-instance.mjs",
+      "sha256": "4bf10475f5185c459776a1093e655d6fb134c9bce0d089a6356ec27e6ef23d9a"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/notebook-bindings.json",
+      "sha256": "6249c320bc290166815d8a7a993859f70fb5f3724e30ebf5009d0379c6fc5d5b"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/html-current.mjs",
+      "sha256": "3c56579ec5c8d52885871d90b8a4c337fc09a773422a819c95a4fc809cdfbde8"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/rpc-7f414a22e2be.js",
+      "sha256": "0fda6fb2408ba816f9bd27f43b4fc94125ac1edf5cd128b817d214ad63f3d1e0"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/lazy-bindings.json",
+      "sha256": "22da7765a31a05299de2c8f244f54ff37c4bddda0e5a47dc122615204a970fd2"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/classify.mjs",
+      "sha256": "a399a38d892f5aa8dc777ce71d2f45c1f1af27e4d36a93def712d6269654fd6a"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/document-engines-provenance.json",
+      "sha256": "9e75d64ab9846425cab39a05875f1c00ce196e43913531e53ac6aa40edbd372c"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/lazy/core-1cefe817935b.js",
+      "sha256": "64564a038ce29c5f8ff4da5bbc94bffbecc307fc16814cc1a3eeaf487c569582"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/lazy/katex-beed9fc52e49.js",
+      "sha256": "ef0e2bb3aa95056dabf3cb2a85f8c5a0c7d602667846bc53aae03e8633ba5137"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/lazy/core-91d80d597b95.js",
+      "sha256": "f3e1707fe936044a5a0d35a4ed06eee49eb1900ea861ad7e0ab28c6c5a99d1eb"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/lazy/pierre-highlights-486757283061.js",
+      "sha256": "bce96c2e8f7f783ad0767e61332c7ee09679003974286cf6fb4c4b2ada76608f"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/lazy/browser-ca0886742f6d.js",
+      "sha256": "a6b505a0c1f09d0c87bc1179b597c2fae78fef9332c79a76888e67590c0b698f"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/lazy/dist-edfa6b7a5d67.js",
+      "sha256": "9c4e1dec0629aee2aeff65a2954536b3f0d1e7acaaddcdb425233b439130a705"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/lazy/rolldown-runtime-428824ca0286.js",
+      "sha256": "f85e715d54a11fa37b7774ad77b536896ed01bfdfc98f485b678c81859fc8e2e"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/lazy/protocol-10e146a4351b.js",
+      "sha256": "c972d87a180f4c749e57c656ba156c2afc33e92ac8420545e43560be6f502259"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/lazy/dist-a16aba51b9ff.js",
+      "sha256": "01ca75c8a4fe7ecff8b907965103f05a797d266eeddc7f5228ad6dff27c6492e"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/lazy/app-shared-b9a49a97ca55.js",
+      "sha256": "f8a823a2038cc308eac6d5ece31ebc4fd413579c32171eae4c4061b79e45f2f6"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/lazy/highlight-code-c510f945915d.js",
+      "sha256": "61fdec659d11223f12bc9f1d260a529dbcd2b9ca4d61d1356b6e446121bdbaf4"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/lazy/dist-916ad95b024d.js",
+      "sha256": "de4b3ee7690fb0b4c0b244bab92739244f05c83fd011d90598f2c8d646465a74"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/lazy/visualization-sandbox-html-d964b8a795f2.js",
+      "sha256": "dcfdc23da193a34a26293fdd43c05dc87dc546939256f458f2fae1ccf2780bc0"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/lazy/dist-c9bd83a959d9.js",
+      "sha256": "d4d877a3054156f3754aaf04e744daaed9280bdb8df989e466f15fc90eaf48bf"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/lazy/dist-fd547e4447f1.js",
+      "sha256": "5f0f34652f7f795edfb13c37340c02885513f24e7da84041ae0dbb87ff0e7ae1"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/lazy/visualization-sandbox-config-ba8f31e9f120.js",
+      "sha256": "ddbaa5a7dc2b8b153949994a4665705caa6e299de1e4d57b5d517186e5cc5c87"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/lazy/html-preview-document-300a529f52d0.js",
+      "sha256": "b10a14704868c4340b80c2759eaa609c7d295e62cb7c2a29d4a56053faa809fb"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/lazy/dist-246a59e3763e.js",
+      "sha256": "199dbc618a37f5132f8cca1f6b99d78610e334eacd18953a1b779f65379a48b3"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/lazy/dist-3055ff5cfe0f.js",
+      "sha256": "a2683f31a3fc069580fda833d233dacb92f69580c291cbd8f35cf46f7e5f49e9"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/lazy/katex-2451010d2911.js",
+      "sha256": "71d967a8e18eab093d953ce416c6c215efabb06d4000a1241f83aed26023d59b"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/lazy/katex-11c2241b3c68.js",
+      "sha256": "c18affb080cab5eeefadea1310f1aa191fc16c4c9ed2c443e97ebb4983585da4"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/lazy/lodash-90699a4d56db.js",
+      "sha256": "1fb5fb424655ec36ae0f04942fb486d6c83f33681053888792a2d96083d75193"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/lazy/b74e19ff7ff4.css",
+      "sha256": "add22f5a6ff93862827b6bba51ed6e4356708d8f99c2a6bdaca51993bc0df3ed"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/lazy/app-initial-4267e52fe5b0.js",
+      "sha256": "bf85d8cbe5c9d9d6f273842d882c6972c5289d6878085eb6ad1d8a7583399478"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/lazy/visualization-sandbox-html-8e65864b7b9d.js",
+      "sha256": "5bd31d23d823f5a8d34ae444838fda0381edff1c63c8e01286cec85d3e31bfee"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/lazy/dist-9426e9074fe7.js",
+      "sha256": "5d42f07bab1361efca5b21b5d26810e65a055ebe0f9a5485c81402cfcda6e151"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/lazy/pierre-highlights-e2dabdcfc7b1.js",
+      "sha256": "7ccf4fe9c47c1bb3de4a68255875bf1fbe79f0c7ffa3951cc8e57d4242f18658"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-preview/lazy/5257da4ba4ae.css",
+      "sha256": "6c0b62be9ea2b0268a114414a05365744206eab52b3c14b66ec6eceb063d23e0"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-steering/markdown-runtime/shared-source-ranges.json",
+      "sha256": "dae82e74e0a0309b11d81edb7cfe566bd6f01e9b3cee9b039fe3ffa3449cd649"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-steering/markdown-runtime/original-rolldown-runtime.mjs",
+      "sha256": "e0a79ad36c6ca1ffbc796c80aa5661803a9d1bc684e29d1587f48b4ba9a82714"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-steering/markdown-runtime/api.mjs",
+      "sha256": "19afa340bfa54b6fed0c7e8309af5b8453eec970c8a401130772902bfaa8cfdc"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-steering/markdown-runtime/static-init-audit.json",
+      "sha256": "b6e38a7a5e1859601c4621333fa6d12e9e09993c0aa5a0158e2c16b0291f9d84"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-steering/markdown-runtime/README.md",
+      "sha256": "a813a4faf9e8c99edb6f85fdd48f26decfc47ffc8a55dbbdee51807e92e807fd"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-steering/markdown-runtime/initial-source-ranges.json",
+      "sha256": "befd9580b47a0c2ae29bbd29e12dd3ffe36774da5873e93a62cf3ab9a37476c8"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-steering/markdown-runtime/source-parts-spec.json",
+      "sha256": "5a9cdc88a782a7a9830abb62df9b7870c1bab0119beb1267580656a96d37caf2"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-steering/markdown-runtime/original-zh-CN.json",
+      "sha256": "2444da57159e9aa4e060d2aface584c6478049d8aeebfd9dd02dfe852e3fe89e"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-steering/markdown-runtime/locale-source-ranges.json",
+      "sha256": "800f854cf297dfee5f3e1d893497f2d941ec6e8e3100134d1782403e26eed244"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-steering/markdown-runtime/original-initial.mjs",
+      "sha256": "a585c8e0967954dafe45da9bd6ea6738a01f582c4c8eb90b78fb0d968f8a308d"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/renderer/native-steering/markdown-runtime/original-shared-runtime.mjs",
+      "sha256": "522f54135d4633e591a3ec2f2c88fa0ddad38da66acaecfbc29a2616973950e2"
+    },
+    {
+      "source": "/Users/jevin/Documents/Codex/Eva-Source/src/main/office-preview.js",
+      "sha256": "94037d5c0e7ed6d703afcd0752ed7d426f655a81b6ab757f30658c3849f3493f"
+    }
+  ],
+  "adaptations": [
+    "Android HTTPS origin replaces Electron app scheme",
+    "Browser Office transport replaces filesystem and unzipper with JSZip; native ZIP preflight retains inflated limits"
+  ],
+  "rights": "User-authorized Eva migration; extracted vendor resources retain original provenance, no relicensing."
+}

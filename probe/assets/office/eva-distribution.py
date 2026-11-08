@@ -1,4 +1,5 @@
 """Idempotent first-launch dependency setup. Never copies another device's user data."""
+import argparse
 import fcntl
 import hashlib
 import json
@@ -8,7 +9,8 @@ import shutil
 import subprocess
 import tempfile
 import time
-import tomllib
+import runpy
+import sys
 import urllib.request
 import zipfile
 
@@ -24,6 +26,8 @@ def emit(message):
 
 
 def run(command, timeout=1200, env=None, cwd=None):
+    if command and str(command[0]) == 'apk' and 'add' in command and '--simulate' not in command:
+        timeout = None  # Let the signed package transaction finish before cancellation.
     result = subprocess.run(list(map(str, command)), stdout=subprocess.PIPE,
                             stderr=subprocess.STDOUT, text=True, timeout=timeout, env=env, cwd=cwd)
     if result.returncode:
@@ -94,73 +98,110 @@ def ghidra():
         root.rename(GHIDRA)
 
 
+# A full legacy installation remains valid; new installs only require core.json.
+PROFILES = {
+    'core': ['procps-ng', 'py3-pip'],
+    'office': ['libreoffice-impress', 'libreoffice-writer', 'libreoffice-calc',
+               'libreoffice-draw', 'poppler-utils', 'font-noto-cjk', 'chromium'],
+    'development': ['build-base', 'python3-dev', 'py3-pip', 'pkgconf', 'openjdk17-jdk', 'gradle'],
+    'media': ['tesseract-ocr', 'tesseract-ocr-data-chi_sim', 'ffmpeg', 'imagemagick'],
+    'analysis': ['procps-ng'],
+    'ghidra': ['build-base', 'bison', 'flex', 'zlib-dev', 'openjdk21-jdk'],
+}
+CANCEL = BASE / 'cancel'
+
+
+def check_cancel():
+    if CANCEL.exists():
+        raise RuntimeError('已取消后续步骤，已安装组件保留，可重试继续')
+
+
+def checked_run(args, **kwargs):
+    check_cancel()
+    result = run(args, **kwargs)
+    check_cancel()
+    return result
+
+
+def write_record(profile):
+    value = {'schema': 2, 'profile': profile, 'ready': True, 'verifiedAt': time.time()}
+    temporary = BASE / (profile + '.tmp')
+    temporary.write_text(json.dumps(value), encoding='utf-8')
+    temporary.replace(BASE / (profile + '.json'))
+    return value
+
+
+def verify_core():
+    checked_run(['python3', '-m', 'pip', '--version'])
+    checked_run(['node', '-e', 'if(6*7!==42)process.exit(1)'])
+    checked_run(['python3', '-c', 'import ssl,sqlite3; assert sqlite3.connect(":memory:").execute("select 42").fetchone()[0]==42'])
+    checked_run(['git', '--version'])
+    checked_run(['/root/eva-kernel/bin/codex', '--version'])
+
+
+def install_profile(profile):
+    check_cancel()
+    emit('安装' + {'core': '必备依赖', 'office': '办公组件', 'development': '开发工具',
+                  'media': '图像与音视频组件', 'analysis': 'REA', 'ghidra': 'Ghidra'}[profile])
+    # Do not impose the former full-toolchain 6 GiB gate on core setup.
+    # apk checks real transaction space; extraction has its own measured gate.
+    if shutil.disk_usage(BASE).free < 256 * 1024**2:
+        raise RuntimeError('请至少保留 256 MiB 可用空间供安装事务使用；大型组件还需要额外空间')
+    policy = runpy.run_path(str(Path(__file__).with_name('eva-download-policy.py')))
+    policy['apk_command'](['apk', '--timeout', '120', '--no-cache', 'add', *PROFILES[profile]], checked_run, BASE / 'download-attempts')
+    if profile == 'core':
+        verify_core()
+    elif profile == 'office':
+        office = runpy.run_path('/root/eva-office.py')
+        if not office['status']()['ready']:
+            office['install']()
+        check_cancel()
+        checked_run(['python3', '/root/eva-office.py', 'selftest'])
+        checked_run(['libreoffice', '--headless', '--version'])
+        checked_run(['chromium-browser', '--version'])
+        checked_run(['pdfinfo', '-v'])
+    elif profile == 'development':
+        checked_run(['python3', '/root/.eva-runtime/eva-android-build.py', 'install'])
+        result = json.loads(checked_run(['python3', '/root/.eva-runtime/eva-android-build.py', 'status']))
+        if not result.get('ready'):
+            raise RuntimeError('Android 构建工具链自检未通过')
+        checked_run(['gcc', '--version'])
+    elif profile == 'media':
+        for args in [['tesseract', '--version'], ['ffmpeg', '-version'], ['magick', '-version']]:
+            checked_run(args)
+    elif profile == 'analysis':
+        rea = BASE / 'rea'
+        rea.mkdir(exist_ok=True)
+        checked_run(['npm', 'install', '--prefix', rea, '--save-exact', '--no-audit', '--no-fund', 'rea-agents@6.8.0'])
+        checked_run([rea / 'node_modules/.bin/rea', '--version'])
+        # No implicit MCP config edits, Java or Ghidra downloads.
+    elif profile == 'ghidra':
+        checked_run(['python3', '/root/.eva-runtime/eva-java21.py', 'install'])
+        checked_run(['python3', '/root/.eva-runtime/eva-java21.py', 'selftest'])
+        check_cancel()
+        ghidra()
+        check_cancel()
+        binary = GHIDRA / 'Ghidra/Features/Decompiler/os/linux_arm_64/decompile'
+        if not binary.is_file() or not os.access(binary, os.X_OK):
+            raise RuntimeError('Ghidra 原生反编译器缺失')
+    return write_record(profile)
+
+
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--profile', choices=PROFILES, default='core')
+    args = parser.parse_args()
     BASE.mkdir(parents=True, exist_ok=True)
     with (BASE / 'setup.lock').open('w') as lock:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
-        started = BASE / 'started.json'
-        free = shutil.disk_usage(BASE).free
-        if not started.is_file():
-            if free < 6 * 1024**3:
-                raise RuntimeError('完整依赖首次部署需要至少 6 GiB 可用空间')
-            temporary = BASE / 'started.tmp'
-            temporary.write_text(json.dumps({'schema': 1, 'initialFreeBytes': free}))
-            temporary.replace(started)
-        elif free < 512 * 1024**2:
-            raise RuntimeError('继续部署前请至少腾出 512 MiB 空间，已有组件与下载保留')
-        emit('安装签名系统依赖与办公渲染引擎')
-        run(['apk', '--timeout', '120', '--no-cache', 'add', 'build-base', 'python3-dev',
-             'pkgconf', 'procps-ng', 'bison', 'flex', 'zlib-dev', 'openjdk17-jdk', 'openjdk21-jdk', 'gradle', 'tesseract-ocr',
-             'tesseract-ocr-data-chi_sim', 'libreoffice-impress', 'libreoffice-writer',
-             'libreoffice-calc', 'libreoffice-draw', 'poppler-utils', 'font-noto-cjk',
-             'chromium', 'ffmpeg', 'imagemagick'])
-        emit('部署并验证 Java 21 兼容运行时')
-        run(['python3', '/root/.eva-runtime/eva-java21.py', 'install'])
-        emit('下载校验并部署 Android SDK')
-        run(['python3', '/root/.eva-runtime/eva-android-build.py', 'install'])
-        emit('部署 Ghidra ARM64 原生反编译器')
-        ghidra()
-        emit('部署 REA 6.8.0')
-        rea = BASE / 'rea'
-        rea.mkdir(exist_ok=True)
-        run(['npm', 'install', '--prefix', rea, '--save-exact', '--no-audit', '--no-fund', 'rea-agents@6.8.0'])
-        emit('执行本地工具自检')
-        run(['python3', '/root/eva-office.py', 'selftest'])
-        run(['python3', '/root/.eva-runtime/eva-java21.py', 'selftest'])
-        env = {**os.environ, 'JAVA_HOME': str(JAVA), 'GHIDRA_INSTALL_DIR': str(GHIDRA),
-               'PATH': str(JAVA / 'bin') + ':' + os.environ.get('PATH', ''),
-               'EVA_JAVA21_COMPAT': '1', 'LD_PRELOAD': str(JAVA / 'libeva-java21-memory.so')}
-        run([rea / 'node_modules/.bin/rea', '--version'], env=env)
-        emit('实际编译执行并验证 Ghidra 与 REA 反编译')
-        run(['python3', '/root/.eva-runtime/eva-distribution-check.py'], timeout=600, env=env)
-        home = Path('/root/.eva-codex')
-        home.mkdir(exist_ok=True)
-        config = home / 'config.toml'
-        text = config.read_text() if config.exists() else ''
-        tomllib.loads(text)
-        if not config.exists():
-            text += '\n[mcp_servers.rea]\ncommand = ' + json.dumps(str(rea / 'node_modules/.bin/rea')) + '\nargs = ["mcp"]\nstartup_timeout_sec = 120\n'
-            text += '[mcp_servers.rea.env]\n' + ''.join(k + ' = ' + json.dumps(env[k]) + '\n' for k in ['JAVA_HOME', 'GHIDRA_INSTALL_DIR', 'EVA_JAVA21_COMPAT', 'LD_PRELOAD'])
-            tomllib.loads(text)
-            with tempfile.NamedTemporaryFile(mode='w', prefix='distribution-config-', dir=home, delete=False) as target:
-                temporary = Path(target.name)
-                target.write(text)
-                target.flush()
-                os.fsync(target.fileno())
-            try:
-                os.link(temporary, config)
-            except FileExistsError:
-                emit('已有配置由用户或应用创建，保留现有配置')
-            finally:
-                temporary.unlink(missing_ok=True)
-        installed = run(['python3', '/root/.eva-runtime/eva-capabilities.py', 'inventory'])
-        (BASE / 'packages.json').write_text(installed)
-        record = {'schema': 1, 'ready': True, 'rea': '6.8.0', 'ghidraSha256': GHIDRA_SHA256}
-        temporary = BASE / 'ready.tmp'
-        temporary.write_text(json.dumps(record))
-        temporary.replace(BASE / 'ready.json')
+        CANCEL.unlink(missing_ok=True)
+        record = install_profile(args.profile)
         print(json.dumps(record), flush=True)
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except Exception as error:
+        print(json.dumps({'error': str(error)}, ensure_ascii=False), flush=True)
+        raise SystemExit(1)

@@ -12,3 +12,8 @@ outputs/runtime-sources/*.tar.gz filter=lfs diff=lfs merge=lfs -text
 # Reproducible runtime build recipes and manifests.
 tools/*.sh text eol=lf
 probe/assets/runtime/*.json text eol=lf
+
+# Generated reader/vendor bundles retain upstream bytes, including template whitespace.
+probe/assets/desktop-reader/native-reader.js -text -whitespace
+probe/assets/desktop-reader/office-browser.js -text -whitespace
+probe/assets/desktop-reader/vendor/docx-current.mjs -text -whitespace

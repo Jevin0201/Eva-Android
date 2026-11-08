@@ -7,12 +7,12 @@ final class VoiceAgent {
  static volatile String thread="",turn="";static volatile boolean busy;static long generation;
  static JSONObject config(Context c)throws Exception{
   String saved=c.getSharedPreferences("eva-voice",0).getString("config","");if(!saved.isEmpty())return new JSONObject(saved);
-  JSONObject all=new ModelStore(c).publicConfig(),account=all.getJSONObject("account"),p=null;
-  if(account.optBoolean("preferred")&&account.optBoolean("loggedIn"))p=new JSONObject(account.toString()).put("id","openai");
-  else{JSONArray ps=all.getJSONArray("providers");for(int i=0;i<ps.length();i++)if(ps.getJSONObject(i).optString("id").equals(all.optString("active")))p=ps.getJSONObject(i);}
-  if(p==null&&account.optBoolean("loggedIn"))p=new JSONObject(account.toString()).put("id","openai");
-  if(p==null||p.optString("model").isEmpty())throw new Exception("请先在 Eva 中选择可用模型，再开启语音模式");
-  return new JSONObject().put("providerId",p.getString("id")).put("model",p.getString("model")).put("effort",p.optString("effort")).put("serviceTier",p.optString("serviceTier")).put("permissionMode","auto").put("projectId","");
+  JSONObject all=new ModelStore(c).publicConfig(),selection=all.getJSONObject("defaultSelection");
+  String provider=selection.optString("providerId");
+  if(selection.optString("model").isEmpty()||provider.isEmpty())throw new Exception("请先在 Eva 设置中选择新会话默认模型，再开启语音模式");
+  if(provider.equals("openai")){if(!all.getJSONObject("account").optBoolean("loggedIn"))throw new Exception("默认账号模型尚未登录，请先登录或选择其他默认模型");}
+  else new ModelStore(c).provider(provider);
+  return new JSONObject(selection.toString()).put("permissionMode","auto").put("projectId","");
  }
  static JSONObject permissions(JSONObject cfg)throws Exception{
   String mode=cfg.optString("permissionMode","auto");return new JSONObject().put("approvalPolicy",mode.equals("full")?"never":"on-request").put("approvalsReviewer",mode.equals("assisted")?"auto_review":"user");

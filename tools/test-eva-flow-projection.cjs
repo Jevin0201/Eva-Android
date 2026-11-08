@@ -52,6 +52,7 @@ assert.equal(steering.mobileBlocks.map(b=>b.kind).join(','),'user,assistant,user
 console.log('Eva native transcript migration: browser-script load and behavioral assertions passed');
 
 for(const [tool,running,completed,failed] of [
+ ['eva_components','正在准备所需组件','检查了所需组件','组件尚未就绪'],
  ['eva_phone_steps','正在执行手机步骤','执行了手机步骤','手机步骤未完成'],
  ['eva_phone_route','正在处理手机路线','处理了手机路线','手机路线未完成'],
  ['eva_wechat','正在操作微信','操作了微信','微信操作失败']
@@ -68,6 +69,7 @@ for(const [tool,running,completed,failed] of [
  assert.equal(result.work[0].output,'保留执行结果');
  if(tool==='eva_phone_steps')assert.equal(result.work[0].command,'手机操作 · 2 个步骤');
  if(tool==='eva_phone_route')assert.equal(result.work[0].command,'手机路线 · read');
+ if(tool==='eva_components')assert.equal(result.work[0].command,'能力与组件 · 检查状态');
  assert(!result.work[0].command.includes('undefined'));
  const unsuccessful=block(project([{...finished,success:false},final]));
  assert.equal(unsuccessful.workGroups[0].label,failed);
@@ -76,5 +78,5 @@ for(const [tool,running,completed,failed] of [
 }
 const registered=[];
 context.EvaFlowProjection.registerPhoneTools({registerDynamicTool:(namespace,tool,display)=>registered.push({namespace,tool,display})});
-assert.deepEqual(registered.map(value=>value.tool),['eva_phone','eva_phone_steps','eva_phone_route','eva_wechat','eva_browser']);
+assert.deepEqual(registered.map(value=>value.tool),['eva_components','eva_phone','eva_phone_steps','eva_phone_route','eva_wechat','eva_browser']);
 console.log('PASS phone batch/route/WeChat native labels, step count, failure/interruption and serialized history restoration; modern registry replay');

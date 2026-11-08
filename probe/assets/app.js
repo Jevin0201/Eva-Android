@@ -10,17 +10,41 @@ let route='home';const active=()=>data.chats.find(c=>c.id===data.active)||data.d
 function acceptConversation(c){if(!data.chats.some(x=>x.id===c.id)){data.drafts=data.drafts.filter(x=>x.id!==c.id);data.chats.push(c);sidebar()}}
 // Native UiStateStore persists complete snapshots transactionally, per conversation.
 function serializeUiState(state){return JSON.stringify(state);}
+function saveUiStructure(state){
+ const pendingContent=persistTimer!=null||(typeof conversationSaveRunning!=='undefined'&&conversationSaveRunning)||(typeof pendingConversationSaves!=='undefined'&&pendingConversationSaves.size>0)||(typeof fullKernelSave!=='undefined'&&fullKernelSave);
+ if(EvaHost.saveUiStructure&&!pendingContent){const index={...state,chats:state.chats.map(c=>({id:c.id})),drafts:(state.drafts||[]).map(c=>({id:c.id}))};const result=EvaHost.saveUiStructure(JSON.stringify(index));if(result==='saved')return true;if(result!=='full')return false;}
+ return EvaHost.save(serializeUiState(state));
+}
 let persistTimer;function persist(){clearTimeout(persistTimer);persistTimer=null;EvaHost.save(serializeUiState(data))}function persistDraft(){clearTimeout(persistTimer);persistTimer=setTimeout(()=>{persistTimer=null;if(EvaHost.saveLater)EvaHost.saveLater(serializeUiState(data));else persist()},350)}
+// Selection metadata is saved after paint, never on the input handler.
+let navigationSaveTimer=null;
+function flushNavigationSave(){
+ if(navigationSaveTimer===null)return;clearTimeout(navigationSaveTimer);navigationSaveTimer=null;
+ try{
+  if(EvaHost.saveNavigationLater){EvaHost.saveNavigationLater(JSON.stringify({active:data.active??null,projectId:data.projectId||''}));return;}
+  const pending=persistTimer!=null||(typeof conversationSaveRunning!=='undefined'&&conversationSaveRunning)||(typeof pendingConversationSaves!=='undefined'&&pendingConversationSaves.size>0)||(typeof fullKernelSave!=='undefined'&&fullKernelSave);
+  if(EvaHost.saveUiStructure&&!pending){const index={...data,chats:data.chats.map(c=>({id:c.id})),drafts:data.drafts.map(c=>({id:c.id}))};const result=EvaHost.saveUiStructure(JSON.stringify(index));if(result==='saved')return;if(result!=='full')throw Error('会话选择保存失败，请重试');}
+  if(EvaHost.saveLater)EvaHost.saveLater(serializeUiState(data));else persist();
+ }catch(error){if(typeof storageFailure==='function')storageFailure(error);}
+}
+function queueNavigationSave(){clearTimeout(navigationSaveTimer);navigationSaveTimer=setTimeout(flushNavigationSave,260);}
+window.addEventListener('pagehide',flushNavigationSave);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)flushNavigationSave();});
 function control(i,label,action){return `<button class="icon-btn" aria-label="${label}" data-action="${action}">${icon(i)}</button>`}
 function row(i,title,sub,action){return `<button class="row" data-action="${esc(action)}">${icon(i)}<span class="copy"><b>${esc(title)}</b><small>${esc(sub)}</small></span>${icon('arrow')}</button>`}
 function sidebar(){const host=$('#sidebar');host.innerHTML=`<div class="side-heading"><strong class="side-brand">Eva</strong>${control('sidebar','收起侧栏','close')}</div>${row('compose','新聊天','','new')}<div class="side-scroll"><div class="side-section">最近会话</div>${data.chats.slice().reverse().map(c=>row('chat',c.title,'本机保存','chat:'+c.id)).join('')||'<p class="preview-label">还没有会话</p>'}${row('tasks','任务记录','本机执行结果','tasks')}</div><div class="side-footer">${row('pc','Eva 浏览器','','browser')}${row('folder','工作区','','files')}${row('settings','设置','','settings')}<p class="preview-label">在此手机上运行</p></div>`}
 function render(){sidebar();const c=active();let title=route==='tasks'?'任务记录':c?c.title:'Eva';let html=`<header class="app-head">${control('sidebar','打开侧栏','drawer')}<strong>${esc(title)}</strong>${control('phone','一键启用手机能力','phone-setup')}${control('compose','新聊天','new')}</header>`;
 if(route==='tasks'){let tasks=[];try{tasks=JSON.parse(EvaHost.tasks())}catch{}html+=`<div class="flow">${tasks.map(t=>row('tasks',t.command,t.state+' · '+t.id.slice(0,8),'task:'+t.id)).join('')||'<p class="preview-label">暂无任务。可以在本地终端执行命令，结果会保存在这里。</p>'}${row('terminal','本地终端','打开工作区终端','terminal')}</div>`}
 else{if(!c||(!(c.messages||[]).length&&!c.kernelThread&&!c.pending&&!c.running))html+=`<div class="welcome${c?' flow':''}"><div class="word">Eva</div><h2>今天想完成什么？</h2><p>让 Eva 帮你操作手机、浏览网页和处理文件。</p><nav class="examples" aria-label="手机上的常用工具"><button data-action="phone-control">${icon('phone')}手机控制</button><button data-action="browser">${icon('pc')}浏览器</button><button data-action="files">${icon('folder')}文件</button><button data-action="terminal">${icon('terminal')}终端</button></nav></div>`;
-else html+=`<div class="flow">${c.messages.map(m=>`<div class="user">${esc(typeof m==='string'?m:m.text)}</div>`).join('')}<p class="preview-label">已保存在此手机，尚未发送到模型。</p></div>`;
+else html+=`<div class="flow">${(c.kernelThread?[]:c.messages).map(m=>`<div class="user">${esc(typeof m==='string'?m:m.text)}</div>`).join('')}<p class="preview-label">已保存在此手机，尚未发送到模型。</p></div>`;
 html+=`<div class="dock"><div class="composer"><textarea id="prompt" aria-label="任务输入" placeholder="和 Eva 一起工作">${esc(c?c.draft||'':data.draft||'')}</textarea><div class="controls">${control('plus','工具','tools')}<span class="context">此手机</span><button class="model" data-action="settings">连接模型${icon('down')}</button><button class="send icon-btn" aria-label="保存待发送消息" data-action="save">${icon('send')}</button></div></div><div class="foot">模型尚未连接 · 输入内容可保存为待发送消息</div></div>`}
 $('#screen').innerHTML=html;$('#prompt')?.addEventListener('input',e=>{const c=active();if(c)c.draft=e.target.value;else data.draft=e.target.value;persistDraft()});}
-function navigate(action){$('#phone').classList.remove('drawer-open');if(action==='new'){data.active=null;route='home';persist();render()}else if(action.startsWith('chat:')){data.active=action.slice(5);route='chat';persist();render()}else if(action==='tasks'){route='tasks';render()}else if(action==='save'){const text=$('#prompt').value.trim();if(!text)return;let c=active();if(!c){c={id:crypto.randomUUID(),title:text.slice(0,24),draft:'',messages:[]};data.chats.push(c);data.active=c.id;data.draft=''}c.messages.push(text);acceptConversation(c);c.draft='';route='chat';persist();render()}else if(action.startsWith('task:'))EvaHost.task(action.slice(5));else if(action==='drawer')$('#phone').classList.add('drawer-open');else if(action!=='close')EvaHost.open(action)}
-document.addEventListener('click',e=>{const b=e.target.closest('[data-action]');if(b)navigate(b.dataset.action)});
+function navigate(action){$('#phone').classList.remove('drawer-open');if(action==='new'){data.active=null;route='home';persist();render()}else if(action.startsWith('chat:')){data.active=action.slice(5);route='chat';queueNavigationSave();render()}else if(action==='tasks'){route='tasks';render()}else if(action==='save'){const text=$('#prompt').value.trim();if(!text)return;let c=active();if(!c){c={id:crypto.randomUUID(),title:text.slice(0,24),draft:'',messages:[]};data.chats.push(c);data.active=c.id;data.draft=''}c.messages.push(text);acceptConversation(c);c.draft='';route='chat';persist();render()}else if(action.startsWith('task:'))EvaHost.task(action.slice(5));else if(action==='drawer')$('#phone').classList.add('drawer-open');else if(action!=='close')EvaHost.open(action)}
+let pendingClick=0;
+document.addEventListener('click',e=>{const b=e.target.closest('[data-action]');if(!b||b.disabled)return;const action=b.dataset.action,epoch=++pendingClick;
+ document.querySelectorAll('#sidebar .is-opening').forEach(el=>{el.classList.remove('is-opening');el.removeAttribute('aria-busy');});
+ if(action.startsWith('chat:')||action.startsWith('delete-chat:')){b.classList.add('is-opening');b.setAttribute('aria-busy','true');requestAnimationFrame(()=>setTimeout(()=>{if(epoch!==pendingClick||!b.isConnected)return;b.classList.remove('is-opening');b.removeAttribute('aria-busy');navigate(action);},0));}
+ else navigate(action);
+});
 window.evaBack=()=>{if($('#phone').classList.contains('drawer-open')){$('#phone').classList.remove('drawer-open');return true}if(route==='tasks'){route=active()?'chat':'home';render();return true}if(route==='chat'||route==='home'){$('#phone').classList.add('drawer-open');return true}return false};
 render();

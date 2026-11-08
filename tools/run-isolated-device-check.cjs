@@ -2,15 +2,16 @@
 // Android instrumentation restarts its target process. Save and check the live app first.
 const cp = require('node:child_process');
 const {chromium} = require('playwright-core');
-const {assertIdle} = require('./install-upgrade-checked.cjs');
+const {assertIdle,assertRuntimeIdle} = require('./install-upgrade-checked.cjs');
 
 async function main() {
  const adb = process.env.EVA_ADB;
  if (!adb) throw Error('Set EVA_ADB');
  const [check, ...args] = process.argv.slice(2);
- if (!['DesktopStreamCheck', 'ScheduledTaskCheck', 'AttachmentImportCheck', 'McpOAuthCheck','ApkInstallCheck','PhoneControlSetupCheck','PhoneAgentPreviewCheck','PhoneAgentDisplayCheck','RuntimeAuthoringCheck','PhoneRouteCheck','PhoneResourceSchedulerCheck','PhoneBatchCheck'].includes(check)) throw Error('Unknown isolated check');
+ if (!['DesktopStreamCheck', 'ScheduledTaskCheck', 'AttachmentImportCheck', 'McpOAuthCheck','ApkInstallCheck','PhoneControlSetupCheck','PhoneAgentPreviewCheck','PhoneAgentDisplayCheck','RuntimeAuthoringCheck','PhoneRouteCheck','PhoneResourceSchedulerCheck','PhoneBatchCheck','ModelCheck','ModelRuntimeCheck','ModelSelectionStorageCheck','DependencyToolsCheck','ExecutionLeaseCheck','WorkspacePreviewChromeCheck','WorkspaceFinalPreviewCheck','ModularSetupCheck'].includes(check)) throw Error('Unknown isolated check');
  const pkg = 'ai.eva.android.probe';
  const run = args => cp.execFileSync(adb, args, {encoding: 'utf8'});
+ assertRuntimeIdle(run,pkg);
  const scheduled = cp.spawnSync(adb, ['shell', 'run-as', pkg, 'cat', 'shared_prefs/eva-scheduled.xml'], {encoding: 'utf8'});
  if (scheduled.status === 0 && /<boolean\s+name="enabled"\s+value="true"/.test(scheduled.stdout)) throw Error('后台调度已开启，取消会重启进程的测试');
  const pid = run(['shell', 'pidof', pkg]).trim().split(/\s+/)[0];
@@ -43,14 +44,18 @@ async function main() {
    for (const button of document.querySelectorAll('.controls button')) button.disabled = true;
   });
  } finally { await browser.close(); }
+ let succeeded=false;
  try {
-  const capture=['AttachmentImportCheck','McpOAuthCheck','ApkInstallCheck','PhoneControlSetupCheck','PhoneAgentPreviewCheck','PhoneAgentDisplayCheck','RuntimeAuthoringCheck','PhoneRouteCheck','PhoneResourceSchedulerCheck','PhoneBatchCheck'].includes(check);
+  const capture=['AttachmentImportCheck','McpOAuthCheck','ApkInstallCheck','PhoneControlSetupCheck','PhoneAgentPreviewCheck','PhoneAgentDisplayCheck','RuntimeAuthoringCheck','PhoneRouteCheck','PhoneResourceSchedulerCheck','PhoneBatchCheck','ModelCheck','ModelRuntimeCheck','ModelSelectionStorageCheck','DependencyToolsCheck','ExecutionLeaseCheck','WorkspacePreviewChromeCheck','WorkspaceFinalPreviewCheck','ModularSetupCheck'].includes(check);
   const result = cp.spawnSync(adb, ['shell', 'am', 'instrument', '-w', ...args, pkg + '/.' + check], capture?{encoding:'utf8'}:{stdio:'inherit'});
-  if(capture){process.stdout.write(result.stdout||'');process.stderr.write(result.stderr||'');const expected={AttachmentImportCheck:'PASS attachment native import',McpOAuthCheck:'PASS scoped loopback callback',ApkInstallCheck:'PASS read-only APK provider'}[check]||'PASS ';if(!result.stdout.includes(expected)||/INSTRUMENTATION_FAILED|FAIL |cleanupError/.test(result.stdout))throw Error('Native check did not pass: '+check);}
+  if(capture){process.stdout.write(result.stdout||'');process.stderr.write(result.stderr||'');const expected={AttachmentImportCheck:'PASS attachment native import',McpOAuthCheck:'PASS scoped loopback callback',ApkInstallCheck:'PASS read-only APK provider',ModelCheck:'PASS:',WorkspaceFinalPreviewCheck:'PASS direct original preview '}[check]||'PASS ';const failed=check==='WorkspaceFinalPreviewCheck'?/^(?:INSTRUMENTATION_FAILED|INSTRUMENTATION_RESULT: stream=FAIL direct original preview)/m.test(result.stdout):/INSTRUMENTATION_FAILED|FAIL |cleanupError/.test(result.stdout);if(!result.stdout.includes(expected)||failed)throw Error('Native check did not pass: '+check);}
   if (result.error) throw result.error;
   if (result.status !== 0) throw Error('Isolated check failed to run');
+  succeeded=true;
  } finally {
-  run(['shell', 'am', 'start', '-n', pkg + '/.ShellActivity']);
+  const launch=['shell','am','start','-n',pkg+'/.ShellActivity'];
+  if(check==='WorkspaceFinalPreviewCheck'&&succeeded){const at=args.findIndex((value,index)=>value==='path'&&args[index-1]==='-e');if(at>=0&&args[at+1])launch.push('--es','page','file-preview','--es','preview-path',args[at+1]);}
+  run(launch);
  }
 }
 main().catch(error => { console.error(error.message); process.exitCode = 1; });

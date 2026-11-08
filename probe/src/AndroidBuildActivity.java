@@ -17,6 +17,7 @@ public class AndroidBuildActivity extends ToolPageActivity {
     EditText project, destination;
     TextView status, log;
     Button install, build, check, cancel;
+    boolean pendingBuild;
     final Runnable repaint = new Runnable() {
         public void run() {
             status.setText(state);
@@ -59,6 +60,11 @@ public class AndroidBuildActivity extends ToolPageActivity {
     }
 
     void execute(String action) {
+        if(action.equals("install") || (action.equals("build")&&!RuntimeComponents.installed(this,"development"))){
+            pendingBuild=action.equals("build");
+            startActivity(new android.content.Intent(this,RuntimeSetupActivity.class).putExtra("component","development"));
+            return;
+        }
         synchronized (AndroidBuildActivity.class) {
             if (busy) return;
             busy = true; cancelled = false;
@@ -116,6 +122,6 @@ public class AndroidBuildActivity extends ToolPageActivity {
         if (child.waitFor() != 0) throw new IOException("请检查构建日志后重试");
     }
 
-    protected void onResume() { super.onResume(); handler.post(repaint); }
+    protected void onResume() { super.onResume(); handler.post(repaint); if(pendingBuild&&RuntimeComponents.installed(this,"development")){pendingBuild=false;execute("build");} }
     protected void onPause() { handler.removeCallbacks(repaint); super.onPause(); }
 }

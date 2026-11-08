@@ -1,0 +1,92 @@
+/* Only sidebar and settings-owned surfaces. Never style chat/composer or their sheets. */
+#sidebar{--muted:#888a83;--line:#eceee8;background:#fafbf9;color:#292c27;padding:16px 16px 10px}
+.dark #sidebar{--muted:#a0a59a;--line:#353930;background:#20231f;color:#eceee7}
+#sidebar .tree-top{gap:10px;margin-bottom:12px}
+#sidebar .tree-new{background:#eff1ed;border-radius:13px;min-height:46px;padding:12px;font-weight:500}
+.dark #sidebar .tree-new{background:#30352c}
+#sidebar .tree-capabilities{padding:0 0 12px}
+#sidebar .tree-capabilities button{min-height:44px;border-radius:11px;padding:9px 11px;font-size:13px}
+#sidebar .tree-capabilities button>svg:last-child{width:13px;color:var(--muted)}
+#sidebar .tree-section{font-size:11px;letter-spacing:.3px;padding:10px 6px}
+#sidebar .tree-folder{font-weight:450;min-height:44px;padding-left:8px}
+#sidebar .tree-chat{min-height:44px;padding:11px 12px;border-radius:11px;font-size:13px}
+#sidebar .tree-chat.is-active{background:#e9ede5}.dark #sidebar .tree-chat.is-active{background:#363c30}
+#sidebar .tree-children{padding-left:15px}#sidebar .tree-project{margin-bottom:14px}
+#sidebar .side-footer{padding:8px 0 0;border-color:var(--line)}
+#sidebar .side-footer .row{min-height:44px;border:0;border-radius:10px;padding:10px;gap:12px}
+#sidebar .side-footer .row b{font-weight:450}
+/* Tokens stay on the settings root, never #phone or :root. */
+#screen:has(>header :is([data-action="settings-back"],[data-action="memory-back"])),#screen:has(>header [data-action="memory-back"]){--ink:#292b27;--muted:#898c83;--line:#eceee7;--soft:#f5f6f2;--accent:#2a2d26;color:var(--ink)}
+.dark #screen:has(>header :is([data-action="settings-back"],[data-action="memory-back"])),.dark #screen:has(>header [data-action="memory-back"]){--ink:#eceee6;--muted:#a1a697;--line:#373d31;--soft:#2d3229;--accent:#e5e9db}
+#screen:has(>header :is([data-action="settings-back"],[data-action="memory-back"]))>.app-head,#screen:has(>header [data-action="memory-back"])>.app-head{min-height:62px;border-bottom:0;padding:6px 16px;gap:8px}
+#screen:has(>header :is([data-action="settings-back"],[data-action="memory-back"]))>.app-head strong{font-size:17px;font-weight:550}
+#screen:has(>header :is([data-action="settings-back"],[data-action="memory-back"]))>.flow,#screen:has(>header [data-action="memory-back"])>.flow{padding:12px 24px 32px;max-width:740px}
+#screen:has(>header :is([data-action="settings-back"],[data-action="memory-back"])) .group{margin-bottom:26px;background:transparent}
+#screen:has(>header :is([data-action="settings-back"],[data-action="memory-back"])) .group>h3{font-size:11px;font-weight:450;letter-spacing:.5px;margin:7px 0 10px;color:var(--muted)}
+#screen:has(>header :is([data-action="settings-back"],[data-action="memory-back"])) .row,#screen:has(>header [data-action="memory-back"]) .row{min-height:56px;padding:14px 0;border-bottom:1px solid var(--line);border-radius:0;gap:13px;background:transparent}
+#screen:has(>header :is([data-action="settings-back"],[data-action="memory-back"])) .row .copy{min-width:0}
+#screen:has(>header :is([data-action="settings-back"],[data-action="memory-back"])) .row .copy b{font-size:14px;font-weight:450;overflow-wrap:anywhere}
+#screen:has(>header :is([data-action="settings-back"],[data-action="memory-back"])) .row .copy small{font-size:12px;line-height:1.7;color:var(--muted);white-space:normal;overflow-wrap:anywhere}
+#screen:has(>header :is([data-action="settings-back"],[data-action="memory-back"])) .row>svg{color:var(--muted);width:19px;height:19px}
+#screen:has(>header :is([data-action="settings-back"],[data-action="memory-back"])) .row>svg:last-child{width:13px;height:13px}
+#screen:has(>header :is([data-action="settings-back"],[data-action="memory-back"])) :is(input:not([type=checkbox]):not([type=radio]),textarea,select){font:inherit;color:var(--ink);background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:12px;min-height:44px;max-width:100%;box-sizing:border-box}
+#screen:has(>header :is([data-action="settings-back"],[data-action="memory-back"])) :is(input,textarea,select):focus-visible{outline:2px solid #8a9b7c;outline-offset:2px}
+#screen:has(>header :is([data-action="settings-back"],[data-action="memory-back"])) .field{display:block;margin:18px 0;font-size:12px;color:var(--muted)}
+#screen:has(>header :is([data-action="settings-back"],[data-action="memory-back"])) .field input{margin-top:8px;width:100%}
+#screen:has(>header :is([data-action="settings-back"],[data-action="memory-back"])) :is(.primary,.panel-primary){min-height:46px;padding:12px 20px;background:var(--ink);color:var(--paper);border:0;border-radius:13px;box-shadow:none}
+#screen:has(>header :is([data-action="settings-back"],[data-action="memory-back"])) .setting-select{min-height:66px}
+#screen:has(>header :is([data-action="settings-back"],[data-action="memory-back"])) :is(.setting-help,.preview-label){color:var(--muted);line-height:1.9;font-size:12px}
+#screen:has(>header :is([data-action="settings-back"],[data-action="memory-back"])) .eva-extension-tabs{background:transparent;border-bottom:1px solid var(--line);border-radius:0;padding:0;gap:20px}
+#screen:has(>header :is([data-action="settings-back"],[data-action="memory-back"])) .eva-extension-tabs button{min-height:44px;border-radius:0;background:none;box-shadow:none}
+#screen:has(>header :is([data-action="settings-back"],[data-action="memory-back"])) .eva-extension-tabs [aria-selected=true]{color:var(--ink);border-bottom:2px solid var(--ink)}
+#screen:has(>header :is([data-action="settings-back"],[data-action="memory-back"])) .extension-entry{border:1px solid var(--line);border-radius:14px;box-shadow:none;margin:12px 0}
+@media(max-width:350px){#screen:has(>header :is([data-action="settings-back"],[data-action="memory-back"]))>.flow{padding:12px 18px 28px}#sidebar{padding:12px}}
+/* Desktop-derived extension manager has its own back action and layout. */
+#screen:has(>header [data-action="desktop-extensions-back"]){--ink:#292b27;--muted:#898c83;--line:#eceee7;--soft:#f5f6f2;color:var(--ink)}
+.dark #screen:has(>header [data-action="desktop-extensions-back"]){--ink:#eceee6;--muted:#a1a697;--line:#373d31;--soft:#2d3229}
+#screen:has(>header [data-action="desktop-extensions-back"])>.app-head{border-bottom:0;min-height:62px;padding:6px 16px}
+.desktop-extensions .customize-content{padding:22px 24px 40px}
+.desktop-extensions .customize-heading h1{font-size:23px;font-weight:550}
+.desktop-extensions .customize-card{border-radius:14px;border-color:var(--line);box-shadow:none;background:var(--paper)}
+.desktop-extensions .customize-search{border-radius:12px;background:var(--soft);border:1px solid var(--line)}
+.desktop-extensions .eva-extension-tabs{border-radius:0;background:none;gap:20px;padding:0;border-bottom:1px solid var(--line)}
+.desktop-extensions .eva-extension-tabs button{border-radius:0;min-height:44px;padding:8px 0}
+.desktop-extensions .eva-extension-tabs [aria-selected=true]{background:none;border-bottom-color:var(--ink)}
+.desktop-extensions .customize-tabs button.selected{background:var(--soft)}
+#screen:has(>header :is([data-action="settings-back"],[data-action="memory-back"])) button:not(.row):not(.icon-btn):not(.primary):not(.panel-primary){min-height:44px;border-radius:10px;padding:9px 13px}
+#screen:has(>header :is([data-action="settings-back"],[data-action="memory-back"])) .group>div>button{background:var(--soft)}
+#eva-panel[data-settings-surface]{--paper:#fff;--ink:#292b27;--muted:#898c83;--line:#eceee7;--soft:#f5f6f2;background:#191c2455}
+#eva-panel[data-settings-surface].settings-dark{--paper:#20231f;--ink:#eceee6;--muted:#a1a697;--line:#373d31;--soft:#2d3229}
+#eva-panel[data-settings-surface] .eva-panel{background:var(--paper);color:var(--ink);border-radius:24px 24px 0 0;box-shadow:none}
+#eva-panel[data-settings-surface] .eva-panel>header{border:0;padding:12px 24px;min-height:56px}
+#eva-panel[data-settings-surface] .panel-content{padding:12px 24px 28px}
+#eva-panel[data-settings-surface] :is(input:not([type=checkbox]),textarea,select){border-radius:12px;background:var(--soft);border:1px solid var(--line);color:var(--ink);padding:12px;max-width:100%}
+#eva-panel[data-settings-surface] button{min-height:44px}
+#eva-panel[data-settings-surface] .panel-primary{border:0;border-radius:13px;background:var(--ink);color:var(--paper);padding:12px 18px}
+@media(min-width:700px){#eva-panel[data-settings-surface] .eva-panel{border-radius:24px}}
+#sidebar .side-footer .row>svg{color:var(--muted)}
+#sidebar .tree-folder{position:relative;padding-right:18px}
+#sidebar .tree-folder:after{content:'';position:absolute;right:4px;top:calc(50% - 4px);width:5px;height:5px;border-right:1px solid currentColor;border-bottom:1px solid currentColor;transform:rotate(45deg);transition:transform .18s ease;color:var(--muted)}
+#sidebar .tree-folder[aria-expanded=false]:after{transform:rotate(-45deg)}
+#sidebar .tree-children[hidden],#sidebar #chat-list[hidden]{display:none}
+#sidebar .tree-recent-toggle svg{transition:transform .18s ease}
+@media(prefers-reduced-motion:reduce){#sidebar .tree-folder:after,#sidebar .tree-recent-toggle svg{transition:none}}
+.default-model-field{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:64px;font-size:14px}
+#screen .default-model-field select{width:auto;min-width:0;max-width:68%;font-size:12px;padding:9px 10px;text-overflow:ellipsis}
+@media(max-width:350px){.default-model-field{align-items:flex-start;flex-direction:column;padding:8px 0}#screen .default-model-field select{width:100%;max-width:100%}}
+#settings-default-model[hidden]{display:none!important}
+#screen #default-model-trigger{display:flex;align-items:center;gap:9px;justify-content:space-between;background:var(--soft);border:1px solid var(--line);border-radius:11px;padding:9px 12px;max-width:68%;min-width:0;font-size:12px;min-height:42px}
+#default-model-trigger span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#default-model-trigger svg{width:13px;height:13px;flex:none;color:var(--muted)}
+.default-model-menu{position:fixed;z-index:1000;overflow-y:auto;overscroll-behavior:contain;padding:7px;background:#fff;color:#292b27;border:1px solid #e8ebe3;border-radius:15px;box-shadow:0 8px 30px #151c1820;font-size:13px;scrollbar-width:thin}
+.default-model-menu.dark{background:#252a22;color:#eceee6;border-color:#3c4434;box-shadow:0 8px 30px #0005}
+.default-model-menu .default-model-group{padding:11px 11px 5px;color:#8b9283;font-size:10px;letter-spacing:.4px}
+.default-model-menu [role=option]{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;padding:11px;border-radius:9px;min-height:44px;text-align:left;font:inherit;color:inherit;background:none;border:0;line-height:1.5}
+.default-model-menu [role=option]>span:first-child{overflow-wrap:anywhere}
+.default-model-menu [role=option]:hover,.default-model-menu [role=option]:focus-visible,.default-model-menu [aria-selected=true]{background:#f1f4ed;outline:none}
+.default-model-menu.dark [role=option]:hover,.default-model-menu.dark [role=option]:focus-visible,.default-model-menu.dark [aria-selected=true]{background:#363f2e}
+.default-check{width:16px;flex:none}.default-check svg{width:16px;height:16px;color:#77866a}
+@media(max-width:350px){#screen #default-model-trigger{max-width:100%;width:100%}}
+#sidebar .tree-chat:active,#sidebar .tree-chat.is-opening{background:#e6ebdf;transition:none}
+.dark #sidebar .tree-chat:active,.dark #sidebar .tree-chat.is-opening{background:#3c4831}
+#sidebar .tree-chat.is-opening:after{content:'正在打开…';font-size:10px;color:var(--muted);white-space:nowrap;margin-left:8px}
+.chat-history-loading{font-size:12px;color:var(--muted);padding:18px 4px;line-height:1.8}

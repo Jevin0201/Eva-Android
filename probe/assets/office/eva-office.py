@@ -24,9 +24,29 @@ def status():
    m=importlib.import_module(mod)
    try: version=importlib.metadata.version(dist)
    except importlib.metadata.PackageNotFoundError: version=getattr(m,'__version__','installed')
-   result[mod]={'ready':True,'version':version}
+   result[mod]={'ready':True,'version':version,'path':getattr(m,'__file__',None)}
   except Exception as e: result[mod]={'ready':False,'error':str(e)}
- return {'ready':all(v['ready'] for v in result.values()) and FONT.is_file(),'modules':result,'chineseFont':FONT.is_file(),'entry':'python3 /root/eva-office.py','rendererEntry':'python3 /root/.eva-office/eva-render.py status','limitations':['基础库状态与渲染引擎分别检查','基础 Excel 写入器保留公式但不会自动重算','不执行宏']}
+ return {'ready':all(v['ready'] for v in result.values()) and FONT.is_file(),'modules':result,'chineseFont':FONT.is_file(),'managedLibPath':str(LIB),'authoringPythonPath':str(LIB),'repairEntry':'python3 /root/.eva-runtime/eva-capabilities.py install --profile office-authoring','entry':'python3 /root/eva-office.py','rendererEntry':'python3 /root/.eva-office/eva-render.py status','limitations':['基础库状态与渲染引擎分别检查','基础 Excel 写入器保留公式但不会自动重算','不执行宏']}
+
+
+def download_policy():
+ entry=pathlib.Path(__file__).with_name('eva-download-policy.py')
+ if not entry.is_file():entry=pathlib.Path('/root/.eva-runtime/eva-download-policy.py')
+ return runpy.run_path(str(entry))
+
+def stage_library(library,destination):
+ if library.is_symlink():raise RuntimeError('办公私有库目录使用链接，已保留并停止，请先核对实际安装路径')
+ destination.mkdir()
+ if library.exists():shutil.copytree(library,destination,dirs_exist_ok=True,symlinks=True)
+ # Only replace the two distributions managed by these pinned wheels. Other
+ # private libraries remain in the new installation and in the rollback copy.
+ owned=[destination/'docx',destination/'pptx']
+ for pattern in ('python_docx-*.dist-info','python_pptx-*.dist-info'):
+  owned.extend(destination.glob(pattern))
+ for target in owned:
+  if target.is_symlink() or target.is_file():target.unlink()
+  elif target.is_dir():shutil.rmtree(target)
+ return destination
 
 def install():
  BASE.mkdir(parents=True,exist_ok=True)
@@ -39,32 +59,26 @@ def install():
   progress('正在安装 Alpine 签名仓库依赖；此步骤取消将在包事务结束后生效')
   repos=BASE/'repositories'
   repos.write_text('https://mirrors.tuna.tsinghua.edu.cn/alpine/v3.22/main\nhttps://mirrors.tuna.tsinghua.edu.cn/alpine/v3.22/community\n',encoding='utf-8')
-  p=subprocess.run(['apk','--repositories-file',str(repos),'add','--no-cache','--no-progress',*PACKAGES],stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,timeout=480)
-  if p.returncode: raise RuntimeError('系统依赖安装失败：'+p.stdout[-6000:])
+  def apk_attempt(command):
+   p=subprocess.run(command,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True)
+   if p.returncode:raise RuntimeError('系统依赖安装失败：'+p.stdout[-6000:])
+   return p.stdout
+  policy=download_policy()
+  policy['apk_command'](['apk','--repositories-file',str(repos),'add','--no-cache','--no-progress',*PACKAGES],apk_attempt,BASE/'download-attempts')
   check_cancel()
   stage=pathlib.Path(tempfile.mkdtemp(prefix='office-install-',dir=BASE))
   try:
    for name,url,sha in WHEELS:
     progress('下载并校验 '+name); dest=stage/name
-    last=None
-    for attempt in range(3):
-     try:
-      download_url=url if attempt==0 else url.replace('https://files.pythonhosted.org/','https://pypi.tuna.tsinghua.edu.cn/')
-      with urllib.request.urlopen(download_url,timeout=30) as response,open(dest,'wb') as out:
-       if not response.url.startswith(('https://files.pythonhosted.org/','https://pypi.tuna.tsinghua.edu.cn/')): raise ValueError('不允许的下载重定向')
-       size=0
-       while True:
-        check_cancel();chunk=response.read(65536)
-        if not chunk: break
-        size+=len(chunk)
-        if size>4*1024*1024: raise ValueError('依赖包超过大小限制')
-        out.write(chunk)
-      if hashlib.sha256(dest.read_bytes()).hexdigest()!=sha: raise ValueError('SHA256 校验失败')
-      last=None;break
-     except Exception as e:
-      last=e;check_cancel()
-    if last: raise RuntimeError('依赖下载失败，可重试：'+str(last))
-   extracted=stage/'lib';extracted.mkdir()
+    policy=download_policy()
+    cache=BASE/'wheel-cache';cache.mkdir(exist_ok=True)
+    cached=cache/name
+    if not cached.is_file() or hashlib.sha256(cached.read_bytes()).hexdigest()!=sha:
+     partial=cache/(name+'.partial')
+     policy['download_wheel'](url,name,sha,partial,check_cancel=check_cancel)
+     partial.replace(cached)
+    shutil.copyfile(cached,dest)
+   extracted=stage_library(LIB,stage/'lib')
    for name,_,_ in WHEELS:
     with zipfile.ZipFile(stage/name) as z:
      total=0
@@ -73,21 +87,26 @@ def install():
       if not target.is_relative_to(extracted.resolve()) or (info.external_attr>>16)&0o170000==0o120000 or total>20*1024*1024: raise ValueError('非法 wheel 内容')
      z.extractall(extracted)
    check_cancel()
-   old=BASE/'lib.previous'
-   if old.exists(): shutil.rmtree(old)
+   old=BASE/('lib.previous-'+str(time.time_ns()))
    if LIB.exists(): LIB.rename(old)
    try: extracted.rename(LIB)
    except BaseException:
     if old.exists(): old.rename(LIB)
     raise
    importlib.invalidate_caches()
-   result=status()
+   try:
+    probe=subprocess.run([sys.executable,__file__,'status'],capture_output=True,text=True,timeout=60)
+    result=json.loads(probe.stdout)
+    if not isinstance(result,dict) or not isinstance(result.get('ready'),bool):raise ValueError('办公状态格式无效')
+    if probe.returncode:result['ready']=False
+   except Exception:
+    result={'ready':False,'error':'安装后独立 Python 检查失败，已保留此前的库供恢复'}
    if not result['ready']:
     shutil.rmtree(LIB)
     if old.exists():old.rename(LIB)
     raise RuntimeError('安装后检查失败，已恢复此前的私有库：'+json.dumps(result,ensure_ascii=False))
    inventory=subprocess.run(['apk','info','-v'],capture_output=True,text=True,timeout=30).stdout
-   (BASE/'installed.json').write_text(json.dumps({'timestamp':time.time(),'wheels':WHEELS,'apkInventory':inventory,'status':result},ensure_ascii=False,indent=2),encoding='utf-8')
+   (BASE/'installed.json').write_text(json.dumps({'timestamp':time.time(),'wheels':WHEELS,'apkInventory':inventory,'status':result,'previousLib':str(old) if old.exists() else None},ensure_ascii=False,indent=2),encoding='utf-8')
    return result
   finally: shutil.rmtree(stage,ignore_errors=True)
 

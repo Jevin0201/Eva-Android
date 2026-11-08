@@ -1,0 +1,35 @@
+// Exercise the original controller through the Android host, never the user's browsing session.
+const {spawn,execFileSync}=require('node:child_process');
+const fs=require('node:fs'),readline=require('node:readline'),assert=require('node:assert/strict');
+const endpoint=process.argv[2];if(!endpoint)throw Error('Pass forwarded private host endpoint');
+const root=fs.mkdtempSync(require('node:path').resolve(process.env.EVA_BROWSER_TEST_ROOT||'artifacts/desktop-browser-20261108/test-'));
+const worker=spawn(process.execPath,[process.env.EVA_BROWSER_WORKER||'probe/assets/desktop-browser/android-worker.mjs',endpoint],{env:{...process.env,EVA_BROWSER_ROOT:root}});worker.stderr.pipe(process.stderr);
+const pending=new Map();let n=0;readline.createInterface({input:worker.stdout}).on('line',line=>{const r=JSON.parse(line),p=pending.get(r.id);if(p){pending.delete(r.id);r.error?p.reject(Error(r.error)):p.resolve(r.result);}});
+const call=(tool,args={})=>new Promise((resolve,reject)=>{const id=String(++n);const timer=setTimeout(()=>reject(Error(tool+' timed out')),65000);pending.set(id,{resolve:r=>{clearTimeout(timer);console.log('PASS',tool,JSON.stringify(r).slice(0,180));resolve(r)},reject:e=>{clearTimeout(timer);reject(e)}});worker.stdin.write(JSON.stringify({id,session:'isolated-browser-check',tool,args})+'\n');});
+(async()=>{try{
+ const tabs=await call('browser_tabs');assert(tabs.tabs.length);
+ const opened=await call('browser_open',{url:'https://example.com/?eva-browser-fixture=1',newTab:true});assert(opened.tabId);
+ await call('browser_request',{url:'https://example.com/?eva-browser-fixture=1',method:'GET',maxResponseChars:100});
+ await call('browser_dialog',{decision:'status'});
+ await call('browser_downloads');
+ await call('browser_evaluate',{expression:`()=>{document.body.innerHTML='<h1>Android browser fixture</h1><input id="a"><button id="b">Apply</button><table id="t"><tr><th>Name</th><th>Value</th></tr><tr><td>Eva</td><td>42</td></tr></table><div id="shadow"></div>';document.querySelector('#shadow').attachShadow({mode:'open'}).innerHTML='<button>Shadow control</button>';return {ready:true};}`});
+ const snapshot=await call('browser_snapshot',{maxRefs:100});assert(JSON.stringify(snapshot).includes('Android browser fixture'));
+ await call('browser_editor',{selector:'#a',editorAction:'replace',text:'手机原控制器'});
+ await call('browser_inspect',{selector:'#a'});
+ await call('browser_table',{selector:'#t'});
+ await call('browser_evaluate',{expression:"()=>{document.querySelector('#b').onclick=()=>window.fixtureClicks=(window.fixtureClicks||0)+1;return true}"});
+ const clicked=await call('browser_act',{selector:'#b',interaction:'click'});assert.notEqual(clicked.execution?.outcome,'unverified');
+ const verify=await call('browser_evaluate',{expression:'window.fixtureClicks'});assert.equal(verify.value,1);
+ await call('browser_key',{key:'Tab'});
+ await call('browser_pointer',{pointer:'scroll',deltaY:100});
+ await call('browser_storage',{storageArea:'local',storageAction:'set',name:'eva-fixture',value:'42'});
+ const cdp=await call('browser_cdp',{method:'Runtime.evaluate',params:{expression:'1+2',returnByValue:true}});assert(JSON.stringify(cdp).includes('3'));
+ await call('browser_debug',{mode:'status'});
+ const big=await call('browser_evaluate',{expression:'"x".repeat(60000)',maxResponseChars:100});assert(big.resultID);
+ await call('browser_result',{resultID:big.resultID,maxResponseChars:100});
+ const shot=await call('browser_screenshot');assert(shot.path);
+ const network=await call('browser_debug',{networkAction:'list',limit:10});assert(network);
+ await call('browser_tabs',{action:'select',tabId:tabs.tabs[0].id});
+ await call('browser_tabs',{action:'close',tabId:opened.tabId});
+ console.log('ENGINE CHECK COMPLETE');
+ }finally{worker.kill();}})().catch(e=>{console.error(e);process.exitCode=1;});

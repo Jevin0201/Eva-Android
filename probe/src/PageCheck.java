@@ -31,7 +31,7 @@ public class PageCheck extends Instrumentation {
   for(String page:new String[]{"settings","models","permissions","execution","browser","storage","appearance","about"}){js("settingsGo('"+page+"')");shot("settings-"+page);}
   js("settingsGo('execution');settingSave('commandTimeout','60')");check(prefs.getInt("commandTimeout",0)==60,"timeout persistence");
   js("settingsGo('appearance');settingSave('theme','dark')");check(prefs.getString("theme","").equals("dark"),"theme persistence");shot("dark");
-  check(js("JSON.parse(EvaHost.setSetting('browserHome','http://example.com')).error").contains("HTTPS"),"reject HTTP");
+  check(!js("EvaHost.setSetting('browserHome','http://example.com')").contains("error"),"accept HTTP browser home");
   js("EvaHost.setSetting('theme','light')");
   Intent tool=new Intent(getTargetContext(),FilesActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);local=(FilesActivity)startActivitySync(tool);
   fixture=new File(local.workspace(),"ui-check-"+java.util.UUID.randomUUID());fixture.mkdir();File text=new File(fixture,"你好.txt");Files.write(text.toPath(),"中文 UTF-8\n第二行".getBytes("UTF-8"));File binary=new File(fixture,"binary.bin");Files.write(binary.toPath(),new byte[]{0,1,2});final File directory=fixture;

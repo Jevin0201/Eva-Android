@@ -11,8 +11,8 @@ public class OfficeActivity extends ToolPageActivity {
  public void onCreate(Bundle b){super.onCreate(b);page("办公文档","");
   body.addView(label("在手机本地生成和读取 Word、Excel、PowerPoint 与 PDF。首次使用需下载依赖；文档保存在工作区。",14));
   status=label("正在检查…",14);body.addView(status);
-  check=button("检查环境",()->OfficeRuntime.start(this,"status"));body.addView(check);addAction("检查渲染引擎",()->OfficeRuntime.start(this,"render-status"));addAction("安装或修复渲染引擎",()->OfficeRuntime.start(this,"render-install"));addAction("验证模板与逐页渲染",()->OfficeRuntime.start(this,"render-selftest"));addAction("检查软件安装环境",()->OfficeRuntime.start(this,"runtime-status"));
-  install=button("安装或修复办公依赖",()->new AlertDialog.Builder(this).setTitle("安装办公依赖").setMessage("从 Alpine 官方镜像和 Python 官方包及其镜像下载依赖与中文字体。需要网络及存储空间；不会上传你的文档。已安装的系统依赖会保留。是否开始？").setPositiveButton("开始安装",(d,w)->OfficeRuntime.start(this,"install")).setNegativeButton("取消",null).show());body.addView(install);
+  check=button("检查环境",()->OfficeRuntime.start(this,"status"));body.addView(check);addAction("检查渲染引擎",()->OfficeRuntime.start(this,"render-status"));addAction("安装或修复渲染引擎",()->openComponents());addAction("验证模板与逐页渲染",()->OfficeRuntime.start(this,"render-selftest"));addAction("检查软件安装环境",()->OfficeRuntime.start(this,"runtime-status"));
+  install=button("安装办公组件",this::openComponents);body.addView(install);
   test=button("生成四种格式验收样例",()->OfficeRuntime.start(this,"selftest"));body.addView(test);
   stop=button("取消后续步骤",()->{try{OfficeRuntime.cancel(this);}catch(Exception e){status.setText(e.getMessage());}});body.addView(stop);
   body.addView(button("打开工作区文件",()->startActivity(new Intent(this,FilesActivity.class))));
@@ -20,6 +20,7 @@ public class OfficeActivity extends ToolPageActivity {
   ScrollView scroll=new ScrollView(this);log=label("",11);log.setTypeface(android.graphics.Typeface.MONOSPACE);log.setTextIsSelectable(true);scroll.addView(log);body.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
   if(!OfficeRuntime.busy)OfficeRuntime.start(this,"status");
  }
+ void openComponents(){startActivity(new Intent(this,RuntimeSetupActivity.class).putExtra("component","office"));}
  void addAction(String title,Runnable work){Button action=button(title,work);extraActions.add(action);body.addView(action);}
  protected void onResume(){super.onResume();handler.post(repaint);}
  protected void onPause(){handler.removeCallbacks(repaint);super.onPause();}

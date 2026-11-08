@@ -1,0 +1,334 @@
+{
+  "source": "/Users/jevin/Documents/Codex/Eva-Source/src",
+  "files": [
+    {
+      "path": "renderer/browser-extension-settings.js",
+      "sha256": "e6e7def8fa3857bc1b15090d7bf5368f40744a9cafc1a7be6a4ff0f143576a00",
+      "bytes": 11766
+    },
+    {
+      "path": "renderer/browser.js",
+      "sha256": "b9cd6a3ecd3386e7c960a14d6a1794d546a23d18547e85f716843b4e7bd2359e",
+      "bytes": 24042
+    },
+    {
+      "path": "renderer/native-steering/browser-eb936edba459.js",
+      "sha256": "234e468337e67f84d363eecedb597210e677d785e7cc8a62df11e917ba00adb2",
+      "bytes": 260400
+    },
+    {
+      "path": "renderer/assets/builtin-plugins/browser.svg",
+      "sha256": "9cf0e2f6e1f4ed25158388fdb5d65fc2b71f97ba7398051e5c1b1133d350b349",
+      "bytes": 1379
+    },
+    {
+      "path": "renderer/native-preview/lazy/browser-ca0886742f6d.js",
+      "sha256": "a6b505a0c1f09d0c87bc1179b597c2fae78fef9332c79a76888e67590c0b698f",
+      "bytes": 260398
+    },
+    {
+      "path": "main/browser-protocol-policy.js",
+      "sha256": "008444e66fd82c8d48ce0afb079f4ffc12bdb03e788810186548e26b9cc639c5",
+      "bytes": 1722
+    },
+    {
+      "path": "main/native-browser-session-provenance.json",
+      "sha256": "9f3b7dd897bf4195e36479476a6adb5e273ad894e5f85cb3dde6facb14bffc23",
+      "bytes": 540
+    },
+    {
+      "path": "main/browser-automation-ready.js",
+      "sha256": "7b40129a4a7b7fe3caac8b79d88b31fcf9dc3eaf539287d6a19d50aef75ddfd7",
+      "bytes": 378
+    },
+    {
+      "path": "main/browser-identity.js",
+      "sha256": "f5fb10ad15a7563eadbea84555465d9c07b99c8228f1b86064a2f39fcf984ba8",
+      "bytes": 1234
+    },
+    {
+      "path": "main/browser-tools.js",
+      "sha256": "c82d61a94cc608c93e92d19f411222947e70d1adca17c11dcda9731ad99f3d45",
+      "bytes": 7174
+    },
+    {
+      "path": "main/browser-profile-import.js",
+      "sha256": "1b2b2057486da6d768ca0add6d673d6af44cd02abd03641cbadf3a25ba67b187",
+      "bytes": 9061
+    },
+    {
+      "path": "main/browser-profile-worker.js",
+      "sha256": "198675c3fc833d7cd8e0f7f6beebafad0d525a1a398b018e254468b0c9de1ec0",
+      "bytes": 3755
+    },
+    {
+      "path": "main/browser-native-messaging.js",
+      "sha256": "7777d78363d9c2eb36db9d792572774fe3bd8a833f1ac5f4c8fa668d9a0e4b85",
+      "bytes": 3087
+    },
+    {
+      "path": "main/browser-cookie-import.js",
+      "sha256": "5232b0fcfa0838c463cf82f8fbeb5c6833823bdb389ccc7e5c7877eacd45ed99",
+      "bytes": 1718
+    },
+    {
+      "path": "main/native-browser-view.js",
+      "sha256": "f8b7158b8c6690bad59f6d303c3f5f07ee44caaa1d16bb65e89ff5019e978924",
+      "bytes": 5927
+    },
+    {
+      "path": "main/browser-web-store.js",
+      "sha256": "981c51b8fd5c36711d1410bd7ab00a98a93f211d17702bbd7379c41dace31de9",
+      "bytes": 3483
+    },
+    {
+      "path": "main/browser-bookmarks.js",
+      "sha256": "ec52ca7c9ba1eaa78fc05083ba3497adac56479172a5b4626bc1b0fef6ee7d5b",
+      "bytes": 3080
+    },
+    {
+      "path": "main/browser-bridge.js",
+      "sha256": "3678b3d60790cd9dd3e7d4f2d007eae27a8e4322e92c2362abfaf4849d148b04",
+      "bytes": 4292
+    },
+    {
+      "path": "main/browser-profile-discovery.js",
+      "sha256": "a2b628995c2fa32fe164290b97913d3e8a170d65ce94196ca09da2c65f4c5fb0",
+      "bytes": 5150
+    },
+    {
+      "path": "main/browser-bridge-error.js",
+      "sha256": "f3662b2562f5898ab091387b1564bedfc2b8f279314642c90c7015e0e1fff7e5",
+      "bytes": 1526
+    },
+    {
+      "path": "main/browser-passwords.js",
+      "sha256": "c3e3f772b6af39ae8996e62e52a6d50343894d4e05d842ae70d3ec20d8dee55d",
+      "bytes": 5937
+    },
+    {
+      "path": "main/browser-extensions.js",
+      "sha256": "0f4134bbc494d3ef766042635f14323c39e7e3c4cb806e13113c50a3f498544e",
+      "bytes": 7371
+    },
+    {
+      "path": "main/browser-import-access.js",
+      "sha256": "901bec44717cda9b085aac02dee3b90d508655130496a0fadf01650bd20b1823",
+      "bytes": 1556
+    },
+    {
+      "path": "main/browser-app-approval.cjs",
+      "sha256": "ac36625d05a25e335dca39bc9dedbb6d909602f0b9f341ae2fdd123bdc508099",
+      "bytes": 1721
+    },
+    {
+      "path": "main/browser-state.js",
+      "sha256": "6c4ec935b07cba805f36d4b787238c93a265ec130093e472cfcf72b66888c0ff",
+      "bytes": 1141
+    },
+    {
+      "path": "main/browser-dialogs.js",
+      "sha256": "76b3a72ed0ee1e66c0b56aeacd8f92aee07863629347c657a2feacaa2e3177d8",
+      "bytes": 2688
+    },
+    {
+      "path": "main/browser-extension-pack.js",
+      "sha256": "01c5b58c5e9bf1d215c8c939d3aac61677b76f1884ba8c23792fefaa90b48db2",
+      "bytes": 2746
+    },
+    {
+      "path": "main/browser-extension-package.js",
+      "sha256": "0dd551be224ecf66009b673ab43d7e2fa48114aeb07c33cf6c6e6c12664f1b05",
+      "bytes": 2680
+    },
+    {
+      "path": "main/browser-result-store.cjs",
+      "sha256": "08532c3fc457a2589a14863bbdaba0a7d21a47b39725f56c6c500b24b7f697e8",
+      "bytes": 8922
+    },
+    {
+      "path": "main/native-browser-session.js",
+      "sha256": "194fccc84460b0586db4b61cca24f743677cee71e592e6562cf22a9dc7bfe870",
+      "bytes": 1740
+    },
+    {
+      "path": "main/browser-mac-crypto.js",
+      "sha256": "0c7e77e09580d1f3f987a98360a0b1e02259e47c4549e7f9d7e740d0532dd992",
+      "bytes": 1809
+    },
+    {
+      "path": "main/browser-auto-fit.js",
+      "sha256": "6e3a945b6aa0c1da9600e1b1b67f10468ab5e669120835ffd22d4ec9e753a446",
+      "bytes": 1555
+    },
+    {
+      "path": "main/browser-bridge-mcp.js",
+      "sha256": "a64c7e234508edb652246669efc1a35be1df1b2d2659e6d56668664a5c1a5685",
+      "bytes": 5060
+    },
+    {
+      "path": "main/browser-profile-snapshot.js",
+      "sha256": "6e6714e4b209bfac5ba4143a367d6eaa4b83cf7706d21968129677d3ab0a15e6",
+      "bytes": 2885
+    },
+    {
+      "path": "main/browser-extension-profile.js",
+      "sha256": "deec035404c0a53922dd6203182d54c256c8209c9623a3a4b1b6adec3c673bd3",
+      "bytes": 4420
+    },
+    {
+      "path": "main/browser-partitions.js",
+      "sha256": "8316af5ab761a7a21594bccbc312feee876592a621915a041bb51db2be91de85",
+      "bytes": 886
+    },
+    {
+      "path": "main/browser-tab-completion.cjs",
+      "sha256": "95a92a3e636878ba785174d53f19780a407791781b70236b2b6d1b947e0a872b",
+      "bytes": 448
+    },
+    {
+      "path": "main/browser-capability-instructions.cjs",
+      "sha256": "5a3d3cd94fcbe0a4ee58c6443a7404d5b78a2ffd5068e2bd62c22d9f50ee171f",
+      "bytes": 7316
+    },
+    {
+      "path": "main/browser-native-host.js",
+      "sha256": "7a801e0d100c880fbca5613292929cfb8e90c04dec98156a9d7abcfe672bfbb7",
+      "bytes": 1198
+    },
+    {
+      "path": "main/native-application-menu/native-vendor/path-browserify-win32-DubphUXU.js",
+      "sha256": "10d5e5589dd91ce7b84528ddb909e3934cfa59121d48f21bf1ca2a2f56286006",
+      "bytes": 11592
+    },
+    {
+      "path": "main/native-image-preview/read-vendor/path-browserify-win32-DubphUXU.js",
+      "sha256": "10d5e5589dd91ce7b84528ddb909e3934cfa59121d48f21bf1ca2a2f56286006",
+      "bytes": 11592
+    },
+    {
+      "path": "main/browser-control/tool-definitions.js",
+      "sha256": "9f4ffd4ac32f1cb6749af2078d626a9bd498ace13e0db4512abbb74daf6271a6",
+      "bytes": 11536
+    },
+    {
+      "path": "main/browser-control/native-download-policy.cjs",
+      "sha256": "9b25d3c5e166de006dd87539ee4f2b37ae4f377abfae1484fa72d79ee903a94f",
+      "bytes": 1036
+    },
+    {
+      "path": "main/browser-control/complex-controls.mjs",
+      "sha256": "046ee9a31b3e75ca447356f07a2fa641769969a1f397f63d22b7f23625fd1d0f",
+      "bytes": 6068
+    },
+    {
+      "path": "main/browser-control/controller.mjs",
+      "sha256": "5bf53af468773cb11770918c09cf98c72d284b01b417c237bb0a754e7ec2eed5",
+      "bytes": 26018
+    },
+    {
+      "path": "main/browser-control/upload-directory.mjs",
+      "sha256": "61e178fb37429d28e9ef70543b2a7095945982461cf8fae951f9a7667300393e",
+      "bytes": 4791
+    },
+    {
+      "path": "main/browser-control/dialog-lifecycle.mjs",
+      "sha256": "bdcad1babfcc3cbb127a371b14a82675383c28fa1065826b9a8517b700f6aa4b",
+      "bytes": 2311
+    },
+    {
+      "path": "main/browser-control/file-selection.mjs",
+      "sha256": "1a0f8baa8d4e73c451b815bbe44108fb4a32d5ec8183771ce45505f94579bd9e",
+      "bytes": 572
+    },
+    {
+      "path": "main/browser-control/page-capabilities.mjs",
+      "sha256": "6ab239a5eee5b6a403d43ab6c84bb9ef0f482d186403cf48d8af8ea48bc97cf6",
+      "bytes": 13848
+    },
+    {
+      "path": "main/browser-control/native-recovery.js",
+      "sha256": "b4d6238889a828a844054727c5abbf49b29d527f60109a8542209a46646aad87",
+      "bytes": 2727
+    },
+    {
+      "path": "main/browser-control/bulu/browser-target-protocol.mjs",
+      "sha256": "fb8b65345d424ec548ffdc5a0db7bd65605ba799f059c547d4fdb5b94c4399f9",
+      "bytes": 9185
+    },
+    {
+      "path": "main/browser-control/bulu/browser-inspection.mjs",
+      "sha256": "f1ab646b2367b6bb835bb26fe94fce253633c8ac1ef2db7463a7f170c65c949c",
+      "bytes": 11823
+    },
+    {
+      "path": "main/browser-control/bulu/browser-network-recorder.mjs",
+      "sha256": "330700d230f58a232ee6831b2fc5bddfe440e3d9e72d952e796143fc26ee4ec0",
+      "bytes": 28833
+    },
+    {
+      "path": "main/browser-control/bulu/browser-pointer.mjs",
+      "sha256": "32bbad5f17fb81179fbbd6fa6e8e5fb240eae244a78c2a81db84c6acd011a9d4",
+      "bytes": 2434
+    },
+    {
+      "path": "main/browser-control/bulu/browser-scroll-controls.mjs",
+      "sha256": "122926a883f2a4c3aa29a057078a9ec9d58dfa7797df74421e61a5c3a9e13708",
+      "bytes": 2234
+    },
+    {
+      "path": "main/browser-control/bulu/browser-navigation-policy.mjs",
+      "sha256": "da31d7f57173b2e1933062f322bfdc8157ee109388b3e0eec84a4cda758b9cec",
+      "bytes": 3025
+    },
+    {
+      "path": "main/browser-control/bulu/browser-action-sequence.mjs",
+      "sha256": "8dbb1600292db85c9343e120ecd683408282311c2fa2022264e4db642a6f4ad1",
+      "bytes": 15079
+    },
+    {
+      "path": "main/browser-control/bulu/port-manifest.json",
+      "sha256": "6e97038cc4c91b2d82c816f6d187a82cd7cf3b419325704fd4d6b030043298d4",
+      "bytes": 4886
+    },
+    {
+      "path": "main/browser-control/bulu/browser-network-actions.mjs",
+      "sha256": "0d70a8e456971b9d8025ecf86dd1e62951e655b49b6589474798419bd44c056f",
+      "bytes": 5309
+    },
+    {
+      "path": "main/browser-control/bulu/browser-network-archive.mjs",
+      "sha256": "c0cde40e50223f162381915e0d50da1ccb18e14c9dc065dd50aa93b5f4ab11a5",
+      "bytes": 21297
+    },
+    {
+      "path": "main/browser-control/bulu/browser-host-state.mjs",
+      "sha256": "0808fc0ecfd324b74866a46d9ca3b39bdc6294f388d292a3a59ce285781594df",
+      "bytes": 4125
+    },
+    {
+      "path": "main/browser-control/bulu/browser-worker-network.mjs",
+      "sha256": "bf79065d7cc701cee770b8308340c33f1b59258f02e1f051b8d7b0ece8a554a4",
+      "bytes": 7670
+    },
+    {
+      "path": "main/browser-control/bulu/browser-page-observation.mjs",
+      "sha256": "d636f356f010309f3457dd9e7eff551702f9eea1bbbbd11024eadfd46f358c0a",
+      "bytes": 25245
+    },
+    {
+      "path": "preload/browser-passwords.js",
+      "sha256": "29ab5d714be67d7037c2e69105610909e92a1c0e06a5b016aa13e794408ceced",
+      "bytes": 2309
+    },
+    {
+      "path": "preload/browser-dialogs.js",
+      "sha256": "6e2d35a106a2d2b6d84eb9fc5c2a747919e337b4927edd45f50d0b3763b6e0ce",
+      "bytes": 712
+    }
+  ],
+  "rights": "User-authorized Eva source migration; original notices and bulu/port-manifest.json retained. Playwright Apache-2.0 LICENSE/NOTICE packaged; no submodules used.",
+  "dependency": {
+    "playwright-core": "1.59.1"
+  }
+}

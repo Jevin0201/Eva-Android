@@ -1,0 +1,15 @@
+{
+  "archive": "C:/Program Files/WindowsApps/OpenAI.Codex_26.1029.7803.0_x64__2p2nqsd0c76g0/app/resources/app.asar",
+  "member": "webview/assets/async/acbec13dc49f.css",
+  "memberSHA256": "29e6ee9804aa19d26550fd047523311ac1280dc290e54854c1c9a7560985361d",
+  "rangeUnit": "UTF-16 code units",
+  "start": 0,
+  "end": 1768,
+  "cssSHA256": "87ea3bc8a88c37777595da9aaedc78e1aac666d4bb45d8dfa83eaa361a452457",
+  "engineVersion": "PDF.js 5.4.296",
+  "hostExport": "Jr",
+  "limitations": [
+    "Retained PDF annotation/text-layer styles only; host toolbar is Eva-owned.",
+    "Original engine source body unchanged; appended named export only."
+  ]
+}

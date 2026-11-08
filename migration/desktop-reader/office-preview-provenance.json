@@ -1,0 +1,40 @@
+{
+  "implementation": "Eva-owned local read-only adapter; not an extracted official artifact viewer",
+  "reference": {
+    "archive": "C:/Program Files/WindowsApps/OpenAI.Codex_26.1029.7803.0_x64__2p2nqsd0c76g0/app/resources/app.asar",
+    "archiveSHA256": "77ed4ddc5b388ac8b29f5035f9c98f982b095df55aad6fa6c27bb80d763b9691",
+    "member": "webview/assets/async/140362.c2b62628d4.js",
+    "memberSHA256": "be658f3c5cb7a5222ef4221331cae86038730eeecd9d5bdc3a0ce99912ae8388",
+    "reaReference": "ev_f811c622faef7ec2ddc3cef629bb57cd3b90f8eb7d2156779ac727125c2f89f6"
+  },
+  "implemented": [
+    "XLSX cell values, cached formulas, common number formats, base styles, widths, heights and merges",
+    "CSV/TSV UTF-8 RFC-style quoted data",
+    "PPTX ordered slide text, embedded bitmaps, background and common direct shapes",
+    "Sheet/slide navigation, zoom, responsive slide fit and theme-aware reader toolbar",
+    "Local content search across worksheets and slides; result counts represent cells/text boxes",
+    "Ctrl/Cmd+F, previous/next and Enter/Shift+Enter search navigation",
+    "PPTX thumbnail navigation reuses the same element renderer, with arrow/Home/End keyboard navigation"
+  ],
+  "limits": {
+    "compressedBytes": 33554432,
+    "inflatedBytes": 134217728,
+    "zipEntries": 10000,
+    "cells": 50000,
+    "rows": 5000,
+    "columns": 200,
+    "slides": 300,
+    "imageBytes": 16777216
+  },
+  "limitations": [
+    "Read-only: no Office editing or official artifact model import",
+    "Complex Excel custom formats, charts, conditional formats and comments are not complete",
+    "PPTX masters, group transforms, charts, gradient fills, complex shapes and animations are not complete",
+    "CSV/TSV require UTF-8; incompatible input returns an explicit encoding error",
+    "Official PrimaryRuntime plugins contain local and connected artifact tooling; this adapter does not claim those tools are unavailable, only that they are not yet integrated"
+  ],
+  "outputs": {
+    "src/main/office-preview.js": "94037d5c0e7ed6d703afcd0752ed7d426f655a81b6ab757f30658c3849f3493f",
+    "src/renderer/office-preview.js": "9af8e0afdcce52c4f6ba69009d464876badf5f7d56145d1df7c26f05dc7b1f1c"
+  }
+}

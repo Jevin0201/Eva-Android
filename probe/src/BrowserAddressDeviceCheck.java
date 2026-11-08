@@ -1,0 +1,14 @@
+package ai.eva.android.probe;
+import android.app.*;import android.content.*;import android.os.*;import java.net.*;import java.io.*;import java.util.concurrent.*;
+/** Uses the real address bar and an HTTP server; no model, account, or user data. */
+public final class BrowserAddressDeviceCheck extends Instrumentation {
+ public void onCreate(Bundle args){super.onCreate(args);start();}
+ public void onStart(){Bundle out=new Bundle();ServerSocket server=null;BrowserWindow b=null;try{
+  if(!android.security.NetworkSecurityPolicy.getInstance().isCleartextTrafficPermitted("example.com"))throw new Exception("HTTP still blocked by Android policy");
+  server=new ServerSocket(0,8,InetAddress.getByName("127.0.0.1"));final ServerSocket fixture=server;new Thread(()->{while(!fixture.isClosed())try(Socket client=fixture.accept()){InputStream in=client.getInputStream();DesktopBrowserHost.line(in);while(!DesktopBrowserHost.line(in).isEmpty()){}byte[] body="<h1>EVA_HTTP_ADDRESS_PASS</h1>".getBytes("UTF-8");client.getOutputStream().write(("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: "+body.length+"\r\nConnection: close\r\n\r\n").getBytes("UTF-8"));client.getOutputStream().write(body);}catch(Exception ignored){}},"address-http-fixture").start();
+  ShellActivity shell=(ShellActivity)startActivitySync(new Intent(getTargetContext(),ShellActivity.class).putExtra("page","browser").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));runOnMainSync(()->shell.showBrowser(new Intent()));b=BrowserWindow.live;final BrowserWindow browser=b;String address="127.0.0.1:"+server.getLocalPort()+"/address";
+  runOnMainSync(()->{browser.browserUrl.setText(address);browser.openAddress();});long deadline=SystemClock.elapsedRealtime()+12000;boolean loaded=false;while(SystemClock.elapsedRealtime()<deadline){CompletableFuture<String> result=new CompletableFuture<>();runOnMainSync(()->browser.browser.evaluateJavascript("document.body&&document.body.innerText.includes('EVA_HTTP_ADDRESS_PASS')",result::complete));if("true".equals(result.get(3,TimeUnit.SECONDS))){loaded=true;break;}Thread.sleep(100);}if(!loaded)throw new Exception("HTTP page did not load through address bar");
+  runOnMainSync(()->{browser.pauseBrowser();browser.resumeBrowser();});String saved=getTargetContext().getSharedPreferences("eva-browser",0).getString("lastUrl","");if(!saved.startsWith("http://127.0.0.1:"))throw new Exception("HTTP page was not persisted");if(!"https://example.com/path".equals(SettingsActivity.validateUrl("example.com/path")))throw new Exception("Bare domain not supported");
+  out.putString("result","PASS actual address bar accepts bare localhost, HTTP page renders and persists, bare domain normalized, non-loopback HTTP allowed by Android policy");finish(-1,out);
+ }catch(Throwable error){out.putString("error",error.toString());finish(0,out);}finally{if(server!=null)try{server.close();}catch(Exception ignored){}}}
+}

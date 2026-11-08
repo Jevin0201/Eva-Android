@@ -10,6 +10,7 @@ import xml.etree.ElementTree as ET
 parser = argparse.ArgumentParser()
 parser.add_argument('--package', default='ai.eva.android.bootstrapcheck')
 parser.add_argument('--isolated-root', action='store_true')
+parser.add_argument('--office', action='store_true', help='Also verify explicitly installed office components; core-only by default')
 args = parser.parse_args()
 adb = os.environ.get('EVA_ADB', os.path.expandvars(r'%LOCALAPPDATA%\Android\Sdk\platform-tools\adb.exe'))
 pkg = args.package
@@ -36,10 +37,13 @@ libc=ctypes.CDLL(None, use_errno=True)
 segment=libc.shmget(0,4096,0o1600)
 assert segment >= 0, ('sysvipc', ctypes.get_errno())
 assert libc.shmctl(segment,0,0) == 0
-office=runpy.run_path('/root/eva-office.py')
-assert office['status']()['ready']
-result=office['selftest']()
-assert result['passed']
+office_formats=0
+if __CHECK_OFFICE__:
+ office=runpy.run_path('/root/eva-office.py')
+ assert office['status']()['ready']
+ result=office['selftest']()
+ assert result['passed']
+ office_formats=4
 testhome=pathlib.Path(tempfile.mkdtemp(prefix='bootstrap-core-',dir='/tmp'))
 environment={**os.environ, 'HOME':'/root', 'CODEX_HOME':str(testhome), 'PATH':'/root/eva-kernel/bin:/root/eva-kernel/codex-path:/usr/bin:/bin:/usr/sbin:/sbin'}
 child=subprocess.Popen(['/root/eva-kernel/bin/codex','app-server','-c','features.apps=false','-c','features.plugins=false','-c','analytics.enabled=false'],env=environment,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.DEVNULL,text=True,bufsize=1)
@@ -68,8 +72,8 @@ finally:
  try:child.wait(timeout=5)
  except subprocess.TimeoutExpired:child.kill();child.wait()
  shutil.rmtree(testhome)
-print(json.dumps({'passed':True,'nodeExecution':42,'pythonSslSqlite':True,'sysvipc':True,'officeFormats':4,'kernelInitialize':True,'ephemeralThread':True,'noImportedAccount':True},ensure_ascii=False),flush=True)
-'''
+print(json.dumps({'passed':True,'nodeExecution':42,'pythonSslSqlite':True,'sysvipc':True,'officeFormats':office_formats,'kernelInitialize':True,'ephemeralThread':True,'noImportedAccount':True},ensure_ascii=False),flush=True)
+'''.replace('__CHECK_OFFICE__', repr(args.office))
 source = out / 'acceptance.py'
 source.write_text(script, encoding='utf-8')
 remote = '/data/local/tmp/eva-bootstrap-build/acceptance.py'

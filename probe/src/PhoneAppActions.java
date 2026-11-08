@@ -51,7 +51,7 @@ final class PhoneAppActions {
  }
  static List<App> matches(List<App> apps,String name){
   LinkedHashMap<String,App> exact=new LinkedHashMap<>();
-  for(App app:apps)if(app.label.equals(name))exact.putIfAbsent(app.packageName,app);
+  for(App app:apps)if(app.label.equals(name)||app.packageName.equals(name))exact.putIfAbsent(app.packageName,app);
   return exact.isEmpty()?filter(apps,name,true):new ArrayList<>(exact.values());
  }
  static JSONArray json(List<App> apps)throws Exception{

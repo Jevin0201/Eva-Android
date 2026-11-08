@@ -15,7 +15,8 @@ public final class ProviderHistoryProjection {
  static final String UUID="(?i)[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
  static final class Source {File file;String id,provider;JSONObject meta;long limit,ordinalLimit,size,modified;boolean prefix;}
  static final class Work {
-  String target;boolean explicit;long bytes,ordinal;int records,removed,checkpointRemoved;
+  String target;boolean explicit,portable;long bytes,ordinal;int records,removed,checkpointRemoved,normalizedItems,rebuiltCheckpoints;
+  JSONArray replayHistory=new JSONArray();
   final Set<String> visiting=new HashSet<>();final List<Source> sources=new ArrayList<>();
   final Map<String,String> origin=new HashMap<>();final Map<String,Boolean> activeReasoning=new HashMap<>();
   final JSONArray audit=new JSONArray();final Map<String,File> index=new HashMap<>();
@@ -41,9 +42,11 @@ public final class ProviderHistoryProjection {
   JSONArray oldTools=current.meta.getJSONObject("payload").optJSONArray("dynamic_tools");
   JSONArray newTools=tools==null?oldTools:upgradeTools(oldTools,tools);
   boolean toolsChanged=tools!=null&&!sameJson(oldTools,newTools);
-  if(!explicit){boolean conflicting=false;for(Source source:work.sources)if(!source.provider.isEmpty()&&!source.provider.equals(provider)){conflicting=true;break;}
-   if(!conflicting&&!toolsChanged)return new JSONObject().put("needed",false).put("reason","same-provider-lineage");
-  }
+  boolean conflicting=false;for(Source source:work.sources)if(!source.provider.isEmpty()&&!source.provider.equals(provider)){conflicting=true;break;}
+  work.portable=explicit||conflicting;
+  // Old same-provider children may already contain foreign item IDs in a checkpoint.
+  // Only copies produced by this wire projection are safe to fast-path.
+  // Inspect even an earlier compatible copy: providers may append malformed IDs later.
   if(Files.isSymbolicLink(output.toPath()))throw new IOException("工作副本目录不能使用链接");
   output=output.getCanonicalFile();
   if(!output.isDirectory()&&!output.mkdirs())throw new IOException("无法创建提供商工作副本目录");
@@ -51,16 +54,16 @@ public final class ProviderHistoryProjection {
   File temp=new File(output,"."+name+".tmp"),file=new File(output,name),auditFile=new File(output,name+".audit.json");
   if(!temp.createNewFile())throw new IOException("工作副本名称冲突");
   try(FileOutputStream stream=new FileOutputStream(temp);BufferedWriter writer=new BufferedWriter(new OutputStreamWriter(stream,StandardCharsets.UTF_8))){
-   JSONObject meta=new JSONObject(current.meta.toString());JSONObject payload=meta.getJSONObject("payload");payload.put("id",copyId).put("model_provider",provider);payload.remove("history_base");
+   JSONObject meta=new JSONObject(current.meta.toString());JSONObject payload=meta.getJSONObject("payload");payload.put("id",copyId).put("model_provider",provider).put("eva_history_wire_version",2);payload.remove("history_base");
    if(toolsChanged)payload.put("dynamic_tools",newTools);
    emit(work,writer,meta);
    for(Source source:work.sources)process(work,source,writer);
    writer.flush();stream.getFD().sync();
   }catch(Exception error){temp.delete();throw error;}
-  int active=0;for(boolean conflicting:work.activeReasoning.values())if(conflicting)active++;
+  int active=0;for(boolean privateItem:work.activeReasoning.values())if(privateItem)active++;
   JSONObject audit=new JSONObject().put("format","eva-provider-history-projection-v1").put("sourceThreadId",id).put("sourceProvider",current.provider).put("targetProvider",provider).put("explicitCrossProvider",explicit).put("projectedThreadId",copyId).put("sources",work.audit).put("removedReasoningItems",work.removed).put("removedCheckpointReasoningItems",work.checkpointRemoved).put("activeConflictingReasoningItems",active).put("sourceFilesUnchanged",true);
-  audit.put("nativeToolsUpdated",toolsChanged);
-  if(active==0&&!toolsChanged){temp.delete();return new JSONObject().put("needed",false).put("audit",audit);}
+  audit.put("nativeToolsUpdated",toolsChanged).put("normalizedWireItems",work.normalizedItems).put("rebuiltPrivateCheckpoints",work.rebuiltCheckpoints).put("preservedToolCallIds",true);
+  if(active==0&&!toolsChanged&&work.normalizedItems==0){temp.delete();return new JSONObject().put("needed",false).put("reason","same-provider-lineage").put("audit",audit);}
   audit.put("projectedSha256",hash(temp,temp.length())).put("projectedBytes",temp.length());
   File auditTemp=new File(output,"."+name+".audit.tmp");
   try{
@@ -144,6 +147,37 @@ public final class ProviderHistoryProjection {
  static boolean conflict(Work w,String origin){return !origin.isEmpty()?!origin.equals(w.target):w.explicit;}
  static String key(JSONObject item,Source s,long ordinal,int n){String id=item.optString("id");return id.isEmpty()?s.id+":"+ordinal+":"+n:id;}
  static void track(Work w,JSONObject item,Source s,long ordinal,int n){if(!"reasoning".equals(item.optString("type")))return;String key=key(item,s,ordinal,n),origin=w.origin.getOrDefault(key,s.provider);w.origin.put(key,origin);w.activeReasoning.put(key,conflict(w,origin));}
+ // Response item IDs belong to an upstream store; call_id pairs tools locally.
+ // Never recursively strip IDs from arguments, tool outputs, attachments or user data.
+ static void normalizeWireItem(Work w,JSONObject item)throws Exception{
+  String type=item.optString("type"),id=item.optString("id"),prefix=null;
+  if(type.equals("message"))prefix="msg_";
+  else if(type.equals("function_call"))prefix="fc_";
+  else if(type.equals("custom_tool_call"))prefix="ctc_";
+  else if(type.equals("function_call_output")||type.equals("custom_tool_call_output"))prefix="output";
+  if(prefix!=null&&!id.isEmpty()&&(w.portable||(prefix.equals("output")?id.startsWith("item_"):!id.startsWith(prefix)))){item.remove("id");w.normalizedItems++;}
+ }
+ static boolean replayable(JSONObject item){String type=item.optString("type");return type.equals("message")||type.equals("function_call")||type.equals("function_call_output")||type.equals("custom_tool_call")||type.equals("custom_tool_call_output")||type.equals("additional_tools");}
+ static void checkpoint(Work w,Source source,JSONObject payload)throws Exception{
+  w.activeReasoning.clear();JSONArray history=payload.optJSONArray("replacement_history");if(history==null)return;
+  JSONArray metadata=payload.optJSONArray("replacement_history_metadata"),kept=new JSONArray(),keptMetadata=new JSONArray();boolean privateSummary=false;
+  if(metadata!=null&&metadata.length()!=history.length())throw new IOException("压缩历史与来源元数据数量不一致，原历史已保留");
+  for(int n=0;n<history.length();n++){
+   JSONObject item=history.getJSONObject(n);track(w,item,source,0,n);
+   if(item.optString("type").equals("compaction")&&conflict(w,source.provider)){privateSummary=true;w.checkpointRemoved++;continue;}
+   if(item.optString("type").equals("reasoning")&&conflict(w,w.origin.get(key(item,source,0,n)))){w.checkpointRemoved++;continue;}
+   normalizeWireItem(w,item);kept.put(item);if(metadata!=null)keptMetadata.put(metadata.get(n));
+  }
+  if(privateSummary){
+   // A foreign opaque summary cannot be decoded. Reconstruct its input from the
+   // preserved rollout instead of silently dropping the user's earlier work.
+   if(w.replayHistory.length()==0)throw new IOException("加密压缩摘要缺少可重建的原始上下文，原对话已保留，未发送不完整历史");
+   JSONArray rebuilt=new JSONArray(w.replayHistory.toString());Set<String> existing=new HashSet<>();for(int n=0;n<rebuilt.length();n++)existing.add(rebuilt.getJSONObject(n).toString());
+   for(int n=0;n<kept.length();n++){JSONObject item=kept.getJSONObject(n);if(replayable(item)&&existing.add(item.toString()))rebuilt.put(item);}
+   kept=rebuilt;payload.remove("replacement_history_metadata");payload.remove("compaction_response_id");w.normalizedItems++;w.rebuiltCheckpoints++;
+  }else if(metadata!=null)payload.put("replacement_history_metadata",keptMetadata);
+  payload.put("replacement_history",kept);w.replayHistory=new JSONArray();for(int n=0;n<kept.length();n++)if(replayable(kept.getJSONObject(n)))w.replayHistory.put(new JSONObject(kept.getJSONObject(n).toString()));
+ }
  static void process(Work w,Source s,BufferedWriter out)throws Exception{
   String originalHash=hash(s.file,s.size);MessageDigest prefix=MessageDigest.getInstance("SHA-256");long consumed=0,records=0,lastOrdinal=-1;
   try(InputStream in=new BufferedInputStream(new FileInputStream(s.file),65536)){
@@ -151,8 +185,8 @@ public final class ProviderHistoryProjection {
     if(ordinal<0||ordinal<=lastOrdinal)throw new IOException("历史记录顺序无效");lastOrdinal=ordinal;records++;
     if("session_meta".equals(row.optString("type"))){if(records!=1)throw new IOException("历史重复元数据");continue;}
     JSONObject payload=row.optJSONObject("payload");boolean remove=false;
-    if("response_item".equals(row.optString("type"))&&payload!=null){track(w,payload,s,ordinal,0);if("reasoning".equals(payload.optString("type"))&&conflict(w,w.origin.get(key(payload,s,ordinal,0)))){remove=true;w.removed++;}}
-    if("compacted".equals(row.optString("type"))){w.activeReasoning.clear();JSONArray history=payload==null?null:payload.optJSONArray("replacement_history");if(history!=null){JSONArray kept=new JSONArray();for(int n=0;n<history.length();n++){JSONObject item=history.getJSONObject(n);track(w,item,s,ordinal,n);if("reasoning".equals(item.optString("type"))&&conflict(w,w.origin.get(key(item,s,ordinal,n))))w.checkpointRemoved++;else kept.put(item);}payload.put("replacement_history",kept);}}
+    if("response_item".equals(row.optString("type"))&&payload!=null){track(w,payload,s,ordinal,0);if(("reasoning".equals(payload.optString("type"))&&conflict(w,w.origin.get(key(payload,s,ordinal,0))))||("compaction".equals(payload.optString("type"))&&conflict(w,s.provider))){remove=true;w.removed++;}else{normalizeWireItem(w,payload);if(replayable(payload))w.replayHistory.put(new JSONObject(payload.toString()));}}
+    if("compacted".equals(row.optString("type"))&&payload!=null)checkpoint(w,s,payload);
     if(!remove)emit(w,out,row);
    }
   }

@@ -4,6 +4,16 @@ Without the original keystore this emits an unsigned candidate and never install
 import argparse,hashlib,json,os,pathlib,shutil,subprocess,zipfile
 p=argparse.ArgumentParser();p.add_argument('--jdk',required=True);p.add_argument('--sdk',required=True);p.add_argument('--base-apk',required=True);p.add_argument('--keystore');p.add_argument('--package');p.add_argument('--release',action='store_true');p.add_argument('--keystore-pass-file');p.add_argument('--signing-lineage');a=p.parse_args()
 root=pathlib.Path(__file__).resolve().parents[1];os.chdir(root);jdk=pathlib.Path(a.jdk).resolve();sdk=pathlib.Path(a.sdk).resolve();bt=next(sdk.glob('*/lib/apksigner.jar')).parent.parent;platform=next(sdk.glob('*/android.jar'));out=root/('probe/build/macos-'+a.package if a.package else ('probe/build/macos-release' if a.release else 'probe/build/macos'));out.mkdir(parents=True,exist_ok=True)
+# Serialize builds sharing this checkout, including runs started by another chat.
+import fcntl
+build_lock=(root/'probe/build/.macos-build.lock').open('a')
+fcntl.flock(build_lock,fcntl.LOCK_EX)
+def source_manifest():
+ paths=[root/'probe/AndroidManifest.xml',root/'LICENSE.md',root/'probe/voice-keywords.txt',root/'research/runtime-provenance.json',pathlib.Path(__file__).resolve()]
+ for folder in ['probe/src','probe/third_party','probe/assets','probe/res','probe/libs']:
+  paths.extend(path for path in (root/folder).rglob('*') if path.is_file())
+ return {str(path.relative_to(root)):hashlib.sha256(path.read_bytes()).hexdigest() for path in sorted(paths)}
+source_before=source_manifest()
 env=dict(os.environ,JAVA_HOME=str(jdk));env['PATH']=str(jdk/'bin')+os.pathsep+env.get('PATH','')
 def run(*cmd):subprocess.run(list(map(str,cmd)),env=env,check=True)
 for name in ['aapt2','zipalign','apksigner','d8']:(bt/name).chmod(0o755)
@@ -52,6 +62,9 @@ with zipfile.ZipFile(out/'un-aligned.apk','a') as z:
  z.write(out/'classes.dex','classes.dex')
  for name,body in native.items():z.writestr(name,body)
 run(bt/'zipalign','-f','4',out/'un-aligned.apk',out/'eva-upgrade-unsigned.apk')
+source_after=source_manifest()
+if source_before!=source_after:raise RuntimeError('Source changed during build; the candidate has not been signed. Rerun after the concurrent edits finish.')
+(out/'build-source-manifest.json').write_text(json.dumps(source_after,ensure_ascii=False,indent=2),encoding='utf-8')
 if a.keystore:
  if a.release and not a.keystore_pass_file:raise RuntimeError('Release signing requires --keystore-pass-file')
  password='file:'+str(pathlib.Path(a.keystore_pass_file).resolve()) if a.keystore_pass_file else 'pass:android'

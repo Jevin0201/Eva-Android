@@ -38,7 +38,21 @@ final class PhoneRouteStore {
         catch (Exception error) { if (output != null) file.failWrite(output); throw error; }
     }
     JSONObject get(String id) throws Exception { synchronized (LOCK) { return read(id); } }
-    JSONArray list(String goal) throws Exception {
+    static JSONObject calibration(JSONObject route, long installedVersion) throws Exception {
+        boolean bound = !route.optString("package").isEmpty() && route.optLong("appVersionCode", -1) >= 0;
+        boolean stale = !bound || route.optLong("appVersionCode", -1) != installedVersion;
+        String state;
+        if (route.optBoolean("disabled")) state = "disabled";
+        else if (!bound) state = "needs_relearning";
+        else if (installedVersion < 0) state = "app_unavailable";
+        else if (stale) state = "needs_relearning";
+        else state = route.optInt("successes") > 0 ? "verified" : route.optString("provenance").equals("observed-safe-navigation") ? "observed" : "candidate";
+        return new JSONObject().put("state", state).put("verified", state.equals("verified"))
+            .put("needsRelearning", state.equals("needs_relearning") || state.equals("disabled") || state.equals("app_unavailable"))
+            .put("boundVersionCode", route.optLong("appVersionCode", -1)).put("installedVersionCode", installedVersion);
+    }
+    JSONArray list(String goal) throws Exception { return list(goal, ""); }
+    JSONArray list(String goal, String app) throws Exception {
         synchronized (LOCK) {
             JSONArray rows = new JSONArray(); File[] files = directory.listFiles();
             if (files == null) return rows;
@@ -47,6 +61,8 @@ final class PhoneRouteStore {
                 try {
                     JSONObject route = read(name.substring(0, 36));
                     if (!goal.isEmpty() && !route.getString("goal").equals(goal)) continue;
+                    if (!app.isEmpty() && !app.equals(route.optString("package", inferPackage(route.getJSONArray("steps"))))) continue;
+                    if (!route.has("package")) route.put("package", inferPackage(route.getJSONArray("steps"))).put("needsRelearning", true);
                     route.remove("steps"); rows.put(route);
                 } catch (Exception ignored) { /* A damaged entry does not hide other routes. */ }
             }
@@ -54,14 +70,98 @@ final class PhoneRouteStore {
         }
     }
     JSONObject create(String goal, String name, JSONArray steps, String sourceTurn) throws Exception {
+        return create(goal, name, steps, sourceTurn, new JSONObject());
+    }
+    JSONObject create(String goal, String name, JSONArray steps, String sourceTurn, JSONObject binding) throws Exception {
+        return create(goal, name, steps, sourceTurn, binding, new JSONObject());
+    }
+    private JSONObject create(String goal, String name, JSONArray steps, String sourceTurn, JSONObject binding, JSONObject metadata) throws Exception {
         synchronized (LOCK) {
             if (goal.trim().isEmpty() || goal.length() > 2000 || name.trim().isEmpty() || name.length() > 100) throw new IOException("路线名称或目标无效");
+            steps = new JSONArray(steps.toString());
             validateSteps(steps);
             JSONObject route = new JSONObject().put("id", UUID.randomUUID().toString()).put("name", name).put("goal", goal)
                 .put("steps", new JSONArray(steps.toString())).put("sourceTurn", sourceTurn).put("createdAt", System.currentTimeMillis())
                 .put("successes", 0).put("consecutiveMisses", 0).put("missStep", -1).put("disabled", false);
+            if (!binding.optString("package").isEmpty()) {
+                route.put("package", binding.getString("package")).put("appVersion", binding.optString("version"))
+                    .put("appVersionCode", binding.optLong("versionCode", -1)).put("startTarget", firstTarget(steps));
+                for (int i = 0; i < steps.length(); i++) {
+                    JSONObject step = steps.getJSONObject(i);
+                    if (step.has("target") && !step.has("before_package")) step.put("before_package", binding.getString("package"));
+                }
+                route.put("steps", new JSONArray(steps.toString()));
+            }
+            java.util.Iterator<String> metadataKeys = metadata.keys();
+            while (metadataKeys.hasNext()) { String key = metadataKeys.next(); route.put(key, metadata.get(key)); }
             write(route); return route;
         }
+    }
+    private static String canonical(Object value) throws Exception {
+        if (value instanceof JSONObject) {
+            JSONObject object = (JSONObject)value;
+            java.util.TreeSet<String> keys = new java.util.TreeSet<>();
+            java.util.Iterator<String> iterator = object.keys();
+            while (iterator.hasNext()) keys.add(iterator.next());
+            StringBuilder result = new StringBuilder("{");
+            for (String key : keys) { if (result.length() > 1) result.append(','); result.append(JSONObject.quote(key)).append(':').append(canonical(object.get(key))); }
+            return result.append('}').toString();
+        }
+        if (value instanceof JSONArray) {
+            JSONArray array = (JSONArray)value; StringBuilder result = new StringBuilder("[");
+            for (int i = 0; i < array.length(); i++) { if (i > 0) result.append(','); result.append(canonical(array.get(i))); }
+            return result.append(']').toString();
+        }
+        return value instanceof String ? JSONObject.quote((String)value) : String.valueOf(value);
+    }
+    JSONObject observe(JSONArray steps, JSONObject binding, JSONObject endState, String sourceTurn) throws Exception {
+        synchronized (LOCK) {
+            validateSteps(steps);
+            JSONObject identity = new JSONObject().put("steps", steps).put("binding", binding).put("endState", endState);
+            byte[] digest = java.security.MessageDigest.getInstance("SHA-256").digest(canonical(identity).getBytes(StandardCharsets.UTF_8));
+            StringBuilder fingerprint = new StringBuilder();
+            for (byte value : digest) fingerprint.append(String.format(java.util.Locale.ROOT, "%02x", value & 255));
+            JSONArray routes = list(""); int appCount = 0, automaticCount = 0;
+            for (int i = 0; i < routes.length(); i++) {
+                JSONObject summary = routes.getJSONObject(i);
+                if (!summary.optString("provenance").equals("observed-safe-navigation")) continue;
+                automaticCount++;
+                if (summary.optString("package").equals(binding.getString("package"))) appCount++;
+                if (!summary.optString("fingerprint").equals(fingerprint.toString())) continue;
+                JSONObject route = read(summary.getString("id"));
+                route.put("observations", route.optInt("observations") + 1).put("lastObservedAt", System.currentTimeMillis()).put("lastSourceTurn", sourceTurn);
+                write(route); return route;
+            }
+            if (automaticCount >= 512 || appCount >= 128) throw new IOException("自动流程记录已达容量，已有流程保留；请整理该软件的旧流程后继续学习");
+            JSONArray labels = new JSONArray();
+            for (int i = 0; i < steps.length(); i++) {
+                JSONObject step = steps.getJSONObject(i), target = step.optJSONObject("target");
+                labels.put(target == null ? step.getString("action") : target.optString("text", target.optString("description")));
+            }
+            String name = "自动导航 · " + labels.join(" → ").replace("\"", "");
+            if (name.length() > 100) name = name.substring(0, 100);
+            JSONObject metadata = new JSONObject().put("provenance", "observed-safe-navigation").put("fingerprint", fingerprint.toString()).put("endState", endState)
+                .put("navigation", labels).put("observations", 1).put("lastObservedAt", System.currentTimeMillis());
+            return create("observed-navigation:" + binding.getString("package") + ":" + fingerprint, name, steps, sourceTurn, binding, metadata);
+        }
+    }
+    static String inferPackage(JSONArray steps) {
+        String app = "";
+        for (int i = 0; i < steps.length(); i++) {
+            JSONObject step = steps.optJSONObject(i); if (step == null) continue;
+            String value = step.optString("package", step.optString("before_package"));
+            if (value.isEmpty()) continue;
+            if (!app.isEmpty() && !app.equals(value)) return "";
+            app = value;
+        }
+        return app;
+    }
+    static JSONObject firstTarget(JSONArray steps) {
+        for (int i = 0; i < steps.length(); i++) {
+            JSONObject step = steps.optJSONObject(i);
+            if (step != null && step.optJSONObject("target") != null) return step.optJSONObject("target");
+        }
+        return new JSONObject();
     }
     static void validateSteps(JSONArray steps) throws Exception {
         if (steps.length() < 1 || steps.length() > 20) throw new IOException("路线需要 1 至 20 步");
@@ -89,7 +189,7 @@ final class PhoneRouteStore {
     JSONObject success(String id) throws Exception {
         synchronized (LOCK) {
             JSONObject route = read(id);
-            route.put("successes", route.optInt("successes") + 1).put("consecutiveMisses", 0).put("missStep", -1).put("lastUsedAt", System.currentTimeMillis());
+            route.put("successes", route.optInt("successes") + 1).put("consecutiveMisses", 0).put("missStep", -1).put("disabled", false).put("lastUsedAt", System.currentTimeMillis());
             write(route); return route;
         }
     }

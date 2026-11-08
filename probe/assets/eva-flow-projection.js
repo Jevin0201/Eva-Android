@@ -58,10 +58,10 @@
  function safeItem(i,text){
   if(i.type==='reasoning')return {id:i.id,type:i.type,status:i.status,summary:(Array.isArray(i.summary)?i.summary:[]).map(s=>typeof s==='string'?s:s?.text||'').filter(s=>s.trim())};
   if(i.type==='agentMessage')return {...i,text:text(i)};
-  if(i.type==='dynamicToolCall'&&['eva_phone','eva_phone_steps','eva_phone_route','eva_wechat','eva_browser'].includes(i.tool)){
+  if(i.type==='dynamicToolCall'&&['eva_phone','eva_phone_steps','eva_phone_route','eva_wechat','eva_browser','eva_components'].includes(i.tool)){
    const count=Array.isArray(i.arguments?.steps)?i.arguments.steps.length:0;
-   const operation=i.tool==='eva_phone_steps'?(count?`${count} 个步骤`:'多步操作'):(i.arguments?.action||'');
-   const title=i.tool==='eva_browser'?'浏览器操作':i.tool==='eva_wechat'?'微信操作':i.tool==='eva_phone_route'?'手机路线':'手机操作';
+   const operation=i.tool==='eva_components'?(i.arguments?.action==='ensure'?'按需安装':'检查状态'):i.tool==='eva_phone_steps'?(count?`${count} 个步骤`:'多步操作'):(i.arguments?.action||'');
+   const title=i.tool==='eva_components'?'能力与组件':i.tool==='eva_browser'?'浏览器操作':i.tool==='eva_wechat'?'微信操作':i.tool==='eva_phone_route'?'手机路线':'手机操作';
    return {...i,command:title+(operation?' · '+operation:''),output:(i.contentItems||[]).filter(x=>x.type==='inputText').map(x=>x.text).join('\n')||i.error||i.output};
   }
   return i;
@@ -100,6 +100,7 @@
   try{for(const i of turn.items){if(activityDisposition(i)==='hidden')continue;if(user(i)){flush();blocks.push({kind:'user',item:i});}else segment.push(i);}flush();return {...turn,mobileBlocks:blocks};}finally{nativeTranscript.endRender(scope);}
  }
  function registerPhoneTools(transcript=root.nativeTranscript){
+  transcript.registerDynamicTool('','eva_components',{title:'能力与组件',invoking:'正在准备所需组件',invoked:'检查了所需组件',failed:'组件尚未就绪'});
   transcript.registerDynamicTool('','eva_phone',{title:'手机控制',invoking:'正在操作手机',invoked:'操作了手机',failed:'手机操作失败'});
   transcript.registerDynamicTool('','eva_phone_steps',{title:'手机多步操作',invoking:'正在执行手机步骤',invoked:'执行了手机步骤',failed:'手机步骤未完成'});
   transcript.registerDynamicTool('','eva_phone_route',{title:'手机路线',invoking:'正在处理手机路线',invoked:'处理了手机路线',failed:'手机路线未完成'});

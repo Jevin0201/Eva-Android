@@ -128,6 +128,165 @@ def convert(source, destination, output_format):
     (destination / 'conversion-report.json').write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')
     return report
 
+def preview_sheets(source):
+    """Return workbook-order visibility, not print ranges or cached page counts."""
+    with zipfile.ZipFile(source) as archive:
+        def xml(name):
+            data = archive.read(name)
+            if b'<!DOCTYPE' in data.upper() or b'<!ENTITY' in data.upper():
+                raise ValueError('预览不接受包含文档类型或实体声明的工作表')
+            return ET.fromstring(data)
+        if source.suffix.lower() == '.xlsx':
+            ns = '{http://schemas.openxmlformats.org/spreadsheetml/2006/main}'
+            sheets = xml('xl/workbook.xml').find(ns + 'sheets')
+            if sheets is None:
+                raise ValueError('无法确认 XLSX 工作表可见性，未导出')
+            result = []
+            for sheet in sheets:
+                state = sheet.get('state', 'visible')
+                if sheet.tag != ns + 'sheet' or state not in ('visible', 'hidden', 'veryHidden') or not sheet.get('name'):
+                    raise ValueError('不支持的 XLSX 工作表可见性，未导出')
+                result.append({'name': sheet.get('name'), 'visible': state == 'visible'})
+        else:
+            office = '{urn:oasis:names:tc:opendocument:xmlns:office:1.0}'
+            table = '{urn:oasis:names:tc:opendocument:xmlns:table:1.0}'
+            style = '{urn:oasis:names:tc:opendocument:xmlns:style:1.0}'
+            content = xml('content.xml')
+            styles, default = {}, None
+            for tree in ([xml('styles.xml')] if 'styles.xml' in archive.namelist() else []) + [content]:
+                for node in tree.iter(style + 'style'):
+                    if node.get(style + 'family') == 'table':
+                        styles[node.get(style + 'name')] = node
+                for node in tree.iter(style + 'default-style'):
+                    if node.get(style + 'family') == 'table':
+                        default = node
+            def displayed(value):
+                if value not in ('true', 'false'):
+                    raise ValueError('不支持的 ODS 工作表可见性，未导出')
+                return value == 'true'
+            def visibility(name, visited=()):
+                if not name:
+                    props = default.find(style + 'table-properties') if default is not None else None
+                    return displayed(props.get(table + 'display', 'true')) if props is not None else True
+                if name not in styles or name in visited or len(visited) > 64:
+                    raise ValueError('无法确认 ODS 工作表样式可见性，未导出')
+                node = styles[name]
+                props = node.find(style + 'table-properties')
+                if props is not None and table + 'display' in props.attrib:
+                    return displayed(props.get(table + 'display'))
+                return visibility(node.get(style + 'parent-style-name'), (*visited, name))
+            spreadsheet = content.find(office + 'body/' + office + 'spreadsheet')
+            if spreadsheet is None:
+                raise ValueError('ODS 不包含可确认的工作表，未导出')
+            result = []
+            for sheet in spreadsheet.findall(table + 'table'):
+                if not sheet.get(table + 'name'):
+                    raise ValueError('ODS 工作表名称缺失，未导出')
+                visible = visibility(sheet.get(table + 'style-name'))
+                if table + 'display' in sheet.attrib:
+                    visible = visible and displayed(sheet.get(table + 'display'))
+                result.append({'name': sheet.get(table + 'name'), 'visible': visible})
+    if not result or len(result) > 300 or not any(sheet['visible'] for sheet in result):
+        raise ValueError('没有可见工作表或工作表超过 300 项，未导出隐藏内容')
+    return result
+
+def preview_pdf_info(pdf):
+    if not pdf.is_file() or not 100 <= pdf.stat().st_size <= 128 * 1024 * 1024:
+        raise RuntimeError('预览 PDF 缺失或超过 128 MiB 限制')
+    info = run(['pdfinfo', str(pdf)], 20)
+    match = re.search(r'^Pages:\s+(\d+)', info, re.M)
+    if not match or not 1 <= int(match[1]) <= 300:
+        raise ValueError('预览 PDF 页数无法确认或超过 300 页限制')
+    count = int(match[1])
+    boxes = run(['pdfinfo', '-f', '1', '-l', str(count), '-box', str(pdf)], 30)
+    sizes = re.findall(r'^Page\s+(?:\d+\s+)?size:\s+([\d.]+)\s+x\s+([\d.]+)\s+pts', boxes, re.M)
+    if len(sizes) != count:
+        raise ValueError('无法确认预览 PDF 的逐页尺寸')
+    dimensions = [{'width': float(w), 'height': float(h)} for w, h in sizes]
+    # Long sheets remain vector pages; never allocate a page-sized bitmap here.
+    if any(not (0 < p['width'] <= 144000 and 0 < p['height'] <= 144000) or p['width'] * p['height'] > 100_000_000 for p in dimensions):
+        raise ValueError('预览 PDF 单页几何尺寸超过资源限制')
+    if sum(p['width'] * p['height'] for p in dimensions) > 256_000_000:
+        raise ValueError('预览 PDF 总页面面积超过资源限制')
+    return count, dimensions
+
+def preview(source, destination):
+    """Final Office PDF for the reader, without QA PNG rasterization."""
+    check_cancel()
+    source = workspace(source, True)
+    suffix = source.suffix.lower()
+    if suffix not in OFFICE_FILTERS:
+        raise ValueError('最终预览支持 DOCX、XLSX、PPTX、ODT、ODS、ODP；旧 DOC/XLS/PPT 需先转换')
+    office_input(source)
+    sheets = preview_sheets(source) if suffix in ('.xlsx', '.ods') else None
+    before = hashlib.sha256(source.read_bytes()).hexdigest()
+    destination = workspace(destination)
+    destination.mkdir(parents=True, exist_ok=False)
+    pdf = destination / (source.stem + '.pdf')
+    hidden = sheets is not None and any(not sheet['visible'] for sheet in sheets)
+    try:
+        if hidden:
+            missing = [tool for tool in ('pdfseparate', 'pdfunite') if not shutil.which(tool)]
+            if missing:
+                raise RuntimeError('隐藏工作表预览需要 Poppler 工具：' + ', '.join(missing) + '；请补齐 poppler-utils 后重试，未提供未过滤 PDF')
+        # Raw export can include hidden content. Keep it outside the reader's
+        # output directory, in a mode-0700 temporary directory, and remove it on
+        # success, failure or cancellation. Never return or log its path.
+        with tempfile.TemporaryDirectory(prefix='eva-office-preview-') as temporary:
+            private = pathlib.Path(temporary)
+            profile = office_profile(private)
+            options = {'UseLosslessCompression': {'type': 'boolean', 'value': 'true'},
+                       'ReduceImageResolution': {'type': 'boolean', 'value': 'false'}}
+            if sheets is not None:
+                options['SinglePageSheets'] = {'type': 'boolean', 'value': 'true'}
+            filter_name = OFFICE_FILTERS[suffix]['pdf'] + ':' + json.dumps(options, separators=(',', ':'))
+            check_cancel()
+            run(['libreoffice', '-env:UserInstallation=' + profile, '--headless', '--convert-to',
+                 'pdf:' + filter_name, '--outdir', str(private), str(source)])
+            check_cancel()
+            raw = private / (source.stem + '.pdf')
+            raw_count, raw_dimensions = preview_pdf_info(raw)
+            if sheets is not None and raw_count != len(sheets):
+                raise RuntimeError('整表原始页数与工作表总数不一致，无法确认隐藏页映射，未提供 PDF')
+            visible_indices = [i for i, sheet in enumerate(sheets, 1) if sheet['visible']] if sheets is not None else None
+            if hidden:
+                selected = []
+                for index in visible_indices:
+                    check_cancel()
+                    pattern = private / ('selected-' + str(index) + '-%d.pdf')
+                    run(['pdfseparate', '-f', str(index), '-l', str(index), str(raw), str(pattern)], 30)
+                    page = private / ('selected-' + str(index) + '-' + str(index) + '.pdf')
+                    page_count, page_dimensions = preview_pdf_info(page)
+                    if page_count != 1 or page_dimensions != [raw_dimensions[index - 1]]:
+                        raise RuntimeError('提取工作表页面的数量或尺寸不一致，未提供 PDF')
+                    selected.append(str(page))
+                check_cancel()
+                run(['pdfunite', *selected, str(pdf)], 60)
+            else:
+                shutil.copyfile(raw, pdf)
+            check_cancel()
+            count, dimensions = preview_pdf_info(pdf)
+            expected_dimensions = [raw_dimensions[i - 1] for i in visible_indices] if sheets is not None else raw_dimensions
+            if (sheets is not None and count != len(visible_indices)) or dimensions != expected_dimensions:
+                raise RuntimeError('最终可见工作表页数或尺寸不一致，未提供 PDF')
+        if hashlib.sha256(source.read_bytes()).hexdigest() != before:
+            raise RuntimeError('源文档在预览期间发生变化，未视为成功')
+        report = {'pdf': str(pdf), 'pageCount': count, 'pageSizes': dimensions,
+                  'engine': 'LibreOffice', 'sourcePreserved': True, 'sourceSHA256': before,
+                  'spreadsheetMode': 'single-page-visible-sheets' if sheets is not None else None,
+                  'visibleSheets': [sheet['name'] for sheet in sheets if sheet['visible']] if sheets is not None else [],
+                  'excludedHiddenSheetCount': sum(not sheet['visible'] for sheet in sheets) if sheets is not None else 0,
+                  'formulaEvaluationEngine': 'LibreOffice Calc' if sheets is not None else None,
+                  'visualReviewRequired': True, 'rasterized': False,
+                  'note': '最终排版依赖已安装字体及引擎兼容性；整表预览保留向量页面，不等同纸张打印分页。'}
+        (destination / 'preview-report.json').write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')
+        return report
+    except BaseException:
+        # This directory was created exclusively for this invocation. Do not
+        # leave an unsuccessful/unverified export available to the reader.
+        pdf.unlink(missing_ok=True)
+        raise
+
 def render(source, destination, expected=None, editable=False):
     check_cancel()
     source = workspace(source, True)
@@ -197,7 +356,7 @@ def render(source, destination, expected=None, editable=False):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('action', choices=['status', 'render', 'convert', 'recalculate'])
+    parser.add_argument('action', choices=['status', 'render', 'preview', 'convert', 'recalculate'])
     parser.add_argument('--input'); parser.add_argument('--output-dir')
     parser.add_argument('--format', choices=['pdf','docx','xlsx','pptx','odt','ods','odp'])
     parser.add_argument('--expect-pages', type=int)
@@ -205,6 +364,8 @@ def main():
     args = parser.parse_args()
     if args.action == 'status':
         value = status()
+    elif args.action == 'preview':
+        value = preview(args.input, args.output_dir)
     elif args.action in ('convert', 'recalculate'):
         if args.action == 'recalculate' and pathlib.Path(args.input).suffix.lower() not in ('.xlsx', '.ods'):
             raise ValueError('重算仅支持 XLSX 或 ODS')

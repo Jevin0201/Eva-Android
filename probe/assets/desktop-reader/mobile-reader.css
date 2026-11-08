@@ -1,0 +1,18 @@
+html{height:100%;-webkit-text-size-adjust:100%;text-size-adjust:100%}body{height:100%;overscroll-behavior:none}button,input,select{box-sizing:border-box;font:inherit}button,input[type=number],select{min-height:36px}button{touch-action:manipulation}body>header,#docx-preview-toolbar{position:relative!important;display:flex;flex-wrap:nowrap!important;justify-content:flex-start!important;gap:4px!important;padding:4px 6px!important;min-height:44px;box-sizing:border-box}body>header>input,#docx-preview-toolbar>input{width:42px!important;min-width:0;padding:4px!important}body>header>button,#docx-preview-toolbar>button{flex-shrink:0}#count{white-space:nowrap;font-size:12px;margin-right:auto}.reader-options{position:absolute;right:6px;top:100%;z-index:30;display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px;background:#fff;border:1px solid #ddd;box-shadow:0 4px 16px #0002;border-radius:8px;max-width:calc(100vw - 32px)}.reader-options[hidden]{display:none!important}.reader-options input{width:60px!important}.reader-options button{padding:6px 10px}#search-bar{flex-wrap:nowrap!important;gap:4px!important;padding:4px 6px!important}#search-input{min-width:0!important;width:0!important;flex:1;text-align:left}#search-count{white-space:nowrap;font-size:11px}#document-scroll,#continuous-scroll{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}.docx-wrapper{align-items:flex-start!important;padding:8px!important}.docx-wrapper>section.docx{flex-shrink:0;margin-bottom:12px!important}body[data-theme=dark] .reader-options{background:#292a2d;border-color:#555}#stage{padding:8px!important}
+
+body[data-reading=mobile] .docx-wrapper>section.docx{width:calc(var(--reading-width,100vw) - 16px)!important;padding:20px 16px!important;height:auto!important;min-height:0!important}body[data-reading=mobile] .docx-wrapper>section.docx>article{width:auto!important;column-count:1!important}body[data-reading=mobile] .docx-wrapper>section.docx img{max-width:100%;object-fit:contain}
+body[data-reading=mobile] .docx-wrapper>section.docx,body[data-reading=mobile] .docx-wrapper>section.docx>article{overflow:visible!important}body[data-reading=mobile] .docx-wrapper>section.docx>article{min-height:0!important}body[data-reading=mobile] .docx-wrapper>section.docx img{height:auto!important}
+
+body[data-reading=mobile] section.docx>header,body[data-reading=mobile] section.docx>footer{margin:0!important;min-height:0!important}body[data-reading=mobile] section.docx>footer{padding-top:12px}
+
+#document{zoom:1!important}.docx-scale-stage{overflow:visible}body[data-reading=mobile] section.docx svg{max-width:100%;height:auto}body[data-reading=mobile] section.docx table{max-width:none}
+
+body[data-reading=mobile] .docx-wrapper>section.docx img{max-width:calc(var(--reading-width,100vw) - 48px)!important}
+
+body[data-reading=mobile] .docx-mobile-image{width:auto!important;height:auto!important;max-width:calc(var(--reading-width,100vw) - 48px)!important}body[data-reading=mobile] .docx-mobile-image>img{position:relative!important;inset:auto!important}
+
+body.mobile-pdf{overflow:hidden}body.mobile-pdf #stage{position:fixed;left:0;right:0;top:calc(var(--document-toolbar-height,44px) + var(--document-search-height,0px));bottom:0;box-sizing:border-box;touch-action:pan-x pan-y;overscroll-behavior:contain}#continuous-scroll{touch-action:pan-x pan-y}
+
+header.sheet-navigation #page,header.sheet-navigation #count{display:none}#pdf-sheet-select{flex:1;min-width:0;width:0;max-width:100%;height:36px}body.mobile-pdf header.sheet-navigation{gap:3px!important}
+/* PDF.js detail canvases use percentage crops of their full page wrapper. */
+#continuous-scroll .canvasWrapper{width:100%;height:100%}#continuous-scroll .canvasWrapper>canvas{width:100%;height:100%}

@@ -28,7 +28,7 @@
   if(readEpoch.get(id)!==epoch)throw stale();const snapshot={...thread,turns:[...turns.data].reverse().map(summary),androidTurnsCursor:turns.nextCursor??null,androidPagedHistory:true};checkpoints.set(snapshot,point);const merged=c?mergeThread(c,snapshot):snapshot;checkpoints.set(merged,point);if(window.EvaHost?.supportsHistoryActivity?.())setTimeout(()=>primeActivities(c,merged,epoch),0);return {...result,thread:merged};
  };
  function current(c,id){if(c?.kernelThread?.id!==id)throw Error('加载期间会话已切换，未合并历史');}
- function refresh(c){scheduleKernelSave();if(active()===c){updateKernelFlow(c);refreshKernelControls();}}
+ function refresh(c){scheduleKernelSave(c);if(active()===c&&!settingPage&&['home','chat'].includes(route)){updateKernelFlow(c);refreshKernelControls();}}
  function once(key,operation){if(inFlight.has(key))return inFlight.get(key);const task=operation().finally(()=>inFlight.delete(key));inFlight.set(key,task);return task;}
  function mergeItems(anchors,details){
   const output=[],seen=new Set(),full=new Map(details.map(i=>[i.id,i]));

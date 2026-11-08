@@ -11,43 +11,48 @@ function openModelMenu() {
   if (state.pendingSend) return;
   if(!state.provider&&globalThis.modelAccess&&!modelAccess.ready()){openModelList();return;}
   const rect = els.modelButton.getBoundingClientRect();
-  openMenu([], { rect, anchor: els.modelButton, onClose:()=>renderComposer() });
+  openMenu([], { rect, anchor: els.modelButton });
   const panel = document.querySelector('#menu-root .menu');
   panel.classList.add('model-control');
   const efforts = availableEfforts();
   const index = Math.max(0, efforts.indexOf(state.effort));
+  const effortLabel=()=>state.effort?t(EFFORT_LABELS[state.effort]||state.effort):(efforts.length?'模型默认':'接口未提供推理档位');
   const provider = state.providers.find(p => p.id === state.provider);
-  const model = state.models.find(m => (m.model || m.id) === state.model);
-  const name = provider?.displayName || codexModelDisplayName(model?.displayName || state.model) || t('models');
-  panel.innerHTML = `<div class="model-control-top"><button type="button" class="model-control-bolt" data-fast-mode aria-label="启用快速模式" aria-pressed="false">${cloudComposerIcons.fast}</button><span class="model-control-effort">${esc(t(EFFORT_LABELS[state.effort] || 'effortHigh'))}</span><button data-reset-effort title="恢复默认推理强度" aria-label="恢复默认推理强度">${cloudComposerIcons.reset}</button></div><button class="model-control-name" data-open-model-list>${esc(name)}${cloudComposerIcons.right}</button><div class="model-control-slider"><div class="model-control-fill"></div><div class="model-control-ticks">${efforts.map(()=>'<i></i>').join('')}</div><input type="range" aria-label="推理强度" min="0" max="${Math.max(0,efforts.length-1)}" step="1" value="${index}" ${efforts.length<2 || state.running ? 'disabled' : ''} /></div>`;
+  const model = state.provider?provider?.models?.find(m=>m.id===state.model):state.models.find(m => (m.model || m.id) === state.model);
+  const name = codexModelDisplayName(model?.name || model?.displayName || state.model) || t('models');
+  panel.innerHTML = `<div class="model-control-top"><button type="button" class="model-control-bolt" data-fast-mode aria-label="启用快速模式" aria-pressed="false">${cloudComposerIcons.fast}</button><span class="model-control-effort">${esc(effortLabel())}</span><button data-reset-effort title="恢复默认推理强度" aria-label="恢复默认推理强度">${cloudComposerIcons.reset}</button></div><button class="model-control-name" data-open-model-list>${esc(name)}${cloudComposerIcons.right}</button><div class="model-control-slider"><div class="model-control-fill"></div><div class="model-control-ticks">${efforts.map(()=>'<i></i>').join('')}</div><input type="range" aria-label="推理强度" min="0" max="${Math.max(0,efforts.length-1)}" step="1" value="${index}" ${efforts.length<2 || state.running || state.saving ? 'disabled' : ''} /></div>`;
   const slider = panel.querySelector('input');
   const update = () => {
     const value = Math.max(0,efforts.indexOf(state.effort));
     slider.value = value;
-    slider.setAttribute('aria-valuetext', t(EFFORT_LABELS[state.effort] || 'effortHigh'));
-    panel.querySelector('.model-control-effort').textContent = t(EFFORT_LABELS[state.effort] || 'effortHigh');
+    slider.setAttribute('aria-valuetext', effortLabel());
+    panel.querySelector('.model-control-effort').textContent = effortLabel();
     const ratio=efforts.length>1?value/(efforts.length-1):0;
     // The native thumb travels width minus its own diameter, not the full track.
     panel.style.setProperty('--effort-position', `calc(14px + (100% - 28px) * ${ratio})`);
     panel.querySelectorAll('.model-control-ticks i').forEach((tick,i)=>tick.classList.toggle('filled',i<=value));
     const fast=panel.querySelector('[data-fast-mode]'),tier=codexFastTier(model),enabled=!!tier&&codexSelectedServiceTier()===tier.id;
-    fast.disabled=state.running||state.pendingSend||!tier;fast.setAttribute('aria-pressed',String(enabled));fast.setAttribute('aria-label',enabled?'切换为标准速度':'启用快速模式');fast.title=tier?(enabled?'快速模式已启用，点击恢复标准速度':'启用快速模式（更快响应，消耗更多用量）'):'当前模型或提供商不支持快速模式';
+    fast.disabled=state.running||state.pendingSend||state.saving||!tier;fast.setAttribute('aria-pressed',String(enabled));fast.setAttribute('aria-label',enabled?'切换为标准速度':'启用快速模式');fast.title=tier?(enabled?'快速模式已启用，点击恢复标准速度':'启用快速模式（更快响应，消耗更多用量）'):'当前模型或提供商不支持快速模式';
   };
   slider.addEventListener('input', () => {
-    if (state.pendingSend || state.running) return;
-    state.effort = efforts[Number(slider.value)]; store.set('codex.effort',state.effort); renderComposer(); update();
+    if (state.pendingSend || state.saving || state.running) return;
+    state.effort = efforts[Number(slider.value)]; update();
   });
-  panel.querySelector('[data-fast-mode]').onclick=()=>{const tier=codexFastTier(model);if(!tier||state.running||state.pendingSend)return;const selected=store.get('codex.serviceTiers',{});selected[state.model]=codexSelectedServiceTier()===tier.id?null:tier.id;store.set('codex.serviceTiers',selected);renderComposer();update();};
-  panel.querySelector('[data-reset-effort]').disabled = state.running;
+  slider.addEventListener('change', () => {
+    if (state.pendingSend || state.saving || state.running) return;
+    state.effort = efforts[Number(slider.value)];
+    store.set('codex.effort',state.effort); renderComposer(); update();
+  });
+  panel.querySelector('[data-fast-mode]').onclick=()=>{const tier=codexFastTier(model);if(!tier||state.running||state.pendingSend||state.saving)return;const selected=store.get('codex.serviceTiers',{});selected[state.model]=codexSelectedServiceTier()===tier.id?null:tier.id;store.set('codex.serviceTiers',selected);renderComposer();update();};
+  panel.querySelector('[data-reset-effort]').disabled = state.running || state.saving;
   panel.querySelector('[data-reset-effort]').addEventListener('click', () => {
-    if (state.pendingSend || state.running || !efforts.length) return;
-    const preferred = model?.defaultReasoningEffort || 'medium';
-    state.effort = efforts.includes(preferred) ? preferred : efforts[0];
+    if (state.pendingSend || state.saving || state.running || !efforts.length) return;
+    const preferred = model?.defaultReasoningEffort || model?.x_ofm_effort_default;
+    state.effort = efforts.includes(preferred) ? preferred : null;
     store.set('codex.effort',state.effort);renderComposer();update();
   });
   panel.querySelector('[data-open-model-list]').addEventListener('click', openModelList);
   update();
-  renderComposer();
   const box = panel.getBoundingClientRect();
   panel.style.left = `${clamp(rect.right-box.width,6,innerWidth-box.width-6)}px`;
   panel.style.top = `${Math.max(6,rect.top-box.height-8)}px`;
@@ -59,20 +64,33 @@ function openModelList() {
   const blocked=globalThis.modelAccess&&!modelAccess.ready();
   items.push({ label: blocked?(modelAccess.phase()==='signed-out'?'请先登录 OpenAI 后选择 GPT 模型':modelAccess.label()):t("models"), heading: true });
   if(blocked){items.push({label:modelAccess.phase()==='signed-out'?'登录 OpenAI':'重新检查登录状态',icon:'user',action:()=>{if(modelAccess.phase()==='signed-out')modelAccess.signIn();else modelAccess.refresh({force:true}).then(()=>openModelList());}});}
-  for (const model of modelEntries()) {
-    const id = model.model || model.id;
+  state.expandedProviders ||= {[state.provider || 'openai']: true};
+  const group = (id, label, models, provider, disabled = false) => {
+    const selected = (state.provider || 'openai') === id;
+    const current = selected ? models.find(model => (model.model || model.id) === state.model) : null;
     items.push({
-      label: codexModelDisplayName(model.displayName || id),
-      checked: !blocked && !state.provider && state.model === id,
-      disabled: !!blocked,
-      action: () => { selectProviderModel(null, id); openModelMenu(); },
+      group: true, id, label,
+      description:state.providers.find(p=>p.id===id)?.managedBy==='dsh'?undefined:state.providers.find(p=>p.id===id)?.description,
+      onRefresh:state.providers.find(p=>p.id===id)?.managedBy==='dsh'?()=>window.EvaHost?.refreshDshModels?.():null,
+      current: selected ? (current?.name || current?.displayName || state.model) : '',
+      expanded: !!state.expandedProviders[id],
+      onToggle: expanded => { state.expandedProviders[id] = expanded; },
+      children: models.map(model => {
+        const modelId = model.model || model.id;
+        return {
+          label: codexModelDisplayName(model.name || model.displayName || modelId),
+          checked: selected && state.model === modelId,
+          disabled,
+          action: () => { selectProviderModel(provider, modelId); openModelMenu(); },
+        };
+      }),
     });
+  };
+  group('openai', 'OpenAI', modelEntries().filter(model=>model.visible!==false), null, !!blocked);
+  for (const provider of state.providers) {
+    const models = Array.isArray(provider.models) ? provider.models : [{id: provider.model, name: provider.displayName || provider.model, ...provider.modelPreferences?.[provider.model]}];
+    group(provider.id, provider.name, models.filter(model => model.id && model.visible !== false), provider.id);
   }
-  for (const provider of state.providers) items.push({
-    label: `${provider.displayName || provider.model}${provider.needsRestart ? "（需重启）" : ""}`,
-    checked: state.provider === provider.id,
-    action: () => { selectProviderModel(provider.id, provider.model); openModelMenu(); },
-  });
   items.push({ label: "管理 API 提供商…", action: () => openSettings("models") });
   openMenu(items, { rect, anchor: els.modelButton });
 }
@@ -80,16 +98,16 @@ function openModelList() {
 function selectProviderModel(provider, model) {
   if(!provider&&globalThis.modelAccess&&!modelAccess.ready()){openModelList();return false;}
   if(provider&&state.sideChatEphemeral){toast('侧边 GPT 聊天使用当前 ChatGPT 账号的模型。');return;}
-  if (state.running || state.pendingSend) { toast("请先完成或停止当前回合再切换模型"); return; }
+  if (state.running || state.pendingSend || state.saving) { toast("请先完成或停止当前回合再切换模型"); return; }
   const entry = state.providers.find(p => p.id === provider);
-  if (provider && (!entry || entry.needsRestart)) { toast("请先在模型设置中重启应用以启用 API Key"); return; }
+  if (provider && !entry) { toast("提供商已删除，请重新选择"); return; }
   if (provider !== state.provider && state.thread && !adapter.preserveThreadOnProviderChange) {
     startNewThread(state.cwd);
     toast("已新建对话，使用所选提供商；原对话保留");
   }
   state.provider = provider;
   state.model = model;
-  if (!availableEfforts().includes(state.effort)) state.effort = availableEfforts()[0] || null;
+  if (!availableEfforts().includes(state.effort)) state.effort = null;
   store.set("codex.provider", provider);
   store.set("codex.model", model);
   renderComposer();
@@ -113,9 +131,9 @@ function openEffortMenu() {
 
 function availableEfforts() {
   const provider = state.providers.find(p => p.id === state.provider);
-  if (provider && new URL(provider.baseUrl).hostname === "api.deepseek.com" && state.model === "deepseek-flash") return ["low", "high", "max"];
-  const model = state.models.find(p => (p.model || p.id) === state.model);
-  return model?.supportedReasoningEfforts?.map(p => p.reasoningEffort) || ["low", "medium", "high", "xhigh", "max", "ultra"];
+  const model = state.provider?provider?.models?.find(m=>m.id===state.model):state.models.find(m => (m.model||m.id)===state.model);
+  const values=model?.reasoningEfforts||model?.supportedReasoningEfforts||model?.x_ofm_efforts||[];
+  return values.map(value=>typeof value==='string'?value:value.reasoningEffort).filter(value=>typeof value==='string'&&value);
 }
 
 

@@ -25,7 +25,7 @@ public final class KernelHost {
   }
   synchronized(kernel.startup){kernel.ensureStarted();}
   synchronized(providerDispatch){
-   if((writes.contains(method)||method.equals("model/list"))&&!new ModelStore(context).read().getJSONArray("providers").toString().equals(kernel.configStamp))throw new IOException("提供商配置已变化，请停止任务并重新打开 Eva 后使用定时任务");
+   if(writes.contains(method)||method.equals("model/list"))kernel.ensureProviderConnection(provider,true);
    if(!"openai".equals(provider))new ModelStore(context).provider(provider);
    if(method.equals("model/list")&&binding!=null)kernel.selectKernelProvider(provider);
    if(method.equals("config/read"))params.put("cwd","/root/eva-workspace");
@@ -33,7 +33,7 @@ public final class KernelHost {
     kernel.selectKernelProvider(provider);
     params.put("model",binding.getString("model")).put("modelProvider",provider).put("cwd","/root/eva-workspace");
     params.put("approvalPolicy","on-request").put("approvalsReviewer","user").put("sandbox","read-only");
-    params.put("dynamicTools",new JSONArray()).put("config",new JSONObject().put("model_providers",kernel.providerDefinitions()));
+    params.put("dynamicTools",new JSONArray()).put("config",kernel.threadModelConfig(provider));
     params.remove("sandboxPolicy");params.remove("androidProject");
    }
    if(method.equals("turn/start")){
@@ -43,6 +43,7 @@ public final class KernelHost {
     params.put("model",binding.getString("model")).put("approvalPolicy","on-request").put("approvalsReviewer","user").put("sandboxPolicy",new JSONObject().put("type","readOnly"));
     params.remove("sandbox");params.remove("config");params.remove("dynamicTools");
    }
+   if(method.equals("turn/start")&&!provider.equals("openai"))LocalFreeModels.turnOptions(new ModelStore(context).provider(provider),params);
    JSONObject result=kernel.rpc(method,params);
    if(method.equals("thread/start")||method.equals("thread/resume")){
     JSONObject thread=result.getJSONObject("thread");String id=thread.getString("id");if(thread.has("cwd")&&!"/root/eva-workspace".equals(thread.getString("cwd")))throw new IOException("定时任务目录未获内核确认");
@@ -54,8 +55,69 @@ public final class KernelHost {
    return result;
   }
  }
- final Context context;final ExecutorService work=Executors.newCachedThreadPool();final ConcurrentHashMap<Integer,CompletableFuture<JSONObject>> pending=new ConcurrentHashMap<>();final AtomicInteger ids=new AtomicInteger(1);final ArrayDeque<JSONObject> events=new ArrayDeque<>();final ArrayList<String> secrets=new ArrayList<>();volatile Process process;BufferedWriter input;String configStamp="";boolean ready;KernelNetwork network;
+ final Context context;final ExecutorService work=Executors.newCachedThreadPool();final ConcurrentHashMap<Integer,CompletableFuture<JSONObject>> pending=new ConcurrentHashMap<>();final AtomicInteger ids=new AtomicInteger(1);final ArrayDeque<JSONObject> events=new ArrayDeque<>();final ArrayList<String> secrets=new ArrayList<>();volatile Process process;BufferedWriter input;boolean ready;KernelNetwork network;
  final boolean apiOnly;
+ final ConcurrentHashMap<String,String> loadedConnections=new ConcurrentHashMap<>();
+ final Set<String> activeTurns=ConcurrentHashMap.newKeySet();
+ final String executionOwner="kernel:"+java.util.UUID.randomUUID();
+ final Object executionLock=new Object();
+ final Map<String,ExecutionLease> turnLeases=new HashMap<>();
+ final Set<String> observedRunningTurns=new HashSet<>();
+ boolean beginExecutionTurn(String thread)throws IOException{
+  if(thread.isEmpty())throw new IOException("任务缺少会话编号");
+  synchronized(executionLock){
+   boolean added=activeTurns.add(thread);
+   if(context.getSharedPreferences("eva-scheduled-routing",0).contains(thread))return added;
+   if(turnLeases.containsKey(thread))return false;
+   try{turnLeases.put(thread,ExecutionLease.acquire(context,executionOwner));return true;}
+   catch(IOException error){if(added)activeTurns.remove(thread);throw error;}
+  }
+ }
+ void endExecutionTurn(String thread){
+  synchronized(executionLock){
+   activeTurns.remove(thread);observedRunningTurns.remove(thread);
+   ExecutionLease lease=turnLeases.remove(thread);if(lease!=null)lease.close();
+  }
+ }
+ void clearExecutionTurns(){
+  synchronized(executionLock){
+   for(ExecutionLease lease:turnLeases.values())lease.close();
+   turnLeases.clear();observedRunningTurns.clear();activeTurns.clear();ExecutionLease.releaseOwner(executionOwner);
+  }
+ }
+ void trackActiveTurn(JSONObject row){
+  JSONObject value=row.optJSONObject("params");if(value==null)return;
+  String thread=value.optString("threadId");if(thread.isEmpty())return;
+  String method=row.optString("method");
+  if("turn/started".equals(method)){
+   JSONObject turn=value.optJSONObject("turn");
+   if(turn!=null&&cancelledTurns.contains(thread+":"+turn.optString("id")))return;
+   synchronized(executionLock){
+    try{beginExecutionTurn(thread);observedRunningTurns.add(thread);}
+    catch(IOException error){try{emit(new JSONObject().put("method","android/executionServiceError").put("params",new JSONObject().put("threadId",thread).put("error",error.getMessage())));}catch(Exception ignored){}}
+   }
+  }
+  if("turn/completed".equals(method))endExecutionTurn(thread);
+ }
+ void ensureProviderConnection(String provider,boolean allowReload)throws Exception{
+  if(apiOnly&&activeTurns.isEmpty())ModelProtocolGateway.prune(context);
+  if("openai".equals(provider))return;
+  JSONObject entry=new ModelStore(context).provider(provider);
+  String revision=ModelStore.connectionRevision(entry);
+  if(revision.equals(loadedConnections.get(provider)))return;
+  if(!allowReload)throw new IOException("当前提供商连接已更新，请重新打开当前会话以恢复连接，尚未发送本次任务");
+  synchronized(startup){
+   if(revision.equals(loadedConnections.get(provider)))return;
+   if(!activeTurns.isEmpty()||!pending.isEmpty())throw new IOException("模型连接将在当前运行任务结束后生效，请稍后重试；正在运行的任务继续执行");
+   JSONArray affected=new JSONArray(threadProviders.keySet());
+   Process old;
+   synchronized(this){old=process;process=null;input=null;ready=false;}
+   clearExecutionTurns();if(old!=null)old.destroy();
+   ensureStarted();
+   emit(new JSONObject().put("method","android/providerRuntimeReloaded").put("params",new JSONObject().put("threadIds",affected)));
+  }
+ }
+
  static final Set<String> cancelledTurns=ConcurrentHashMap.newKeySet();
  static String turnKey(JSONObject p){return p.optString("threadId")+":"+p.optString("turnId");}
  static void guardTurn(JSONObject p)throws IOException{if(cancelledTurns.contains(turnKey(p)))throw new IOException("任务已停止，操作已取消");}
@@ -88,7 +150,34 @@ public final class KernelHost {
   if(existing.contains(PRODUCT_IDENTITY))return params;
   return new JSONObject(params.toString()).put("developerInstructions",existing.isEmpty()?PRODUCT_IDENTITY:existing+"\n\n"+PRODUCT_IDENTITY);
  }
- JSONObject rpc(String method,JSONObject params)throws Exception{params=withProductIdentity(method,params);KernelTrace.mark("rpc-send:"+method);int id=ids.getAndIncrement();CompletableFuture<JSONObject> future=new CompletableFuture<>();pending.put(id,future);pendingMethods.put(id,method);FullAccessApprovals.Request permissions=fullAccessApprovals.prepare(method,params);permissionRequests.put(id,permissions);try{try{write(new JSONObject().put("id",id).put("method",method).put("params",permissions.params));}catch(Exception sendError){fullAccessApprovals.rejected(permissions);throw sendError;}JSONObject reply=future.get(45,TimeUnit.SECONDS);if(reply.has("error"))throw new IOException(redact(reply.getJSONObject("error").optString("message","内核请求失败")));return reply.optJSONObject("result")==null?new JSONObject():reply.getJSONObject("result");}finally{KernelTrace.mark("rpc-return:"+method);pending.remove(id);pendingMethods.remove(id);permissionRequests.remove(id);}}
+ JSONObject rpc(String method,JSONObject params)throws Exception{
+  params=withProductIdentity(method,params);KernelTrace.mark("rpc-send:"+method);
+  int id=ids.getAndIncrement();CompletableFuture<JSONObject> future=new CompletableFuture<>();
+  pending.put(id,future);pendingMethods.put(id,method);
+  FullAccessApprovals.Request permissions=null;boolean ownsReservation=false;
+  String thread=params.optString("threadId");
+  try{
+   permissions=fullAccessApprovals.prepare(method,params);permissionRequests.put(id,permissions);
+   try{
+    if(method.equals("turn/start"))ownsReservation=beginExecutionTurn(thread);
+    write(new JSONObject().put("id",id).put("method",method).put("params",permissions.params));
+   }catch(Exception sendError){fullAccessApprovals.rejected(permissions);throw sendError;}
+   JSONObject reply=future.get(45,TimeUnit.SECONDS);
+   if(reply.has("error"))throw new IOException(redact(reply.getJSONObject("error").optString("message","内核请求失败")));
+   if(method.equals("turn/interrupt"))endExecutionTurn(thread);
+   JSONObject result=reply.optJSONObject("result")==null?new JSONObject():reply.getJSONObject("result");
+   JSONObject returnedTurn=result.optJSONObject("turn");
+   if(method.equals("turn/start")&&ownsReservation&&returnedTurn!=null&&Arrays.asList("completed","failed","interrupted").contains(returnedTurn.optString("status")))endExecutionTurn(thread);
+   return result;
+  }catch(Exception error){
+   // A transport timeout is not evidence that an observed running turn ended.
+   // Its completion/interrupt/process-exit event still owns the execution lease.
+   if(method.equals("turn/start")&&ownsReservation)synchronized(executionLock){if(!observedRunningTurns.contains(thread))endExecutionTurn(thread);}
+   throw error;
+  }finally{
+   KernelTrace.mark("rpc-return:"+method);pending.remove(id);pendingMethods.remove(id);permissionRequests.remove(id);
+  }
+ }
  void ensureStarted()throws Exception{RuntimeBootstrap.ensure(context);synchronized(this){if(ready&&process!=null&&process.isAlive())return;
   File root=new File(context.getFilesDir(),"alpine"),binary=new File(root,"root/eva-kernel/bin/codex");if(!binary.isFile())throw new IOException("Codex 内核尚未安装到手机运行环境");
   new File(root,"root/.eva-codex").mkdirs();new File(root,"root/eva-workspace").mkdirs();new File(context.getFilesDir(),"tmp").mkdirs();String lib=context.getApplicationInfo().nativeLibraryDir;
@@ -101,14 +190,19 @@ public final class KernelHost {
   else pb.command().addAll(Arrays.asList("-c","model_provider=\"openai\""));
   if(apiOnly&&KernelModelCatalog.prepare(context,root))pb.command().addAll(Arrays.asList("-c","model_catalog_json=\"/root/.eva-codex/android-models.json\""));
   Map<String,String> env=pb.environment();env.put("PROOT_LOADER",lib+"/liboperit_loader.so");env.put("PROOT_TMP_DIR",new File(context.getFilesDir(),"tmp").getAbsolutePath());env.put("HOME","/root");env.put("CODEX_HOME","/root/.eva-codex");env.put("PATH","/root/eva-kernel/bin:/root/eva-kernel/codex-path:/usr/bin:/bin:/usr/sbin:/sbin");
+  OfficeRuntime.configurePythonEnvironment(env);
+  // Session-scoped guard: package installs belong in project/managed venvs.
+  env.put("PIP_REQUIRE_VIRTUALENV","true");
+  pb.command().add("-c");pb.command().add("shell_environment_policy.set.PYTHONPATH="+JSONObject.quote(env.get("PYTHONPATH")));
+  pb.command().add("-c");pb.command().add("shell_environment_policy.set.PIP_REQUIRE_VIRTUALENV="+JSONObject.quote(env.get("PIP_REQUIRE_VIRTUALENV")));
   if(network==null)network=new KernelNetwork();env.put("HTTPS_PROXY",network.proxyUrl);env.put("HTTP_PROXY",network.proxyUrl);env.put("https_proxy",network.proxyUrl);env.put("http_proxy",network.proxyUrl);env.put("NO_PROXY","localhost,127.0.0.1,::1");env.put("no_proxy","localhost,127.0.0.1,::1");
-  ModelStore store=new ModelStore(context);JSONObject config=store.read();configStamp=config.getJSONArray("providers").toString();JSONArray providers=config.getJSONArray("providers");synchronized(secrets){secrets.clear();for(int i=0;i<providers.length();i++){JSONObject p=providers.getJSONObject(i);String secret=store.secret(p);secrets.add(secret);env.put(envName(p.getString("id")),secret);}}
+  ModelStore store=new ModelStore(context);JSONObject config=store.read();JSONArray providers=config.getJSONArray("providers");loadedConnections.clear();clearExecutionTurns();synchronized(secrets){secrets.clear();for(int i=0;i<providers.length();i++){JSONObject p=providers.getJSONObject(i);String secret=store.secret(p);secrets.add(secret);env.put(envName(p.getString("id")),secret);loadedConnections.put(p.getString("id"),ModelStore.connectionRevision(p));}}
   fullAccessApprovals.clear();providerConfigCache.invalidate();currentProvider="";threadProviders.clear();threadCwds.clear();final Process child=LinuxRuntime.start(context,pb);process=child;input=new BufferedWriter(new OutputStreamWriter(child.getOutputStream(),"UTF-8"));
-  work.execute(()->{try(BufferedReader reader=new BufferedReader(new InputStreamReader(child.getInputStream(),"UTF-8"))){String line;while((line=reader.readLine())!=null){if(process!=child)break;try{JSONObject row=new JSONObject(line);if(!(row.has("id")&&!row.has("method")&&"config/read".equals(pendingMethods.get(row.optInt("id")))))row=new JSONObject(redact(line));GeneratedImages.normalize(context,row);String observedMethod=row.optString("method");if(!observedMethod.isEmpty()){JSONObject observedParams=row.optJSONObject("params"),observedItem=observedParams==null?null:observedParams.optJSONObject("item");KernelTrace.once("event:"+observedMethod+(observedItem==null?"":":"+observedItem.optString("type")));}if(row.has("id")&&!row.has("method")){CompletableFuture<JSONObject> f=pending.get(row.optInt("id"));if(f!=null){FullAccessApprovals.Request permissions=permissionRequests.get(row.optInt("id"));if(row.has("error")){if(row.getJSONObject("error").opt("code") instanceof Integer||row.getJSONObject("error").opt("code") instanceof Long)fullAccessApprovals.rejected(permissions);}else fullAccessApprovals.accepted(permissions,row.optJSONObject("result"));if(!row.has("error"))observeAccount(pendingMethods.get(row.optInt("id")),row.optJSONObject("result"));f.complete(row);}}else {fullAccessApprovals.observe(row.optString("method"),row.optJSONObject("params"));JSONObject approved=row.has("id")&&!cancelledTurns.contains(turnKey(row.optJSONObject("params")==null?new JSONObject():row.getJSONObject("params")))?fullAccessApprovals.decision(row):null;if(approved!=null){write(new JSONObject().put("id",row.get("id")).put("result",approved));continue;}observeAccount(row.optString("method"),row.optJSONObject("params"));if("mcpServer/oauthLogin/completed".equals(row.optString("method")))work.execute(()->{try{reloadMcpConnections();}catch(Exception ignored){}});rememberRuntimeThread(row);PhoneTaskReport.event(context,row);PhoneRouteTools.event(row);if(PhoneRouteTools.handle(this,row)||NetworkTools.handle(this,row)||BrowserTools.handle(this,row)||PhoneTools.handle(this,row))continue;if("turn/started".equals(row.optString("method"))){JSONObject state=row.optJSONObject("params");if(state!=null&&state.optString("threadId").equals(PhoneTools.owner))PhoneTools.turn=state.getJSONObject("turn").getString("id");}if("turn/completed".equals(row.optString("method"))){JSONObject state=row.optJSONObject("params");if(state!=null){JSONObject ended=state.optJSONObject("turn");if(ended!=null){BrowserOwnership.release(state.optString("threadId")+":"+ended.optString("id"));PhoneResourceScheduler.releaseTurn(state.optString("threadId"),ended.optString("id"));}}if(state!=null&&state.optJSONObject("turn")!=null){PhoneTools.releaseTurn(state.optString("threadId"),state.getJSONObject("turn").optString("id"));}}if("account/login/completed".equals(row.optString("method"))){JSONObject state=row.optJSONObject("params");if(state!=null){loginSession=null;loginError=state.optBoolean("success")?"":state.optString("error","登录未完成，请重试");LoginService.end(context);}}emit(row);}}catch(JSONException ignored){}}}catch(Exception ignored){}finally{if(process!=child)return;fullAccessApprovals.clear();providerConfigCache.invalidate();for(String thread:threadProviders.keySet()){PhoneTools.release(thread);BrowserOwnership.releaseThread(thread);PhoneResourceScheduler.releaseThread(thread);PhoneRouteTools.clear(thread);PhoneBatch.steer(thread);}PhoneTaskReport.failThreads(context,threadProviders.keySet());for(CompletableFuture<JSONObject> f:pending.values())f.completeExceptionally(new IOException("Codex 内核已停止，请恢复会话"));try{emit(new JSONObject().put("method","android/kernelExited").put("params",new JSONObject().put("threadIds",new JSONArray(threadProviders.keySet()))));}catch(Exception ignored){}}});
+  work.execute(()->{try(BufferedReader reader=new BufferedReader(new InputStreamReader(child.getInputStream(),"UTF-8"))){String line;while((line=reader.readLine())!=null){if(process!=child)break;try{JSONObject row=new JSONObject(line);if(!(row.has("id")&&!row.has("method")&&"config/read".equals(pendingMethods.get(row.optInt("id")))))row=new JSONObject(redact(line));GeneratedImages.normalize(context,row);String observedMethod=row.optString("method");if(!observedMethod.isEmpty()){JSONObject observedParams=row.optJSONObject("params"),observedItem=observedParams==null?null:observedParams.optJSONObject("item");KernelTrace.once("event:"+observedMethod+(observedItem==null?"":":"+observedItem.optString("type")));}if(row.has("id")&&!row.has("method")){CompletableFuture<JSONObject> f=pending.get(row.optInt("id"));if(f!=null){FullAccessApprovals.Request permissions=permissionRequests.get(row.optInt("id"));if(row.has("error")){if(row.getJSONObject("error").opt("code") instanceof Integer||row.getJSONObject("error").opt("code") instanceof Long)fullAccessApprovals.rejected(permissions);}else fullAccessApprovals.accepted(permissions,row.optJSONObject("result"));if(!row.has("error"))observeAccount(pendingMethods.get(row.optInt("id")),row.optJSONObject("result"));f.complete(row);}}else {fullAccessApprovals.observe(row.optString("method"),row.optJSONObject("params"));JSONObject approved=row.has("id")&&!cancelledTurns.contains(turnKey(row.optJSONObject("params")==null?new JSONObject():row.getJSONObject("params")))?fullAccessApprovals.decision(row):null;if(approved!=null){write(new JSONObject().put("id",row.get("id")).put("result",approved));continue;}observeAccount(row.optString("method"),row.optJSONObject("params"));if("mcpServer/oauthLogin/completed".equals(row.optString("method")))work.execute(()->{try{reloadMcpConnections();}catch(Exception ignored){}});trackActiveTurn(row);rememberRuntimeThread(row);PhoneTaskReport.event(context,row);PhoneRouteTools.event(row);if(DependencyTools.handle(this,row)||RuntimeComponentTools.handle(this,row)||PhoneRouteTools.handle(this,row)||NetworkTools.handle(this,row)||DesktopBrowserRuntime.handle(this,row)||BrowserTools.handle(this,row)||PhoneTools.handle(this,row))continue;if("turn/started".equals(row.optString("method"))){JSONObject state=row.optJSONObject("params");if(state!=null&&state.optString("threadId").equals(PhoneTools.owner))PhoneTools.turn=state.getJSONObject("turn").getString("id");}if("turn/completed".equals(row.optString("method"))){JSONObject state=row.optJSONObject("params");if(state!=null){JSONObject ended=state.optJSONObject("turn");if(ended!=null){BrowserOwnership.release(state.optString("threadId")+":"+ended.optString("id"));PhoneResourceScheduler.releaseTurn(state.optString("threadId"),ended.optString("id"));}}if(state!=null&&state.optJSONObject("turn")!=null){PhoneTools.releaseTurn(state.optString("threadId"),state.getJSONObject("turn").optString("id"));}}if("account/login/completed".equals(row.optString("method"))){JSONObject state=row.optJSONObject("params");if(state!=null){loginSession=null;loginError=state.optBoolean("success")?"":state.optString("error","登录未完成，请重试");LoginService.end(context);}}emit(row);}}catch(JSONException ignored){}}}catch(Exception ignored){}finally{if(process!=child)return;clearExecutionTurns();fullAccessApprovals.clear();providerConfigCache.invalidate();for(String thread:threadProviders.keySet()){PhoneTools.release(thread);BrowserOwnership.releaseThread(thread);PhoneResourceScheduler.releaseThread(thread);PhoneRouteTools.clear(thread);PhoneBatch.steer(thread);}PhoneTaskReport.failThreads(context,threadProviders.keySet());for(CompletableFuture<JSONObject> f:pending.values())f.completeExceptionally(new IOException("Codex 内核已停止，请恢复会话"));try{emit(new JSONObject().put("method","android/kernelExited").put("params",new JSONObject().put("threadIds",new JSONArray(threadProviders.keySet()))));}catch(Exception ignored){}}});
   work.execute(()->{try(InputStream err=child.getErrorStream()){byte[] bytes=new byte[4096];while(err.read(bytes)!=-1){/* Do not persist raw provider stderr or credentials. */}}catch(Exception ignored){}});
  }
  // Reader must be able to acquire the event lock during initialization.
- try{rpc("initialize",new JSONObject().put("clientInfo",new JSONObject().put("name","eva_android").put("version","0.0.28")).put("capabilities",new JSONObject().put("experimentalApi",true)));write(new JSONObject().put("method","initialized").put("params",new JSONObject()));JSONObject mcpConfig=rpc("config/read",new JSONObject().put("includeLayers",false)).getJSONObject("config").optJSONObject("mcp_servers");if(mcpConfig!=null)McpSettings.rememberSecrets(this,mcpConfig);ready=true;}catch(Exception error){synchronized(this){ready=false;Process failed=process;process=null;input=null;if(failed!=null)failed.destroy();}throw error;}
+ try{rpc("initialize",new JSONObject().put("clientInfo",new JSONObject().put("name","eva_android").put("version","0.0.28")).put("capabilities",new JSONObject().put("experimentalApi",true)));write(new JSONObject().put("method","initialized").put("params",new JSONObject()));JSONObject mcpConfig=rpc("config/read",new JSONObject().put("includeLayers",false)).getJSONObject("config").optJSONObject("mcp_servers");if(mcpConfig!=null)McpSettings.rememberSecrets(this,mcpConfig);ready=true;}catch(Exception error){synchronized(this){ready=false;Process failed=process;process=null;input=null;clearExecutionTurns();if(failed!=null)failed.destroy();}throw error;}
  }
  // Child threads belong to the same authenticated runtime as the parent. Persist
  // routing before publishing the event so UI reads cannot start the other runtime.
@@ -123,9 +217,14 @@ public final class KernelHost {
  }catch(Exception ignored){}}
  void rememberThread(String id,String provider,String cwd){if(id.isEmpty())return;if(!provider.isEmpty())threadProviders.put(id,provider);threadCwds.put(id,cwd);android.content.SharedPreferences routing=context.getSharedPreferences("eva-kernel-routing",0);if(!routing.contains(id)||routing.getBoolean(id,false)!=apiOnly)routing.edit().putBoolean(id,apiOnly).apply();}
  static String envName(String id){return "EVA_PROVIDER_"+id.replace('-','_');}
+ JSONObject threadModelConfig(String provider)throws Exception{
+  JSONObject config=new JSONObject().put("model_providers",providerDefinitions());
+  if(!provider.isEmpty()&&!provider.equals("openai")&&new ModelStore(context).provider(provider).optString("protocol","responses").equals("chat_completions"))config.put("web_search","disabled");
+  return config;
+ }
+ JSONArray browserSpecs()throws Exception{JSONArray all=PhoneTools.specs().put(BrowserTools.spec());JSONArray browser=DesktopBrowserRuntime.specs(context);for(int i=0;i<browser.length();i++)all.put(new JSONObject().put("name",browser.getJSONObject(i).getString("name")).put("description",browser.getJSONObject(i).getString("description")).put("inputSchema",browser.getJSONObject(i).getJSONObject("inputSchema")));return all;}
  JSONObject params(String method,JSONObject p)throws Exception{if(method.equals("turn/start")){PhoneTaskService.restore(context);}if(method.equals("thread/start")||method.equals("thread/resume")){
-  ModelStore store=new ModelStore(context);if(!store.read().getJSONArray("providers").toString().equals(configStamp))throw new IOException("提供商配置已变化，请重启 Eva 后使用新配置");JSONArray list=store.read().getJSONArray("providers");JSONObject definitions=new JSONObject();for(int i=0;i<list.length();i++){JSONObject entry=list.getJSONObject(i);definitions.put(entry.getString("id"),new JSONObject().put("name",entry.getString("name")).put("base_url",entry.getString("url")).put("env_key",envName(entry.getString("id"))).put("wire_api","responses").put("requires_openai_auth",false).put("supports_websockets",false));}
-  if(method.equals("thread/start"))p.put("dynamicTools",PhoneTools.specs().put(BrowserTools.spec()).put(NetworkTools.spec()));p.put("config",new JSONObject().put("model_providers",definitions));String project=p.optString("androidProject","");p.remove("androidProject");WorkspaceFiles.project(context,project);p.put("cwd","/root/eva-workspace"+(project.isEmpty()?"":"/projects/"+project));OfficeRuntime.deploy(context);if(managedSkillsRevision!=OfficeRuntime.skillsRevision){rpc("skills/list",new JSONObject().put("cwds",new JSONArray().put(p.getString("cwd"))).put("forceReload",true));managedSkillsRevision=OfficeRuntime.skillsRevision;}p.put("developerInstructions",p.optString("developerInstructions","")+"\n"+MemoryStore.instructions()+"\n"+OfficeRuntime.instructions()+"\n"+NetworkTools.instructions());applyPermissions(p,false);
+  if(method.equals("thread/start"))p.put("dynamicTools",browserSpecs().put(NetworkTools.spec()).put(RuntimeComponentTools.spec()).put(DependencyTools.spec()));p.put("config",threadModelConfig(p.optString("modelProvider",currentProvider)));String project=p.optString("androidProject","");p.remove("androidProject");WorkspaceFiles.project(context,project);p.put("cwd","/root/eva-workspace"+(project.isEmpty()?"":"/projects/"+project));OfficeRuntime.deploy(context);if(managedSkillsRevision!=OfficeRuntime.skillsRevision){rpc("skills/list",new JSONObject().put("cwds",new JSONArray().put(p.getString("cwd"))).put("forceReload",true));managedSkillsRevision=OfficeRuntime.skillsRevision;}p.put("developerInstructions",p.optString("developerInstructions","")+"\n"+MemoryStore.instructions()+"\n"+OfficeRuntime.instructions()+"\n"+NetworkTools.instructions());applyPermissions(p,false);
  }if(method.equals("turn/start"))applyPermissions(p,true);return p;}
 
  // Canonical desktop permission triples. Never promote a failed review into full access.
@@ -169,10 +268,18 @@ public final class KernelHost {
  String currentProvider="";long managedSkillsRevision=-1;
  JSONObject providerDefinitions()throws Exception{
   JSONArray list=new ModelStore(context).read().getJSONArray("providers");JSONObject definitions=new JSONObject();
-  for(int i=0;i<list.length();i++){JSONObject entry=list.getJSONObject(i);definitions.put(entry.getString("id"),new JSONObject().put("name",entry.getString("name")).put("base_url",entry.getString("url")).put("env_key",envName(entry.getString("id"))).put("wire_api","responses").put("requires_openai_auth",false).put("supports_websockets",false));}
+  for(int i=0;i<list.length();i++){JSONObject entry=list.getJSONObject(i);JSONObject definition=new JSONObject().put("name",entry.getString("name")).put("base_url",ModelProtocolGateway.currentBaseUrl(entry)).put("env_key",envName(entry.getString("id"))).put("wire_api","responses").put("requires_openai_auth",false).put("supports_websockets",false);
+   // The managed service already owns upstream recovery. Do not wrap an
+   // explicit quota/protocol failure in another five stream reconnects.
+   if(LocalFreeModels.URL.equals(entry.optString("url")))definition.put("request_max_retries",0).put("stream_max_retries",0);
+   definitions.put(entry.getString("id"),definition);
+  }
   return definitions;
  }
  void selectKernelProvider(String provider)throws Exception{
+  if(!provider.equals("openai")){
+   JSONObject entry=new ModelStore(context).provider(provider);LocalFreeModels.ensureProvider(context,entry);ModelProtocolGateway.baseUrl(context,entry);
+  }
   // Reuse only a successful write from this exact live process and unchanged disk bytes.
   JSONObject definitions=providerDefinitions();if(!provider.equals("openai")&&!definitions.has(provider))throw new IOException("会话提供商已删除，请重新配置");
   String selection=provider+"\n"+definitions.toString();Object child=process;
@@ -183,19 +290,28 @@ public final class KernelHost {
  }
  JSONObject providerRequest(String method,JSONObject prepared,String provider)throws Exception{
   if(method.equals("thread/resume")){
-   JSONObject projection=ProviderHistoryProjection.project(context,prepared.getString("threadId"),provider,false,PhoneTools.specs().put(BrowserTools.spec()).put(NetworkTools.spec()));
+   JSONObject projection=ProviderHistoryProjection.project(context,prepared.getString("threadId"),provider,false,browserSpecs().put(NetworkTools.spec()).put(RuntimeComponentTools.spec()).put(DependencyTools.spec()));
    if(projection.optBoolean("needed"))return projectedProviderFork(prepared,provider,projection);
   }
   return ProviderSwitch.execute(method,prepared,provider,(name,params)->{
    if(name.equals("thread/fork")){
-    JSONObject projection=ProviderHistoryProjection.project(context,params.getString("threadId"),provider,true,PhoneTools.specs().put(BrowserTools.spec()).put(NetworkTools.spec()));
-    if(projection.optBoolean("needed")){JSONObject copy=new JSONObject(params.toString()).put("path",projection.getString("path")).put("excludeTurns",true);return rpc(name,copy);}
+    JSONObject projection=ProviderHistoryProjection.project(context,params.getString("threadId"),provider,true,browserSpecs().put(NetworkTools.spec()).put(RuntimeComponentTools.spec()).put(DependencyTools.spec()));
+    if(projection.optBoolean("needed"))return projectedProviderFork(params,provider,projection);
    }
    return rpc(name,params);
   });
  }
  JSONObject projectedProviderFork(JSONObject prepared,String provider,JSONObject projection)throws Exception{
-  JSONObject result=ProviderSwitch.forkProvider(new JSONObject(prepared.toString()).put("path",projection.getString("path")).put("excludeTurns",true),provider,this::rpc);
+  String original=prepared.getString("threadId"),copyId=projection.getJSONObject("audit").getString("projectedThreadId");
+  // This pinned core has no path field on resume/fork. Register the new rollout
+  // through its filesystem-aware catalog, then fork its actual ID. A fork
+  // also rebinds provider configuration retained in old turn checkpoints.
+  String cursor=null;boolean found=false;int pages=0;
+  do{JSONObject query=new JSONObject().put("useStateDbOnly",false).put("limit",100).put("modelProviders",new JSONArray().put(provider));if(cursor!=null)query.put("cursor",cursor);JSONObject page=rpc("thread/list",query);JSONArray entries=page.optJSONArray("data");for(int i=0;entries!=null&&i<entries.length();i++)if(copyId.equals(entries.getJSONObject(i).optString("id")))found=true;cursor=page.isNull("nextCursor")?null:page.optString("nextCursor",null);if(++pages>200)throw new IOException("兼容副本索引超过检查范围，原对话已保留");}while(!found&&cursor!=null&&!cursor.isEmpty());
+  if(!found){JSONObject indexed=rpc("thread/read",new JSONObject().put("threadId",copyId).put("includeTurns",false));if(indexed.optJSONObject("thread")==null||!copyId.equals(indexed.getJSONObject("thread").optString("id")))throw new IOException("内核尚未索引兼容副本，原对话已保留；没有发送任务");}
+  JSONObject result=ProviderSwitch.forkProvider(new JSONObject(prepared.toString()).put("threadId",copyId).put("excludeTurns",true),provider,this::rpc);
+  JSONObject thread=result.optJSONObject("thread");if(thread==null||copyId.equals(thread.optString("id"))||original.equals(thread.optString("id"))||!provider.equals(result.optString("modelProvider"))||!prepared.optString("model").equals(result.optString("model")))throw new IOException("内核未确认兼容副本，原对话已保留；没有发送任务");
+  result.put("androidPreviousThreadId",original);
   result.put("androidContextProjection",new JSONObject().put("preservedOriginal",true).put("removedProviderPrivateReasoning",projection.optInt("removedReasoningItems")+projection.optInt("removedCheckpointReasoningItems")).put("auditPath",projection.getString("auditPath")));
   KernelTrace.mark("provider-history:projected");return result;
  }
@@ -219,7 +335,7 @@ public final class KernelHost {
   synchronized(providerDispatch){
    String provider=request.optString("modelProvider","openai");
    if(method.equals("turn/start")){provider=threadProviders.get(request.getString("threadId"));if(provider==null)throw new IOException("请重新打开会话后发送，提供商状态尚未恢复");}
-   if(!new ModelStore(context).read().getJSONArray("providers").toString().equals(configStamp))throw new IOException("提供商配置已变化，请重启 Eva 后使用新配置");
+   ensureProviderConnection(provider,!method.equals("turn/start"));
    if(method.equals("thread/resume")){
     String id=request.getString("threadId");KernelHost previous=forThread(context,id);String oldProvider=previous.threadProviders.get(id);
     // Release the old subscription before resuming with another provider. Loaded
@@ -230,13 +346,15 @@ public final class KernelHost {
     }
    }
    selectKernelProvider(provider);
-   JSONObject prepared=params(method,new JSONObject(request.toString())),result=providerRequest(method,prepared,provider);
+   JSONObject prepared=params(method,new JSONObject(request.toString()));
+   if(method.equals("turn/start")&&!provider.equals("openai"))LocalFreeModels.turnOptions(new ModelStore(context).provider(provider),prepared);
+   JSONObject result=providerRequest(method,prepared,provider);
    if(!method.equals("turn/start")){JSONObject thread=result.getJSONObject("thread");threadProviders.put(thread.getString("id"),result.optString("modelProvider",provider));threadCwds.put(thread.getString("id"),thread.optString("cwd",request.optString("cwd","/root/eva-workspace")));context.getSharedPreferences("eva-kernel-routing",0).edit().putBoolean(thread.getString("id"),apiOnly).commit();}
    return result;
   }
  }
  void reloadMcpConnections()throws Exception{rpc("config/mcpServer/reload",new JSONObject());KernelHost other=apiOnly?instance:apiInstance;if(other!=null&&other.ready){JSONObject servers=other.rpc("config/read",new JSONObject().put("includeLayers",false)).getJSONObject("config").optJSONObject("mcp_servers");if(servers!=null)McpSettings.rememberSecrets(other,servers);other.rpc("config/mcpServer/reload",new JSONObject());}}
- void warm(){if(!apiOnly){try{JSONObject config=new ModelStore(context).read();if(!context.getSharedPreferences("eva-account",0).getBoolean("preferred",false)&&!config.optString("active").isEmpty()){api(context).warm();return;}}catch(Exception ignored){}}work.execute(()->{try{synchronized(startup){ensureStarted();}}catch(Exception ignored){/* Actual send reports startup failure without sending or retrying a task. */}});}
+ void warm(){if(!apiOnly){try{JSONObject selection=new ModelStore(context).publicConfig().optJSONObject("defaultSelection");if(selection!=null&&!selection.optString("providerId").isEmpty()&&!"openai".equals(selection.optString("providerId"))){api(context).warm();return;}}catch(Exception ignored){}}work.execute(()->{try{synchronized(startup){ensureStarted();}}catch(Exception ignored){/* Actual send reports startup failure without sending or retrying a task. */}});}
  final Object startup=new Object();
  void observeAccount(String method,JSONObject value){
   if(apiOnly||method==null||value==null)return;

@@ -1,0 +1,25 @@
+{
+  "files": [
+    {
+      "path": "probe/src/BrowserAddress.java",
+      "sha256": "3aed4b7a6b9fc6d5fe6440d567101295ee6aa79d4b89608a6619ea8851c09625"
+    },
+    {
+      "path": "probe/src/DesktopBrowserHost.java",
+      "sha256": "8c145fc7e5df878a785dd5b8d2042e8dc46df599fc3432a4a23545770f8e7a06"
+    },
+    {
+      "path": "probe/src/DesktopBrowserRuntime.java",
+      "sha256": "fd219486fa4e46f49df483e43500daa434bb0cdd711e3d67e2ae23677f68fa54"
+    },
+    {
+      "path": "probe/assets/desktop-browser/android-worker.mjs",
+      "sha256": "ebdb816f72bc99843c59344226e904467690aea4cf171c0c94c2dc3492615719"
+    },
+    {
+      "path": "probe/assets/desktop-browser/android-input.cjs",
+      "sha256": "ac8d381d1e46a83a865e36734977d48b10a7fee71f6405d97071c2179a3369b9"
+    }
+  ],
+  "validation": "18 tool categories executed by phone Node against isolated Android WebView; upload, extension host and full product parity not accepted"
+}

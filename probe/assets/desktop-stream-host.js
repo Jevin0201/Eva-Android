@@ -140,7 +140,7 @@ import './desktop-stream/native-image-preview/common.js';
   state.approvals = [...kernelApprovals.values()].filter(row => row.params?.threadId === state.thread.id);
   if (window.agentQuestions?.hasPending?.(state.thread.id)) state.approvals.push({params: {threadId: state.thread.id}});
   const turns = state.thread.turns || [];
-  const limit = flowHistoryLimits.get(chat) || 20;
+  const limit = flowHistoryLimits.get(chat) || 5;
   const chunks = [];
   const pendingUser = pendingUserMessage(chat);
   // The accepted turn can arrive before its userMessage echo. Render the local

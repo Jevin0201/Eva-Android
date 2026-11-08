@@ -14,6 +14,13 @@ import org.json.JSONObject;
 public final class PhoneRouteCheck extends Instrumentation {
     private int checks;
     private void check(boolean passed, String name) { if (!passed) throw new AssertionError(name); checks++; }
+    private JSONObject observedOutput(Context context) throws Exception {
+        android.content.pm.PackageInfo info = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+        return new JSONObject().put("completed", true).put("steps", new JSONArray().put(new JSONObject().put("ok", true)))
+            .put("learningPackage", context.getPackageName()).put("learningVersion", info.versionName).put("learningVersionCode", info.getLongVersionCode())
+            .put("observation", new JSONObject().put("package", context.getPackageName()).put("snapshot", "fixture-snapshot")
+                .put("nodes", new JSONArray().put(new JSONObject().put("id", "fixture-settings").put("text", "设置").put("resourceId", "fixture:id/settings"))));
+    }
     public void onCreate(Bundle arguments) { super.onCreate(arguments); start(); }
     public void onStart() {
         Bundle result = new Bundle(); File temporary = null;
@@ -83,6 +90,95 @@ public final class PhoneRouteCheck extends Instrumentation {
             rejected = false;
             try { PhoneRouteTools.execute(context, save, request, 0, 0); } catch (IOException expected) { rejected = true; }
             check(rejected, "failed batch invalidates learning chain");
+            JSONArray appSteps = new JSONArray("[{action:open_app,package:'example.calculator'},{action:click,target:{text:'更多'}}]");
+            JSONObject binding = new JSONObject("{package:'example.calculator',version:'1.2',versionCode:12}");
+            JSONObject bound = store.create("settings", "App settings", appSteps, "app-turn", binding);
+            check(store.list("settings", "example.calculator").length() == 1 && store.list("settings", "example.other").length() == 0, "App route isolation");
+            JSONObject restored = new PhoneRouteStore(context).get(bound.getString("id"));
+            check(restored.getLong("appVersionCode") == 12 && restored.getString("appVersion").equals("1.2"), "installed version persisted");
+            check(restored.getJSONObject("startTarget").getString("text").equals("更多") && restored.getJSONArray("steps").getJSONObject(1).getString("before_package").equals("example.calculator"), "entry target and App guard persisted");
+            check(store.list("open more").getJSONObject(0).optBoolean("needsRelearning"), "legacy routes remain readable with relearning marker");
+            JSONObject legacyReplay = PhoneRouteTools.execute(context, new JSONObject().put("action", "replay").put("id", learned.getString("id")).put("goal", "save goal"), request, 0, 0);
+            check(legacyReplay.optBoolean("needsRelearning") && !legacyReplay.optBoolean("actionExecuted"), "legacy route requires relearning before dispatch");
+            long installedVersion = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).getLongVersionCode();
+            JSONObject staleVersion = store.create("version check", "Stale version", new JSONArray("[{action:observe}]"), "app-turn",
+                new JSONObject().put("package", context.getPackageName()).put("versionCode", installedVersion + 1));
+            JSONObject rejectedVersion = PhoneRouteTools.execute(context, new JSONObject().put("action", "replay").put("id", staleVersion.getString("id")).put("goal", "version check"), request, 0, 0);
+            check(rejectedVersion.optBoolean("needsRelearning") && !rejectedVersion.optBoolean("actionExecuted"), "changed App version rejected before phone dispatch");
+            JSONObject appOk = new JSONObject().put("completed", true).put("steps", new JSONArray("[{ok:true}]")).put("learningPackage", "example.one").put("learningVersionCode", 1);
+            PhoneRouteTools.candidate("route-check", "apps", observed, appOk);
+            appOk.put("learningPackage", "example.two");
+            PhoneRouteTools.candidate("route-check", "apps", observed, appOk);
+            check(appOk.getJSONObject("routeLearning").getInt("candidateSteps") == 1, "different App batches never merged");
+            PhoneRouteTools.candidate("route-check", "apps", observed, new JSONObject(appOk.toString()).put("learningMixedApps", true));
+            rejected = false;
+            try { PhoneRouteTools.execute(context, save, request, 0, 0); } catch (IOException expected) { rejected = true; }
+            check(rejected, "cross App batch cannot be learned as one route");
+            check(PhoneRouteStore.calibration(restored, 12).getString("state").equals("candidate"), "saved candidate is not shown as verified");
+            JSONObject verifiedRoute = store.success(restored.getString("id"));
+            check(PhoneRouteStore.calibration(verifiedRoute, 12).getBoolean("verified"), "same-version verified calibration");
+            check(PhoneRouteStore.calibration(verifiedRoute, 13).getBoolean("needsRelearning"), "upgrade reported stale before replay");
+            check(PhoneRouteStore.calibration(verifiedRoute, -1).getString("state").equals("app_unavailable"), "unavailable App has no verified status");
+            check(PhoneRouteStore.calibration(learned, installedVersion).getBoolean("needsRelearning"), "legacy calibration remains untrusted");
+            JSONObject disabledStatus = new JSONObject(verifiedRoute.toString()).put("disabled", true);
+            check(PhoneRouteStore.calibration(disabledStatus, 12).getString("state").equals("disabled"), "disabled route not shown as verified");
+            JSONObject emptyApp = PhoneRouteTools.list(context, store, "unused-status-goal", context.getPackageName());
+            check(emptyApp.getJSONObject("appLearning").getString("state").equals("unlearned"), "unknown goal exposes actionable unlearned state");
+            JSONObject staleList = PhoneRouteTools.list(context, store, "version check", context.getPackageName()).getJSONArray("routes").getJSONObject(0);
+            check(staleList.getBoolean("needsRelearning") && staleList.getJSONObject("calibration").getLong("installedVersionCode") == installedVersion, "list evaluates actual installed version");
+            JSONObject safeNavigation = new JSONObject().put("steps", new JSONArray("[{action:click,target:{text:'更多'}}]"));
+            JSONObject automatic = observedOutput(context);
+            PhoneRouteTools.candidate(context, "route-check", "auto-first", safeNavigation, automatic);
+            JSONObject automaticRoute = automatic.getJSONObject("routeLearning").getJSONObject("route");
+            String automaticId = automaticRoute.getString("id");
+            check(automatic.getJSONObject("routeLearning").getBoolean("autoSaved") && store.get(automaticId).getString("provenance").equals("observed-safe-navigation"), "safe observed batch automatically persisted without save");
+            check(PhoneRouteStore.calibration(store.get(automaticId), installedVersion).getString("state").equals("observed") && automaticRoute.getInt("successes") == 0, "automatic observation does not assert goal verification");
+            JSONObject repeated = observedOutput(context);
+            PhoneRouteTools.candidate(context, "route-check", "auto-second", safeNavigation, repeated);
+            check(repeated.getJSONObject("routeLearning").getJSONObject("route").getString("id").equals(automaticId) && store.get(automaticId).getInt("observations") == 2, "repeated path upserts the same automatic route");
+            JSONObject automaticRequest = new JSONObject().put("threadId", "route-check").put("turnId", "auto-second");
+            JSONObject automaticConfirmation = PhoneRouteTools.execute(context, new JSONObject().put("action", "confirm").put("receipt", repeated.getJSONObject("routeLearning").getString("receipt")).put("success", true), automaticRequest, 0, 0);
+            check(automaticConfirmation.getBoolean("verified") && store.get(automaticId).getInt("successes") == 1, "actual automatic batch receipt promotes verified status");
+            JSONObject untrustedConfirmation = new JSONObject().put("action", "confirm").put("receipt", "invented-auto-receipt").put("success", true);
+            rejected = false;
+            try { PhoneRouteTools.execute(context, untrustedConfirmation, automaticRequest, 0, 0); } catch (IOException expectedError) { rejected = true; }
+            check(rejected, "automatic learning does not permit invented verification receipts");
+            int beforeRejectedLearning = store.list("").length();
+            PhoneRouteTools.candidate(context, "route-check", "auto-opt-out", new JSONObject(safeNavigation.toString()).put("learn", false), observedOutput(context));
+            check(store.get(automaticId).getInt("observations") == 2, "explicit no-learning request does not record another observation");
+            JSONObject failedBatch = observedOutput(context).put("completed", false);
+            PhoneRouteTools.candidate(context, "route-check", "auto-failed", safeNavigation, failedBatch);
+            check(store.list("").length() == beforeRejectedLearning, "failed batch does not automatically learn");
+            PhoneRouteTools.candidate(context, "route-check", "auto-input", new JSONObject().put("steps", new JSONArray("[{action:input,target:{text:'搜索'},text:'fixture'}]")), observedOutput(context));
+            check(store.list("").length() == beforeRejectedLearning, "input is excluded from automatic learning");
+            JSONObject unreadable = observedOutput(context);
+            unreadable.getJSONObject("observation").put("nodes", new JSONArray());
+            PhoneRouteTools.candidate(context, "route-check", "auto-unreadable", safeNavigation, unreadable);
+            check(store.list("").length() == beforeRejectedLearning, "unreadable endpoint cannot be auto-calibrated");
+            PhoneRouteTools.candidate(context, "route-check", "auto-wrong-version", safeNavigation, observedOutput(context).put("learningVersionCode", installedVersion + 1));
+            check(store.list("").length() == beforeRejectedLearning && PhoneRouteStore.calibration(store.get(automaticId), installedVersion + 1).getBoolean("needsRelearning"), "automatic routes require the actual installed version");
+            check(PhoneRouteTools.endpointMatches(store.get(automaticId), observedOutput(context).getJSONObject("observation")) && !PhoneRouteTools.endpointMatches(store.get(automaticId), unreadable.getJSONObject("observation")), "automatic replay endpoint binding checked without dispatch");
+            JSONObject afterVerified = observedOutput(context);
+            PhoneRouteTools.candidate(context, "route-check", "auto-third", safeNavigation, afterVerified);
+            check(store.get(automaticId).getInt("successes") == 1 && store.get(automaticId).getString("goal").equals(automaticRoute.getString("goal")), "new observations preserve verified history and saved goal");
+            PhoneBatchCheck.Fake navigation = new PhoneBatchCheck.Fake();
+            navigation.app = context.getPackageName(); navigation.firstLabel = ""; navigation.firstDescription = "更多"; navigation.nextLabel = "设置";
+            JSONObject firstArgs = PhoneBatchCheck.args("[{action:click,target:{resourceId:'fixture:id/action'},expect:'设置'}]");
+            JSONObject firstBatch = PhoneBatch.run(firstArgs, navigation).put("learningVersionCode", installedVersion).put("learningVersion", "fixture");
+            PhoneRouteTools.candidate(context, "route-check", "canonical-chain", firstArgs, firstBatch);
+            check(firstBatch.getJSONObject("routeLearning").getBoolean("autoSaved"), "observed resource-only safe navigation auto-saves its first batch");
+            JSONObject secondArgs = PhoneBatchCheck.args("[{action:click,target:{text:'设置'}}]");
+            JSONObject secondBatch = PhoneBatch.run(secondArgs, navigation).put("learningVersionCode", installedVersion).put("learningVersion", "fixture");
+            PhoneRouteTools.candidate(context, "route-check", "canonical-chain", secondArgs, secondBatch);
+            JSONObject canonicalRoute = store.get(secondBatch.getJSONObject("routeLearning").getJSONObject("route").getString("id"));
+            check(canonicalRoute.getJSONArray("steps").length() == 2, "two actual successful batches aggregate the complete navigation path");
+            check(canonicalRoute.getJSONObject("startTarget").getString("description").equals("更多") && canonicalRoute.getJSONArray("steps").getJSONObject(1).getJSONObject("target").getString("text").equals("设置"), "aggregated route starts at actual more control rather than the later menu");
+            check(!firstArgs.getJSONArray("steps").getJSONObject(0).getJSONObject("target").has("description"), "canonical route learning preserves original ID-only arguments");
+            int beforeUnsafeCanonical = store.list("").length();
+            JSONObject unsafeCanonical = new JSONObject(secondBatch.toString()).put("learningRejected", true);
+            unsafeCanonical.remove("routeLearning");
+            PhoneRouteTools.candidate(context, "route-check", "canonical-chain", secondArgs, unsafeCanonical);
+            check(!unsafeCanonical.has("routeLearning") && store.list("").length() == beforeUnsafeCanonical, "rejected canonical evidence cannot silently fall back to original selectors");
             store.delete(id); check(store.list("open more").length() == 0, "delete");
             result.putString("stream", "PASS phone routes " + checks + " checks\n");
         } catch (Throwable error) { result.putString("stream", "FAIL phone routes " + error + "\n"); }

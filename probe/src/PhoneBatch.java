@@ -28,8 +28,9 @@ final class PhoneBatch {
         fields.put("wait_stable", new JSONObject().put("type", "boolean"));
         fields.put("timeoutMs", new JSONObject().put("type", "integer").put("minimum", 0).put("maximum", 10000));
         JSONObject step = new JSONObject().put("type", "object").put("properties", fields).put("required", new JSONArray().put("action")).put("additionalProperties", false);
-        JSONObject properties = new JSONObject().put("steps", new JSONObject().put("type", "array").put("minItems", 1).put("maxItems", 20).put("items", step));
-        return new JSONObject().put("name", "eva_phone_steps").put("description", "Execute 1-20 phone actions in order. Targets use exact text/resourceId/description from an observation and must uniquely match a fresh screen. Do not pass node IDs or snapshots. Each action returns fresh observation. Optional before_package checks before dispatch. expect/expect_gone wait for visible text and expect_package checks App after dispatch; wait_stable waits for an unchanged node tree. Stops on failure, timeout, cancellation or user steering and reports every skipped step. No automatic replay. A batch does not grant authorization. Use only actions already authorized by the user. Stop before sending/purchasing/deleting or granting permissions, perform those separately under existing approval rules. For messaging try eva_wechat only when available, otherwise use live phone actions. Before exploring a repeated navigation, list eva_phone_route. After a successful batch inspect observation and save its navigation goal via eva_phone_route with success=true to learn it automatically.").put("inputSchema", new JSONObject().put("type", "object").put("properties", properties).put("required", new JSONArray().put("steps")).put("additionalProperties", false));
+        JSONObject properties = new JSONObject().put("steps", new JSONObject().put("type", "array").put("minItems", 1).put("maxItems", 20).put("items", step))
+            .put("learn", new JSONObject().put("type", "boolean").put("description", "Defaults true for safe observed navigation; set false when the user asks not to remember this operation"));
+        return new JSONObject().put("name", "eva_phone_steps").put("description", "Execute 1-20 phone actions in order. Targets use exact text/resourceId/description from an observation and must uniquely match a fresh screen. Do not pass node IDs or snapshots. Each action returns fresh observation. Optional before_package checks before dispatch. expect/expect_gone wait for visible text and expect_package checks App after dispatch; wait_stable waits for an unchanged node tree. Stops on failure, timeout, cancellation or user steering and reports every skipped step. No automatic replay. A batch does not grant authorization. Use only actions already authorized by the user. Stop before sending/purchasing/deleting or granting permissions, perform those separately under existing approval rules. For messaging try eva_wechat only when available, otherwise use live phone actions. Before exploring a repeated navigation, list eva_phone_route. Successful safe single-App navigation with a readable endpoint is automatically recorded. Inspect routeLearning and its receipt, verify the actual navigation goal, then eva_phone_route confirm. No separate save is required. Prefer this batch tool even for one navigation action. Set learn=false if the user asks not to remember the operation.").put("inputSchema", new JSONObject().put("type", "object").put("properties", properties).put("required", new JSONArray().put("steps")).put("additionalProperties", false));
     }
 
     interface Backend {
@@ -41,7 +42,7 @@ final class PhoneBatch {
 
     static JSONObject execute(Context context, JSONObject arguments, JSONObject request, long epoch, long revision) throws Exception {
         String thread = request.optString("threadId");
-        return run(arguments, new Backend() {
+        JSONObject result = run(arguments, new Backend() {
             public JSONObject execute(JSONObject args) throws Exception { PhoneTools.dispatchGuard.set(()->{guard();return true;});try{PhoneTools.reserveTask(request,args);return PhoneTools.executeObserved(context,args,epoch);}finally{PhoneTools.dispatchGuard.remove();} }
             public void guard() throws Exception {
                 KernelHost.guardTurn(request);
@@ -51,10 +52,21 @@ final class PhoneBatch {
             public long now() { return SystemClock.elapsedRealtime(); }
             public void sleep(long millis) throws Exception { Thread.sleep(millis); }
         });
+        String app = result.optString("learningPackage");
+        if (!app.isEmpty()) {
+            try {
+                android.content.pm.PackageInfo info = context.getPackageManager().getPackageInfo(app, 0);
+                result.put("learningVersion", info.versionName).put("learningVersionCode", info.getLongVersionCode());
+            } catch (android.content.pm.PackageManager.NameNotFoundException missing) {
+                result.put("learningUnavailable", true);
+            }
+        }
+        return result;
     }
 
     static JSONObject run(JSONObject arguments, Backend backend) throws Exception {
         JSONArray steps = arguments.getJSONArray("steps");
+        if (arguments.has("learn") && !(arguments.get("learn") instanceof Boolean)) throw new IOException("learn 必须是布尔值");
         if (steps.length() < 1 || steps.length() > 20) throw new IOException("批处理需要 1 至 20 个步骤");
         // Validate the whole request before the first side effect.
         for (int i = 0; i < steps.length(); i++) validate(steps.getJSONObject(i));
@@ -75,7 +87,11 @@ final class PhoneBatch {
                 if (!previousPackage.isEmpty() && !previousPackage.equals(latest.optString("package"))) throw new IOException("步骤之间 App 已改变，停止后续操作");
                 if (!step.optString("before_package").isEmpty() && !step.getString("before_package").equals(latest.optString("package"))) throw new IOException("当前 App 与 before_package 不一致");
                 String startingPackage = latest.optString("package");
+                latest = awaitTarget(step, latest, backend, deadline, startingPackage);
                 JSONObject args = resolve(step, latest);
+                JSONObject learningStep = null;
+                try { learningStep = observedLearningStep(step, latest); }
+                catch (Exception unsafeLearning) { entry.put("learningRejected", true); }
                 backend.guard();
                 if (!step.getString("action").equals("observe")) {
                     entry.put("attempted", true);
@@ -86,13 +102,30 @@ final class PhoneBatch {
                 if (latest.has("observationError")) throw new IOException(latest.getString("observationError"));
                 if (step.getString("action").equals("input") && !visibleText(latest).contains(step.getString("text"))) throw new IOException("输入回读未匹配，停止后续步骤");
                 latest = await(step, latest, backend, deadline, startingPackage);
-                entry.put("ok", true);
+                entry.put("package", latest.optString("package")).put("ok", true);
+                if (learningStep != null) entry.put("learningStep", learningStep);
             } catch (Exception error) {
                 stopped = error.getMessage() == null ? error.toString() : error.getMessage();
                 entry.put("ok", false).put("error", stopped);
             }
         }
         JSONObject result = new JSONObject().put("steps", results).put("completed", stopped.isEmpty());
+        JSONArray learningSteps = new JSONArray();
+        for (int i = 0; i < results.length(); i++) {
+            JSONObject entry = results.getJSONObject(i);
+            if (!entry.optBoolean("ok") || !entry.has("learningStep")) result.put("learningRejected", true);
+            else learningSteps.put(entry.getJSONObject("learningStep"));
+        }
+        result.put("learningSteps", learningSteps);
+        String learningPackage = ""; boolean mixedApps = false;
+        for (int i = 0; i < results.length(); i++) {
+            String app = results.getJSONObject(i).optString("package");
+            if (app.isEmpty()) continue;
+            if (!learningPackage.isEmpty() && !learningPackage.equals(app)) mixedApps = true;
+            learningPackage = app;
+        }
+        if (!mixedApps && !learningPackage.isEmpty()) result.put("learningPackage", learningPackage);
+        if (mixedApps) result.put("learningMixedApps", true);
         if (latest != null) result.put("observation", latest);
         if (!stopped.isEmpty()) result.put("actionError", stopped);
         // The final image stays in the normal host image channel.
@@ -122,6 +155,52 @@ final class PhoneBatch {
         }
     }
 
+    static final class MissingTarget extends IOException {
+        MissingTarget() { super("当前页面没有匹配的目标控件"); }
+    }
+
+    /** Capture the actual pre-dispatch node, never infer labels from IDs or the end page. */
+    static JSONObject observedLearningStep(JSONObject step, JSONObject observation) throws Exception {
+        JSONObject canonical = new JSONObject(step.toString());
+        if (step.has("target")) {
+            String nodeId = resolve(step, observation).getString("node");
+            JSONObject actual = null; JSONArray nodes = observation.getJSONArray("nodes");
+            for (int i = 0; i < nodes.length(); i++) {
+                JSONObject node = nodes.getJSONObject(i);
+                if (nodeId.equals(node.optString("id"))) {
+                    if (actual != null) throw new IOException("学习节点编号不唯一");
+                    actual = node;
+                }
+            }
+            if (actual == null) throw new IOException("学习节点缺失");
+            JSONObject target = new JSONObject();
+            for (String field : new String[]{"text", "description", "resourceId"})
+                if (!actual.optString(field).isEmpty()) target.put(field, actual.getString(field));
+            canonical.put("target", target);
+            // Adding actual readable labels must retain uniqueness on this exact screen.
+            resolve(canonical, observation);
+        }
+        PhoneRouteStore.validateSteps(new JSONArray().put(canonical));
+        return canonical;
+    }
+
+    static JSONObject awaitTarget(JSONObject step, JSONObject latest, Backend backend, long batchDeadline, String startingPackage) throws Exception {
+        long deadline = Math.min(batchDeadline, backend.now() + step.optInt("timeoutMs", 3000));
+        while (true) {
+            backend.guard();
+            if (backend.now() >= batchDeadline) throw new IOException("批处理总时限已到");
+            if (!startingPackage.equals(latest.optString("package"))) throw new IOException("等待目标时 App 已改变，停止后续操作");
+            if (latest.has("observationError")) throw new IOException(latest.getString("observationError"));
+            try { resolve(step, latest); return latest; }
+            catch (MissingTarget missing) {
+                if (backend.now() >= deadline) throw missing;
+            }
+            backend.sleep(Math.min(100, deadline - backend.now()));
+            backend.guard();
+            latest = backend.execute(new JSONObject().put("action", "observe"));
+        }
+    }
+
     static JSONObject resolve(JSONObject step, JSONObject observation) throws Exception {
         JSONObject args = new JSONObject().put("action", step.getString("action"));
         for (String key : new String[]{"package", "app", "text", "direction"}) if (step.has(key)) args.put(key, step.get(key));
@@ -138,7 +217,7 @@ final class PhoneBatch {
             if (selected != null) throw new IOException("目标控件不唯一，请缩小 target");
             selected = node;
         }
-        if (selected == null) throw new IOException("当前页面没有匹配的目标控件");
+        if (selected == null) throw new MissingTarget();
         return args.put("node", selected.getString("id"));
     }
 

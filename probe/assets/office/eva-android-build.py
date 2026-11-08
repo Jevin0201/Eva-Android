@@ -10,6 +10,7 @@ import json
 import os
 from pathlib import Path
 import platform
+import runpy
 import shutil
 import signal
 import subprocess
@@ -31,6 +32,14 @@ SOURCES = {
                '530cdbd1ec315e1477624d7ed2f0f2962108d69f36eddba5894cef9ea2cedb48'),
     'jars': ('https://dl.google.com/android/repository/build-tools_r36_macosx.zip',
              '04e7f3a72044de4926fa038fa0e251a37bba1e1c3fb8beab6f8401bfd9eb4bf3'),
+}
+# Exact archive bytes verified against SOURCES on 2026-11-08; evidence:
+# artifacts/sdk-mirror-research-20261108/verified-archives.json.
+# The native GitHub archive has no verified alternate and remains single-source.
+VERIFIED_MIRRORS = {
+    'platform': ('https://mirrors.cloud.tencent.com/AndroidSDK/platform-36_r02.zip',),
+    'jars35': ('https://mirrors.cloud.tencent.com/AndroidSDK/build-tools_r35_macosx.zip',),
+    'jars': ('https://mirrors.cloud.tencent.com/AndroidSDK/build-tools_r36_macosx.zip',),
 }
 
 
@@ -91,16 +100,17 @@ def download(name, cache):
             if hashlib.file_digest(cached, 'sha256').hexdigest() == digest:
                 return target
     temp = target.with_suffix('.part')
+    policy = runpy.run_path(str(Path(__file__).with_name('eva-download-policy.py')))
+    record = cache / (name + '-download-attempts.json')
     try:
-        with urllib.request.urlopen(url, timeout=90) as source, temp.open('wb') as output:
-            shutil.copyfileobj(source, output)
-        with temp.open('rb') as source:
-            actual = hashlib.file_digest(source, 'sha256').hexdigest()
-        if actual != digest:
-            raise ValueError('下载校验失败 ' + name)
+        result = policy['download_verified']([url, *VERIFIED_MIRRORS.get(name, ())], digest, temp, timeout=90)
+        record.write_text(json.dumps(result, ensure_ascii=False, indent=2))
         temp.replace(target)
-    finally:
-        temp.unlink(missing_ok=True)
+        temp.with_name(temp.name + '.resume.json').unlink(missing_ok=True)
+    except Exception as error:
+        record.write_text(json.dumps({'error': str(error), 'sourceAttempts': getattr(error, 'sourceAttempts', []),
+                                      'retryable': getattr(error, 'retryable', False)}, ensure_ascii=False, indent=2))
+        raise
     return target
 
 

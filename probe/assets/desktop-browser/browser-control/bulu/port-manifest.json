@@ -1,0 +1,96 @@
+{
+  "source": "E:/Project/布噜换芯/BuLu-source/packages/desktop/src/main",
+  "changes": [
+    "TypeScript annotations removed",
+    "Relative ESM imports resolved",
+    "Private DOM/background identifiers renamed for RAE",
+    "Eva: semantic refs for empty/plaintext contenteditable and ARIA grid cells, headers, menu and tree items (2026-11-05)"
+  ],
+  "files": [
+    {
+      "source": "browser-host-state.ts",
+      "sourceSHA256": "c5a38b516b7e5ad209620223d4cc597bd9bbbeaa308a582f40b6b1fd6f7cf4bb",
+      "output": "browser-host-state.mjs",
+      "outputSHA256": "0808fc0ecfd324b74866a46d9ca3b39bdc6294f388d292a3a59ce285781594df",
+      "portedSHA256": "f9d34dd615c9720158854abf3b5d61fc2984673dea91854170a0d86a52a4328f"
+    },
+    {
+      "source": "browser-page-observation.ts",
+      "sourceSHA256": "12688c1e174c16bae46f4e6aff7b308dad09904c27932f6a36ebaea85cf0b333",
+      "output": "browser-page-observation.mjs",
+      "outputSHA256": "95eca8659783e83871225ab9257e818f18904596b0fc790a14ba24c251d40bd4",
+      "portedSHA256": "d636f356f010309f3457dd9e7eff551702f9eea1bbbbd11024eadfd46f358c0a"
+    },
+    {
+      "source": "browser-scroll-controls.ts",
+      "sourceSHA256": "b305d0709c637c300351a181e5ed0d8124fc0da235bbcb39584321f2f75c1062",
+      "output": "browser-scroll-controls.mjs",
+      "outputSHA256": "122926a883f2a4c3aa29a057078a9ec9d58dfa7797df74421e61a5c3a9e13708"
+    },
+    {
+      "source": "browser-action-sequence.ts",
+      "sourceSHA256": "04da68283919e2c36843b9b6e4b9408f0d864d10da5bc0a8f1014886a6edb745",
+      "output": "browser-action-sequence.mjs",
+      "outputSHA256": "8dbb1600292db85c9343e120ecd683408282311c2fa2022264e4db642a6f4ad1",
+      "portedSHA256": "009391c8d5f2ddfc14410d9d17c68c7171e4b0c440aa263680cd1c0d3df6a9fc"
+    },
+    {
+      "source": "browser-pointer.ts",
+      "sourceSHA256": "4c4b085e4f6681242d71df1400e511a0b28f1d558b1e69e79bb75c20296c57aa",
+      "output": "browser-pointer.mjs",
+      "outputSHA256": "5ba5edda1dc3a44baf74552af2b01206182654fec25b1cc76b10a7483f144a3b",
+      "portedSHA256": "32bbad5f17fb81179fbbd6fa6e8e5fb240eae244a78c2a81db84c6acd011a9d4"
+    },
+    {
+      "source": "browser-navigation-policy.ts",
+      "sourceSHA256": "a05eae9189228f15f310e945113f98b9d8ada47f0db1e2d3a0e04e9c8f5f0bae",
+      "output": "browser-navigation-policy.mjs",
+      "outputSHA256": "da31d7f57173b2e1933062f322bfdc8157ee109388b3e0eec84a4cda758b9cec"
+    },
+    {
+      "source": "browser-network-archive.ts",
+      "sourceSHA256": "3e48d6636e5238e5bde119924966d61f203b5487ef7748ccb7f3ebedfcc83ec7",
+      "output": "browser-network-archive.mjs",
+      "outputSHA256": "c0cde40e50223f162381915e0d50da1ccb18e14c9dc065dd50aa93b5f4ab11a5"
+    },
+    {
+      "source": "browser-network-recorder.ts",
+      "sourceSHA256": "07a107c9017b8fc212d2c90e4998c92c09712036ca235b97d3baab2baf3e7944",
+      "output": "browser-network-recorder.mjs",
+      "outputSHA256": "330700d230f58a232ee6831b2fc5bddfe440e3d9e72d952e796143fc26ee4ec0",
+      "portedSHA256": "2c7199033cc8846a68cadb8362b5bb7989dcc6c70a1b6b202ce48b075d0ed06d"
+    },
+    {
+      "source": "browser-target-protocol.ts",
+      "sourceSHA256": "6764bfa0df2803f5213fc7866582a2c2b1772ceacba175828ea99e548b45f56e",
+      "output": "browser-target-protocol.mjs",
+      "outputSHA256": "fb8b65345d424ec548ffdc5a0db7bd65605ba799f059c547d4fdb5b94c4399f9"
+    },
+    {
+      "source": "browser-worker-network.ts",
+      "sourceSHA256": "9bb3b1a4b83625ee26ebc5bd46b3fc624927ba5ffe6b9b2e605e75e0ed909673",
+      "output": "browser-worker-network.mjs",
+      "outputSHA256": "bf79065d7cc701cee770b8308340c33f1b59258f02e1f051b8d7b0ece8a554a4"
+    },
+    {
+      "source": "browser-network-actions.ts",
+      "sourceSHA256": "85690015d9a5c6eade4006eb40d19ef2755c51255b5ab4ca4c27fe0dbd24ac05",
+      "output": "browser-network-actions.mjs",
+      "outputSHA256": "0d70a8e456971b9d8025ecf86dd1e62951e655b49b6589474798419bd44c056f"
+    },
+    {
+      "source": "browser-host.ts (inspectPage/clampInteger/interact/fillAndVerify)",
+      "sourceSHA256": "44bfce2eb05073646250ae55b779d9e6ebf9c8d8393e3c0e9417c5db3a132ee1",
+      "output": "browser-inspection.mjs",
+      "outputSHA256": "f1ab646b2367b6bb835bb26fe94fce253633c8ac1ef2db7463a7f170c65c949c"
+    }
+  ],
+  "localAdaptations": [
+    "Preserve unique references across snapshots and pagination; renew cloned references; keep document scopes per request",
+    "Restrict Worker capture to owned browser contexts/sites",
+    "Normalize captured headers for response body decoding",
+    "Subscribe batch action boundaries to clone managed JavaScript dialogs",
+    "Target document scrolling explicitly when pointer coordinates are omitted, preserving coordinate-targeted wheel input",
+    "Bound post-action DOM text and change excerpts; make structured document blocks opt-in for MCP reads to avoid duplicate full-content payloads"
+  ]
+}

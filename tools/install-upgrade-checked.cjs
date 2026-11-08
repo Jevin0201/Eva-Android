@@ -2,10 +2,12 @@
 // Back up and freeze the composer before replacing the APK. Any failure aborts here.
 const fs=require('fs'),path=require('path'),cp=require('child_process');
 function assertIdle(state){if(state.busy||state.running||state.pending)throw Error('仍有发送或任务正在进行，已取消安装');}
+function assertRuntimeIdle(run,pkg){for(const name of ['RuntimeSetupService','TaskExecutionService']){const state=run(['shell','dumpsys','activity','services',pkg+'/.'+name]);if(/isForeground=true/.test(state))throw Error('任务、排版或组件安装仍在进行，已取消会重启应用的操作');}}
 async function main(){
  const adb=process.env.EVA_ADB;if(!adb)throw Error('Set EVA_ADB to the Android platform-tools adb path');
  const apk=path.resolve(process.argv[2]||'probe/build/macos/eva-upgrade.apk');if(!fs.existsSync(apk))throw Error('Signed APK does not exist');
  const run=args=>cp.execFileSync(adb,args,{encoding:'utf8'}),pkg='ai.eva.android.probe';
+ assertRuntimeIdle(run,pkg);
  const pid=run(['shell','pidof',pkg]).trim().split(/\s+/)[0];try{run(['forward','--remove','tcp:9223'])}catch{}run(['forward','tcp:9223','localabstract:webview_devtools_remote_'+pid]);
  const {chromium}=require('playwright-core');const browser=await chromium.connectOverCDP('http://127.0.0.1:9223');let page,locked=false;
  try{
@@ -24,4 +26,4 @@ async function main(){
  }catch(error){if(locked&&page)try{await page.evaluate(()=>window.__evaUpgradeUndo?.())}catch{}throw error;}
  finally{await browser.close();}
 }
-module.exports={assertIdle};if(require.main===module)main().catch(error=>{console.error(error.message);process.exitCode=1});
+module.exports={assertIdle,assertRuntimeIdle};if(require.main===module)main().catch(error=>{console.error(error.message);process.exitCode=1});
