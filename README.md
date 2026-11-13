@@ -116,6 +116,8 @@ Eva 使用云端模型完成理解、推理与任务规划，用户自行配置�
 
 ## 安装与开始使用
 
+最新版安装包在 [GitHub Releases](https://github.com/Jevin0201/Eva-Android/releases/latest) 提供。也可以直接 [下载最新版 ARM64 APK](https://github.com/Jevin0201/Eva-Android/releases/latest/download/eva-android-0.1.2-arm64-release.apk)。当前版本为 0.1.2。
+
 基础 ARM64 运行环境要求 Android 9 或更新版本，后台虚拟屏要求 Android 14 或更新版本。现有记录包含 Android 17 ARM64 真机验证，其他设备仍需结合系统权限和厂商后台策略检查兼容性。
 
 1. 安装 Eva Android，并启动首次设置。
