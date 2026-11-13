@@ -34,9 +34,9 @@ function showItemDiff(itemId) {
 
 function copyTurnText(turnId) {
   const turn = state.thread?.turns?.find(turn => turn.id === turnId);
-  if (!turn) return;
+  if (!turn) return false;
   const text = finalAnswerItems(turn).map(item => item.text).join("\n\n").trim();
-  copyText(text);
+  return copyText(text);
 }
 
 function modalDiff(dialog) {

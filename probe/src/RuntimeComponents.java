@@ -10,7 +10,7 @@ import org.json.*;
 final class RuntimeComponents {
  static final String[] IDS={"office","development","media","analysis","ghidra"};
  static final String[] TITLES={"办公处理","编程与 APK 构建","图像与音视频","逆向分析 · REA","Ghidra 原生反编译"};
- static final String[] DESCRIPTIONS={"制作 Word、Excel、PPT、PDF，排版预览与 HTML 导出","编译工具、Java 17、Gradle 与 Android SDK","图片文字识别、音视频转换与图像处理","按需下载 REA；不连带安装 Java 或 Ghidra","需要原生反编译时安装，包含 Java 21 与原生编译器"};
+ static final String[] DESCRIPTIONS={"制作 Word、Excel、PPT、PDF，排版预览与 HTML 导出","Java 17（APK 构建兼容）、Gradle、Android SDK；Java 21 可按需安装","图片文字识别、音视频转换与图像处理","按需下载 REA；不连带安装 Java 或 Ghidra","需要原生反编译时安装，包含 Java 21 与原生编译器"};
  static volatile boolean busy, stopping;
  static volatile Process process;
  static final Map<String,CompletableFuture<Boolean>> requests=new ConcurrentHashMap<>();

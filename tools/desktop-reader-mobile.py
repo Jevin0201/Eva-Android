@@ -1,7 +1,39 @@
 """Reproducible Android layout adaptation of authorized desktop source assets."""
 from pathlib import Path
 
+MARKDOWN_CLIPBOARD_HELPER = r''' async function copyReaderText(content){
+  try{if(typeof navigator.clipboard?.writeText==='function'){await navigator.clipboard.writeText(content);return;}}catch{}
+  const active=document.activeElement,selection=document.getSelection(),ranges=[];
+  for(let i=0;selection&&i<selection.rangeCount;i++)ranges.push(selection.getRangeAt(i).cloneRange());
+  const anchor=selection?.anchorNode,anchorOffset=selection?.anchorOffset,focus=selection?.focusNode,focusOffset=selection?.focusOffset;
+  const inputSelection=active&&typeof active.selectionStart==='number'?[active.selectionStart,active.selectionEnd,active.selectionDirection]:null;
+  const left=scrollX,top=scrollY,field=document.createElement('textarea');
+  field.value=content;field.readOnly=true;field.tabIndex=-1;field.style.cssText='position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none';
+  try{
+   document.body.appendChild(field);field.focus({preventScroll:true});field.select();field.setSelectionRange(0,field.value.length);
+   if(!document.execCommand('copy'))throw Error('Clipboard copy failed');
+  }finally{
+   field.remove();
+   if(active?.isConnected){try{active.focus({preventScroll:true});}catch{}}
+   if(selection){try{selection.removeAllRanges();for(const range of ranges)selection.addRange(range);if(anchor&&focus&&selection.setBaseAndExtent)selection.setBaseAndExtent(anchor,anchorOffset,focus,focusOffset);}catch{}}
+   if(inputSelection&&active?.isConnected){try{active.setSelectionRange(...inputSelection);}catch{}}
+   scrollTo(left,top);
+  }
+ }
+'''
+
+
+def adapt_markdown_clipboard(text):
+ old='await navigator.clipboard.writeText(content);'
+ assert text.count(old)==1, 'Desktop Markdown clipboard source changed'
+ marker=' function hydrate(root)'
+ assert text.count(marker)==1, 'Desktop Markdown hydration source changed'
+ return text.replace(old,'await copyReaderText(content);').replace(marker,MARKDOWN_CLIPBOARD_HELPER+marker)
+
+
 def adapt(destination):
+ path=destination/'cloud-markdown.js'
+ path.write_text(adapt_markdown_clipboard(path.read_text(encoding='utf-8')),encoding='utf-8')
  def edit(name, old, new):
   path=destination/name;text=path.read_text();assert text.count(old)==1,(name,old[:80]);path.write_text(text.replace(old,new))
  for kind in ['docx','pdf']:

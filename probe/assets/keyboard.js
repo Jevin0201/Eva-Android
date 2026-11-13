@@ -11,8 +11,8 @@
   let bar=document.querySelector('#eva-keyboard-toolbar');
   const target=document.querySelector('.dock');
   if(!target){bar?.remove();return;}
-  if(!bar){bar=document.createElement('div');bar.id='eva-keyboard-toolbar';bar.innerHTML='<button type="button" aria-label="收起键盘"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="3" width="18" height="12" rx="2"/><path d="M6 7h1m3 0h1m3 0h1m3 0h1M7 11h10m-9 8 4 3 4-3"/></svg><span>收起键盘</span></button>';bar.querySelector('button').addEventListener('pointerdown',e=>e.preventDefault());bar.querySelector('button').onclick=hide;target.prepend(bar);}
-  bar.hidden=!(nativeVisible||editing());
+  if(!bar){bar=document.createElement('div');bar.id='eva-keyboard-toolbar';bar.innerHTML='<button type="button" aria-label="收起键盘"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="3" width="18" height="12" rx="2"/><path d="M6 7h1m3 0h1m3 0h1m3 0h1M7 11h10m-9 8 4 3 4-3"/></svg><span>收起键盘</span></button>';bar.querySelector('button').addEventListener('pointerdown',e=>e.preventDefault());bar.querySelector('button').onclick=hide;const paste=document.createElement('button');paste.type='button';paste.textContent='粘贴';paste.setAttribute('aria-label','粘贴到输入框');paste.dataset.clipboardPaste='';paste.addEventListener('pointerdown',e=>e.preventDefault());paste.onclick=()=>window.evaClipboard?.paste();bar.prepend(paste);target.prepend(bar);}
+  bar.hidden=!(nativeVisible||editing());bar.querySelector('[data-clipboard-paste]').hidden=!document.activeElement?.matches('#prompt');
  }
  window.evaKeyboardState=state=>{const wasVisible=nativeVisible;nativeVisible=!!state?.visible;if(wasVisible&&!nativeVisible&&editing())document.activeElement.blur();document.documentElement.classList.toggle('ime-visible',nativeVisible);update();};
  window.evaHideKeyboard=hide;

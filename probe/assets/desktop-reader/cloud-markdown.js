@@ -55,7 +55,26 @@ globalThis.cloudMarkdown=(()=>{
  parser.renderer.rules.table_open=(...args)=>'<div class="cloud-table-scroll" tabindex="0" role="region" aria-label="表格">'+tableOpen(...args);
  parser.renderer.rules.table_close=()=>'</table></div>\n';
  const roots=new WeakSet();
- function hydrate(root){if(roots.has(root))return;roots.add(root);root.addEventListener('click',async event=>{const button=event.target.closest('.cloud-code-copy,.cloud-writing-copy');if(!button)return;try{const content=button.classList.contains('cloud-writing-copy')?button.closest('.cloud-writing-block').querySelector('.cloud-writing-content').innerText:button.parentElement.querySelector('code').textContent;await navigator.clipboard.writeText(content);button.textContent='已复制';setTimeout(()=>{if(button.isConnected)button.textContent='复制';},1500);}catch{button.textContent='复制失败，请重试';}});}
+ async function copyReaderText(content){
+  try{if(typeof navigator.clipboard?.writeText==='function'){await navigator.clipboard.writeText(content);return;}}catch{}
+  const active=document.activeElement,selection=document.getSelection(),ranges=[];
+  for(let i=0;selection&&i<selection.rangeCount;i++)ranges.push(selection.getRangeAt(i).cloneRange());
+  const anchor=selection?.anchorNode,anchorOffset=selection?.anchorOffset,focus=selection?.focusNode,focusOffset=selection?.focusOffset;
+  const inputSelection=active&&typeof active.selectionStart==='number'?[active.selectionStart,active.selectionEnd,active.selectionDirection]:null;
+  const left=scrollX,top=scrollY,field=document.createElement('textarea');
+  field.value=content;field.readOnly=true;field.tabIndex=-1;field.style.cssText='position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none';
+  try{
+   document.body.appendChild(field);field.focus({preventScroll:true});field.select();field.setSelectionRange(0,field.value.length);
+   if(!document.execCommand('copy'))throw Error('Clipboard copy failed');
+  }finally{
+   field.remove();
+   if(active?.isConnected){try{active.focus({preventScroll:true});}catch{}}
+   if(selection){try{selection.removeAllRanges();for(const range of ranges)selection.addRange(range);if(anchor&&focus&&selection.setBaseAndExtent)selection.setBaseAndExtent(anchor,anchorOffset,focus,focusOffset);}catch{}}
+   if(inputSelection&&active?.isConnected){try{active.setSelectionRange(...inputSelection);}catch{}}
+   scrollTo(left,top);
+  }
+ }
+ function hydrate(root){if(roots.has(root))return;roots.add(root);root.addEventListener('click',async event=>{const button=event.target.closest('.cloud-code-copy,.cloud-writing-copy');if(!button)return;try{const content=button.classList.contains('cloud-writing-copy')?button.closest('.cloud-writing-block').querySelector('.cloud-writing-content').innerText:button.parentElement.querySelector('code').textContent;await copyReaderText(content);button.textContent='已复制';setTimeout(()=>{if(button.isConnected)button.textContent='复制';},1500);}catch{button.textContent='复制失败，请重试';}});}
  const cache=new Map();let cacheSize=0;
  function render(source,env={}){source=String(source??'');const cacheKey=(env.codex?'codex:':'chatgpt:')+source;if(cache.has(cacheKey)){const value=cache.get(cacheKey);cache.delete(cacheKey);cache.set(cacheKey,value);return value;}
   const html=parser.render(source,env),size=cacheKey.length+html.length;if(size<=1024*1024){cache.set(cacheKey,html);cacheSize+=size;while(cache.size>200||cacheSize>4*1024*1024){const key=cache.keys().next().value;cacheSize-=key.length+cache.get(key).length;cache.delete(key);}}return html;

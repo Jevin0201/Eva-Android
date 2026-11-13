@@ -2,8 +2,4 @@
 <network-security-config>
     <!-- WebView must support ordinary HTTP sites and LAN development servers. -->
     <base-config cleartextTrafficPermitted="true" />
-    <domain-config cleartextTrafficPermitted="true">
-        <domain>127.0.0.1</domain>
-        <domain>::1</domain>
-    </domain-config>
 </network-security-config>

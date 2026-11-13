@@ -19,6 +19,30 @@ import './desktop-stream/native-image-preview/common.js';
   kernelNotice = error?.message || String(error);
   refreshKernelControls();
  }
+ function copyClipboardText(text) {
+  try {
+   if (typeof text !== 'string' || !text.length) { notice('没有可复制的文字'); return false; }
+   if (EvaHost.copyText(text) !== true) throw Error('复制失败，请重试');
+   return true;
+  } catch { notice('复制失败，请重试'); return false; }
+ }
+ const copyFeedback = new WeakMap();
+ function paintCopied(button) {
+  button.innerHTML=renderer.ic('check');button.setAttribute('aria-label','已复制');button.setAttribute('title','已复制');
+  button.dataset.copySucceeded='true';
+ }
+ function copied(button) {
+  if (copyFeedback.has(button)) return;
+  const old={html:button.innerHTML,label:button.getAttribute('aria-label'),title:button.getAttribute('title')};
+  paintCopied(button);
+  copyFeedback.set(button,setTimeout(()=>{
+   copyFeedback.delete(button);
+   if (!button.isConnected) return;
+   button.innerHTML=old.html;
+   for(const [key,value] of [['aria-label',old.label],['title',old.title]])value===null?button.removeAttribute(key):button.setAttribute(key,value);
+   delete button.dataset.copySucceeded;
+  },1500));
+ }
  function relativePath(value) {
   if (typeof value !== 'string' || /[\u0000-\u001f]/.test(value)) throw Error('文件路径无效');
   const path = value.replace(/\\/g, '/');
@@ -82,7 +106,7 @@ import './desktop-stream/native-image-preview/common.js';
  const actions = EvaDesktopStreamActions.create({
   state, renderer,
   scheduleTranscript: () => window.evaDesktopStream?.request(active()),
-  copyText: text => { if (!EvaHost.copyText(text)) notice('复制失败，请重试'); },
+  copyText: copyClipboardText,
   closeModal: () => closeModelPanel(),
   modalShell: ({title, body, foot}) => {
    const modal = modelPanel(title);
@@ -170,6 +194,9 @@ import './desktop-stream/native-image-preview/common.js';
     '<button data-action="kernel-deny:' + esc(key) + '">拒绝</button></article>');
   }
   renderer.patchTranscriptDOM(transcript, chunks.join(''), state.thread.id, chunks);
+  // Keyed transcript reconciliation can repaint a copied button during a late
+  // event. Preserve its existing feedback deadline without starting a new one.
+  for (const button of transcript.querySelectorAll('[data-copy-turn],[data-copy-code],[data-copy-text]')) if(copyFeedback.has(button))paintCopied(button);
   if (follow) flow.scrollTop = flow.scrollHeight;
   window.evaChatScroll?.after(flow);
   window.evaDesktopActivity?.paint();
@@ -231,14 +258,15 @@ import './desktop-stream/native-image-preview/common.js';
   }
   const copy = event.target.closest('[data-copy-turn]');
   if (copy) {
-   actions.copyTurnText(copy.dataset.copyTurn);
+   if (!copyFeedback.has(copy) && actions.copyTurnText(copy.dataset.copyTurn)) copied(copy);
    return;
   }
   const code = event.target.closest('[data-copy-code]');
   const text = event.target.closest('[data-copy-text]');
   if (code || text) {
+   if (copyFeedback.has(code || text)) return;
    const content = code ? code.closest('.code-block')?.querySelector('code')?.textContent : text.dataset.copyText;
-   if (!EvaHost.copyText(content || '')) notice('复制失败，请重试');
+   if (copyClipboardText(content)) copied(code || text);
    return;
   }
   const diff = event.target.closest('[data-turn-diff],[data-diff-item]');

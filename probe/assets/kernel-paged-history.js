@@ -23,8 +23,13 @@
   if(method==='thread/resume')return baseCall(method,{...params,excludeTurns:true});
   if(method!=='thread/read'||params.includeTurns!==true)return baseCall(method,params);
   const id=params.threadId,epoch=(readEpoch.get(id)||0)+1;readEpoch.set(id,epoch);const c=conversation(id),point={ids:new Set((c?.kernelThread?.turns||[]).map(t=>t.id)),sequence:eventSequence};
-  const result=await baseCall(method,{...params,includeTurns:false}),thread=validThread(result,id);if(readEpoch.get(id)!==epoch)throw stale();
-  const turns=page(await baseCall('thread/turns/list',{threadId:params.threadId,itemsView:'summary',limit:5,sortDirection:'desc'}));
+  // Both reads depend only on threadId. Overlap their bridge/RPC latency while
+  // keeping a single checkpoint and observing both failures through Promise.all.
+  const [result,firstPage]=await Promise.all([
+   baseCall(method,{...params,includeTurns:false}),
+   baseCall('thread/turns/list',{threadId:id,itemsView:'summary',limit:5,sortDirection:'desc'})
+  ]);
+  if(readEpoch.get(id)!==epoch)throw stale();const thread=validThread(result,id),turns=page(firstPage);
   if(readEpoch.get(id)!==epoch)throw stale();const snapshot={...thread,turns:[...turns.data].reverse().map(summary),androidTurnsCursor:turns.nextCursor??null,androidPagedHistory:true};checkpoints.set(snapshot,point);const merged=c?mergeThread(c,snapshot):snapshot;checkpoints.set(merged,point);if(window.EvaHost?.supportsHistoryActivity?.())setTimeout(()=>primeActivities(c,merged,epoch),0);return {...result,thread:merged};
  };
  function current(c,id){if(c?.kernelThread?.id!==id)throw Error('加载期间会话已切换，未合并历史');}

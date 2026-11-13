@@ -329516,6 +329516,21 @@ function surface(node, kind) {
   scope.append(element);
   return { scope, element, body };
 }
+// BEGIN EVA ANDROID CLIPBOARD HOST
+// Android host binding for the original message-copy control. The control owns
+// its busy state/checkmark; only a successful native write returns true.
+async function writeAndroidMessageClipboard(payload) {
+  const text = typeof payload === 'string' ? payload : payload?.['text/plain'];
+  try {
+    if (typeof text !== 'string' || text.length === 0) throw Error('没有可复制的文字');
+    if (window.EvaHost?.copyText(text) !== true) throw Error('复制失败，请重试');
+    return true;
+  } catch (error) {
+    window.toast?.(error?.message === '没有可复制的文字' ? error.message : '复制失败，请重试');
+    return false;
+  }
+}
+// END EVA ANDROID CLIPBOARD HOST
 function initialize() {
   if (environment) return;
   const host = document.createElement("div");
@@ -329549,16 +329564,7 @@ function initialize() {
   queryClient = new shared.Swt(core.A5n);
   presentation = createOriginalHistoryPresentation({ Compiler, JSX, cx: shared.SPt });
   collapse = createOriginalCollapsible({ Compiler, React: React3, ReactDOM: ReactDOM2, JSX, shared, initial: core });
-  historyActions = createOriginalHistoryActions({ Compiler, React: React3, ReactDOM: ReactDOM2, JSX, shared, cx: shared.SPt, initial: core, writeClipboard: async (payload) => {
-    try {
-      if (typeof payload === "string") await navigator.clipboard.writeText(payload);
-      else await navigator.clipboard.write([new ClipboardItem(Object.fromEntries(Object.entries(payload).map(([type, text]) => [type, new Blob([text], { type })])))]);
-      return true;
-    } catch (error) {
-      console.error("Message clipboard write failed:", error);
-      return false;
-    }
-  } });
+  historyActions = createOriginalHistoryActions({ Compiler, React: React3, ReactDOM: ReactDOM2, JSX, shared, cx: shared.SPt, initial: core, writeClipboard: writeAndroidMessageClipboard });
   const Tooltip = createQueueTooltip({ Compiler, JSX, cx: shared.SPt });
   const helpers = createOriginalQueueTextHelpers(core);
   queueDependencies = { Tooltip, ...helpers, preview: createOriginalQueuedMessage({ j: core.CQn }), slots: createOriginalQueueStateSlots({ Compiler, JSX, Spinner: shared.J6, Tooltip: shared.$kt, Message: shared.Fkt }) };
