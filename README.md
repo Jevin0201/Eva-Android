@@ -161,6 +161,27 @@ powershell -ExecutionPolicy Bypass -File tools/build-probe.ps1
 
 默认构建产物为 `probe/build/eva-probe.apk`。发布构建使用 `-Release` 参数，并要求配置发布签名。APK、签名材料、账号凭据、个人数据和本地缓存按仓库忽略规则管理。参与开发前请阅读 [项目工作约定](AGENTS.md) 与 [实施清单](docs/IMPLEMENTATION_CHECKLIST.md)。
 
+## 交流与合作
+
+欢迎交流 Eva 的使用体验、开发想法与合作需求。问题反馈和功能建议也可以通过 [GitHub Issues](https://github.com/Jevin0201/Eva-Android/issues) 提交。
+
+- **合作联系邮箱**：[wzy1305470201@qq.com](mailto:wzy1305470201@qq.com)
+- **个人微信**：扫描下方二维码添加 Jevin，请备注 **“Eva + 来意”**；合作咨询也可通过微信联系。
+- **Eva 交流群**：扫描下方群二维码加入，交流使用经验与项目进展。
+
+<table>
+  <tr>
+    <th>个人微信 · Jevin</th>
+    <th>Eva 交流群</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/media/wechat-jevin.png" width="280" alt="Jevin 个人微信二维码，添加时请备注 Eva + 来意"></td>
+    <td align="center"><img src="docs/media/wechat-eva-group.png" width="280" alt="Eva 交流群二维码，原图注明 11 月 20 日前有效"></td>
+  </tr>
+</table>
+
+群二维码原图注明 **11 月 20 日前有效**。如二维码过期或无法入群，请添加上方个人微信，备注 **“Eva 入群”**。
+
 ## 来源与许可
 
 Eva Android 基于开源 Codex harness 开发，手机端使用的官方 Codex ARM64 包及其 Apache-2.0 许可核验记录保存在 [内核来源说明](docs/CODEX_MIGRATION.md)。其他迁移组件、运行时和依赖分别保留各自的来源与许可证声明。
