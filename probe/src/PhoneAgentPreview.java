@@ -27,6 +27,9 @@ final class PhoneAgentPreview {
     private final LinearLayout root;
     private final ImageView image;
     private final TextView message, fold;
+    private final View mode;
+    private static volatile Boolean taskVisible;
+    private static volatile boolean switching;
     private final WindowManager.LayoutParams params;
     private Bitmap bitmap;
     private boolean collapsed;
@@ -43,24 +46,28 @@ final class PhoneAgentPreview {
         return context.getSharedPreferences("eva-phone", 0).getBoolean("previewEnabled", false);
     }
     static boolean isShowing() { return displaying; }
+    static boolean visibleChoice(Context context){return taskVisible==null?enabled(context):taskVisible;}
+    static void setTaskVisible(Context context,boolean value){taskVisible=value;if(value)show(context);else hide();}
+    static void resetTaskVisible(Context context){taskVisible=null;if(context==null)return;if(enabled(context))show(context);else hide();}
     static String state(Context context) {
-        if (!enabled(context)) return "实时悬浮预览已关闭";
+        if (!visibleChoice(context)) return "实时悬浮预览已关闭";
         if (!Settings.canDrawOverlays(context)) return "实时悬浮预览待授权，请打开悬浮窗权限";
         if (displaying) return "实时悬浮预览正在显示";
         if (!reason.isEmpty()) return reason;
         return PhoneAgentDisplay.active == null ? "实时悬浮预览等待后台屏" : "实时悬浮预览可用，后台操作时自动显示";
     }
     static void setEnabled(Context context, boolean enabled) {
-        context.getSharedPreferences("eva-phone", 0).edit().putBoolean("previewEnabled", enabled).apply();
+        taskVisible=null;
+        context.getSharedPreferences("eva-phone", 0).edit().putBoolean("previewEnabled", enabled).commit();
         if (enabled) show(context); else hide();
     }
     static void show(Context context) {
         Context app = context.getApplicationContext();
         main.post(() -> {
-            if (!enabled(app)) { remove(); return; }
+            if (!visibleChoice(app)||!PhoneAccessibility.armed) { remove(); return; }
             if (!Settings.canDrawOverlays(app)) { reason = "实时悬浮预览待授权"; remove(); return; }
             if (((KeyguardManager) app.getSystemService(Context.KEYGUARD_SERVICE)).isKeyguardLocked()) { reason = "实时悬浮预览等待手机解锁"; remove(); return; }
-            if (!PhoneAgentDisplay.connected(app, PhoneAgentDisplay.active)) { reason = "实时悬浮预览等待后台屏连接"; remove(); return; }
+            if (!PhoneAgentDisplay.foregroundSelected()&&!PhoneAgentDisplay.connected(app, PhoneAgentDisplay.active)) { reason = "实时悬浮预览等待后台屏连接"; remove(); return; }
             if (current != null) return;
             PhoneAgentPreview next = null;
             try {
@@ -97,10 +104,12 @@ final class PhoneAgentPreview {
         root = new LinearLayout(app); root.setOrientation(LinearLayout.VERTICAL);
         root.setBackground(EvaUi.surface(app, 0xfff6f8fc, 14));
         root.setElevation(dp(8)); root.setPadding(dp(3), dp(3), dp(3), dp(3));
-        root.setContentDescription("Eva 后台屏实时预览，仅查看");
+        root.setContentDescription("Eva 手机控制预览与执行屏切换");
         LinearLayout header = new LinearLayout(app); header.setGravity(Gravity.CENTER_VERTICAL);
-        TextView title = text("Eva", 12); title.setContentDescription("拖动移动实时预览");
-        header.addView(title, new LinearLayout.LayoutParams(0, -2, 1));
+        header.setGravity(Gravity.CENTER);
+        header.setContentDescription("拖动移动实时预览");
+        mode=EvaUi.icon(app,"switch-display","切换到前台操作",this::switchMode);
+        ((ImageView)mode).setColorFilter(0xff26334a);header.addView(mode);
         fold = text("−", 18); fold.setContentDescription("收起或展开实时画面");
         fold.setOnClickListener(view -> toggleCollapsed());
         header.addView(fold);
@@ -119,7 +128,7 @@ final class PhoneAgentPreview {
         params.x = app.getSharedPreferences("eva-phone", 0).getInt("previewX", dp(12));
         params.y = app.getSharedPreferences("eva-phone", 0).getInt("previewY", dp(100));
         clamp();
-        title.setOnTouchListener((view, event) -> {
+        View.OnTouchListener drag = (view, event) -> {
             if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
                 downX = event.getRawX(); downY = event.getRawY(); originX = params.x; originY = params.y; return true;
             }
@@ -131,9 +140,24 @@ final class PhoneAgentPreview {
                 app.getSharedPreferences("eva-phone", 0).edit().putInt("previewX", params.x).putInt("previewY", params.y).apply(); return true;
             }
             return true;
-        });
+        };
+        header.setOnTouchListener(drag);
+        message.setOnTouchListener(drag);
         renderer.start();
         frames = new Handler(renderer.getLooper());
+    }
+    private void switchMode(){
+        if(switching)return;
+        switching=true;mode.setEnabled(false);message.setText("等待当前操作结束后切换…");
+        final boolean background=PhoneAgentDisplay.foregroundSelected();
+        final long epoch=PhoneAccessibility.generation;final String owner=PhoneTools.owner,turn=PhoneTools.turn;
+        PhoneTools.serial.execute(()->{
+            String error=null;try{PhoneTools.switchPreview(context,background,epoch,owner,turn);}catch(Exception e){error=e.getMessage();}
+            final String failure=error;main.post(()->{switching=false;if(current!=null)current.mode.setEnabled(true);
+                if(failure!=null)android.widget.Toast.makeText(context,"切换未完成："+failure,android.widget.Toast.LENGTH_LONG).show();
+                PhoneAgentPreview.show(context);
+            });
+        });
     }
     private void toggleCollapsed() {
         collapsed = !collapsed;
@@ -168,8 +192,15 @@ final class PhoneAgentPreview {
         public void run() {
             if (closed || current != PhoneAgentPreview.this) return;
             PhoneAgentDisplay display = PhoneAgentDisplay.active;
-            if (!enabled(context) || !Settings.canDrawOverlays(context) || !PhoneAgentDisplay.connected(context, display)) { reason = "实时悬浮预览等待后台屏连接"; remove(); return; }
+            if (!visibleChoice(context)||!PhoneAccessibility.armed || !Settings.canDrawOverlays(context) || (!PhoneAgentDisplay.foregroundSelected()&&!PhoneAgentDisplay.connected(context, display))) { reason = "实时悬浮预览等待后台屏连接"; remove(); return; }
             if (((KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE)).isKeyguardLocked()) { reason = "实时悬浮预览等待手机解锁"; remove(); return; }
+            String action=PhoneAgentDisplay.foregroundSelected()?"切换到后台操作":"切换到前台操作";
+            mode.setContentDescription(action);mode.setTooltipText(action);mode.setEnabled(!switching);mode.setAlpha(switching?.45f:1f);
+            if(PhoneAgentDisplay.foregroundSelected()){
+                image.setVisibility(View.GONE);image.setImageDrawable(null);bitmap=null;
+                if(!switching)message.setText("前台操作中");
+                main.postDelayed(this,200);return;
+            }
             if (!collapsed && !rendering) {
                 rendering = true;
                 if (source != display) { source = display; lastFrameAt = 0; }

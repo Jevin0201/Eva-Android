@@ -27,19 +27,29 @@ const {chromium,launchOptions}=require('./browser-test-env.cjs');
   assert.equal(await page.locator('#phone.drawer-open').count(),0);
   await page.evaluate(()=>{navigate('settings');settingsGo('browser');settingsGo('permissions');});
   assert.equal(await page.evaluate(()=>settingPage),'permissions');
-  await page.evaluate(()=>evaAndroidBack());assert.equal(await page.evaluate(()=>settingPage),'browser');
   await page.evaluate(()=>evaAndroidBack());assert.equal(await page.evaluate(()=>settingPage),'settings');
   await page.evaluate(()=>evaAndroidBack());assert.equal(await page.evaluate(()=>settingPage),null);
   assert.equal(await page.evaluate(()=>active().id),'chat');
   await page.evaluate(()=>{navigate('settings');settingsGo('extensions');settingsGo('skills');settingsGo('mcp');});
   assert.equal(await page.evaluate(()=>settingPage),'mcp');
   await page.evaluate(()=>navigate('settings-back'));
-  assert.equal(await page.locator('.eva-extension-tabs [aria-selected=true]').getAttribute('data-action'),'settings:skills');
-  await page.evaluate(()=>navigate('settings-back'));
-  assert.equal(await page.locator('.eva-extension-tabs [aria-selected=true]').getAttribute('data-action'),'settings:plugins');
-  await page.evaluate(()=>navigate('settings-back'));
   assert.equal(await page.evaluate(()=>settingPage),'settings');
   await page.evaluate(()=>navigate('settings-back'));
+  assert.equal(await page.evaluate(()=>settingPage),null);
+  // Direct section entry returns to the same chat, regardless of tab switches.
+  for(const back of ['system','header']){
+   await page.evaluate(()=>{settingsGo('extensions');settingsGo('skills');settingsGo('mcp');settingsGo('plugins');settingsGo('skills');});
+   if(back==='system')await page.evaluate(()=>evaAndroidBack());
+   else await page.locator('[data-action="desktop-extensions-back"]').click();
+   assert.equal(await page.evaluate(()=>settingPage),null);
+   assert.equal(await page.evaluate(()=>active().id),'chat');
+  }
+  // Repeated section visits and sibling settings never resurrect older pages.
+  await page.evaluate(()=>{settingsGo('settings');settingsGo('appearance');settingsGo('browser');settingsGo('permissions');navigate('settings-back');});
+  assert.equal(await page.evaluate(()=>settingPage),'settings');
+  await page.evaluate(()=>{settingsGo('skills');settingsGo('mcp');evaAndroidBack();});
+  assert.equal(await page.evaluate(()=>settingPage),'settings');
+  await page.evaluate(()=>evaAndroidBack());
   assert.equal(await page.evaluate(()=>settingPage),null);
   await page.evaluate(()=>{modelPanel('测试弹层');evaKeyboardState({visible:true});});
   await page.evaluate(()=>evaAndroidBack());assert.equal(await page.locator('#eva-panel').count(),1);

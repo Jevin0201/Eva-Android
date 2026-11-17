@@ -1,6 +1,7 @@
 'use strict';
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 const {createNativeHeartbeat}=require('../probe/assets/scheduled-task-core/native-heartbeat');
+fs.mkdirSync(path.resolve('tmp'),{recursive:true});
 const fixture=fs.mkdtempSync(path.resolve('tmp/scheduled-due-'));
 let now=Date.parse('2026-11-05T01:00:00Z');
 class Clock extends Date{constructor(...args){super(...(args.length?args:[now]));}static now(){return now;}}

@@ -60,7 +60,7 @@ public final class BrowserHandoverDeviceCheck extends Instrumentation {
             check(window != null, "Browser did not open");
             BrowserWindow b = window;
             runOnMainSync(() -> {
-                b.browser.loadDataWithBaseURL("https://eva-browser-test.invalid/", "<html><body><h1>Handover fixture</h1><input aria-label='Fixture input'><button onclick='window.clicks=(window.clicks||0)+1'>Apply</button></body></html>", "text/html", "UTF-8", null);
+                b.browser.loadDataWithBaseURL("https://eva-browser-test.invalid/", "<html><body><h1>Handover fixture</h1><input type='password' aria-label='Fixture input'><button onclick='window.clicks=(window.clicks||0)+1'>Apply</button></body></html>", "text/html", "UTF-8", null);
                 b.windowMode(false, false);
             });
             long deadline = SystemClock.elapsedRealtime() + 6000;
@@ -75,10 +75,13 @@ public final class BrowserHandoverDeviceCheck extends Instrumentation {
             CompletableFuture<JSONObject> pending = BrowserTools.execute(getTargetContext(), new JSONObject().put("action", "click").put("snapshot", entered.getString("snapshot")).put("node", node(entered, "BUTTON")), first);
             touch(b);
             rejected(pending, "Touch returned a normal successful observation");
-            check(KernelHost.cancelledTurns.contains(first.key), "Touch did not cancel model turn");
+            check(!KernelHost.cancelledTurns.contains(first.key), "Touch cancelled whole model turn");
+            check(!entered.toString().contains("交接验收"), "Observation exposed password");
+            check(BrowserOwnership.resume(first.thread,first.turn), "Paused browser did not resume");
             String clicks = js(b, "window.clicks||0");
             rejected(BrowserTools.execute(getTargetContext(), new JSONObject().put("action", "click").put("snapshot", entered.getString("snapshot")).put("node", node(entered, "BUTTON")), first), "Old lease executed click");
             check(clicks.equals(js(b, "window.clicks||0")), "Stale action changed page");
+            BrowserOwnership.release(first.key);
             BrowserOwnership.Lease second = BrowserOwnership.claim(params("minimized"));
             runOnMainSync(() -> b.windowMode(false, true));
             check(BrowserWindow.live == b && b.browser != null, "Minimize destroyed page");
@@ -90,17 +93,17 @@ public final class BrowserHandoverDeviceCheck extends Instrumentation {
             BrowserOwnership.Lease third = BrowserOwnership.claim(params("close"));
             check(third != second, "Completion retained previous lease");
             runOnMainSync(b::finish);
-            check(BrowserWindow.live == null, "Close retained browser");
             check(b.browser == null && b.destroyed, "Close left a live WebView");
-            runOnMainSync(() -> shell.showBrowser(new Intent()));
+            BrowserOwnership.Lease recovered=BrowserOwnership.await(params("close"));
             BrowserWindow replacement = BrowserWindow.live;
-            check(replacement != null && replacement != b, "Close did not permit reopening");
+            check(recovered!=third&&replacement!=null&&replacement!=b, "Browser did not automatically recover");
             runOnMainSync(b::destroyBrowser);
             check(BrowserWindow.live == replacement && replacement.browser != null, "Old dismiss callback destroyed replacement");
-            runOnMainSync(replacement::finish);
-            check(KernelHost.cancelledTurns.contains(third.key), "Close did not cancel task");
+            check(!KernelHost.cancelledTurns.contains(third.key), "Close cancelled whole model turn");
             rejected(BrowserTools.execute(getTargetContext(), new JSONObject().put("action", "observe"), third), "Destroyed page accepted stale lease");
-            result.putString("result", "PASS real WebView observe/input; native touch cancels pending observation and old actions; no stale click; minimized page continues; completion hands back; close cancels and releases");
+            BrowserOwnership.release(third.key);
+            runOnMainSync(replacement::finish);
+            result.putString("result", "PASS real WebView observe/input; native touch cancels pending observation and old actions; no stale click; minimized page continues; completion hands back; close reopens without interrupting the turn");
         } catch (Exception error) {
             code = 1;
             result.putString("error", error.toString());

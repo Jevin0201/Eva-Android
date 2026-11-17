@@ -43,6 +43,7 @@
    if(!bar){bar=document.createElement('button');bar.type='button';bar.className='composer-status-strip';bar.hidden=true;bar.innerHTML='<span></span>';bar.setAttribute('role','status');bar.onclick=()=>bar.classList.toggle('expanded');dock.querySelector('.composer').before(bar);}
    if(observedFoot!==foot){statusObserver?.disconnect();observedFoot=foot;statusObserver=new MutationObserver(paintStatus);statusObserver.observe(foot,{childList:true,subtree:true,characterData:true});}
    window.evaContextCompaction?.paint();
+   window.composerQuota?.mount(footer,selectedProvider(active()),modelConfig.account);
    paintStatus();
    const name=projectName(active()?.projectId||data.projectId);chip.querySelector('span').textContent=name;chip.title='打开'+name;chip.setAttribute('aria-label','打开工作区：'+name);
   }

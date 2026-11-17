@@ -50,12 +50,32 @@ final class UiStateStore {
    db.beginTransaction();try{
     String raw=row(db,"metadata");if(raw==null)return applySelections(db,new JSONObject(c.getSharedPreferences("eva-ui",0).getString("state",DEFAULT))).toString();
     JSONObject state=new JSONObject(raw);
-    for(String group:new String[]{"chats","drafts"}){
-     JSONArray keys=state.getJSONArray(group),rows=new JSONArray();
-     for(int n=0;n<keys.length();n++){String body=row(db,keys.getString(n));if(body==null)throw new IOException("会话记录缺失");rows.put(new JSONObject(body));}
-     state.put(group,rows);
+    java.util.Map<String,JSONObject> selections=new java.util.HashMap<>();
+    try(Cursor cursor=db.rawQuery("SELECT key,body FROM model_selections WHERE body != 'null'",null)){
+     while(cursor.moveToNext())selections.put(cursor.getString(0),new JSONObject(cursor.getString(1)));
     }
-    db.setTransactionSuccessful();return applySelections(db,state).toString();
+    if(selections.containsKey("composer"))state.put("composerSelection",selections.get("composer"));
+    JSONArray chats=state.getJSONArray("chats"),drafts=state.getJSONArray("drafts");
+    state.remove("chats");state.remove("drafts");String metadata=state.toString();
+    StringBuilder result=new StringBuilder(metadata.substring(0,metadata.length()-1));
+    for(String group:new String[]{"chats","drafts"}){
+     if(result.length()>1)result.append(',');result.append(JSONObject.quote(group)).append(":[");
+     JSONArray keys=group.equals("chats")?chats:drafts;
+     for(int n=0;n<keys.length();n++){
+      String key=keys.getString(n),body=row(db,key);if(body==null)throw new IOException("会话记录缺失");
+      // Saved rows are validated JSON and row() verifies every chunk and digest.
+      // Preserve untouched histories verbatim; only selection overlays need parsing.
+      int first=key.indexOf(':'),last=key.lastIndexOf(':');
+      JSONObject selection=first>=0&&last>first?selections.get("chat:"+key.substring(first+1,last)):null;
+      if(selection!=null){JSONObject chat=new JSONObject(body);
+       for(String field:new String[]{"providerId","model","effort","serviceTier"}){
+        if(selection.has(field))chat.put(field,selection.get(field));else chat.remove(field);
+       }body=chat.toString();
+      }
+      if(n>0)result.append(',');result.append(body);
+     }result.append(']');
+    }
+    db.setTransactionSuccessful();return result.append('}').toString();
    }finally{db.endTransaction();}
   }catch(Exception e){throw new IllegalStateException("会话存储读取失败，请保留应用数据后重试",e);}
  }}

@@ -89,4 +89,7 @@
 #sidebar .tree-chat:active,#sidebar .tree-chat.is-opening{background:#e6ebdf;transition:none}
 .dark #sidebar .tree-chat:active,.dark #sidebar .tree-chat.is-opening{background:#3c4831}
 #sidebar .tree-chat.is-opening:after{content:'正在打开…';font-size:10px;color:var(--muted);white-space:nowrap;margin-left:8px}
-.chat-history-loading{font-size:12px;color:var(--muted);padding:18px 4px;line-height:1.8}
+.chat-history-loading{position:fixed;inset:0;display:grid;place-items:center;pointer-events:none;z-index:2;margin:0;padding:0;color:var(--muted)}
+.chat-loading-ring{display:block;width:32px;height:32px;border:2px solid currentColor;border-right-color:transparent;border-bottom-color:transparent;border-radius:50%;opacity:.45;animation:chat-loading-spin .85s linear infinite}
+@keyframes chat-loading-spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.chat-loading-ring{animation:none}}

@@ -60,7 +60,7 @@ export class BrowserController{
  async findPageFor(session,id){
   await this.ensure();const tabs=this.bindings.tabs(session),tab=tabs.find(t=>t.id===id);
   if(!tab)throw Error('指定标签已关闭或不属于当前窗口，请重新列出标签。');
-  const target=await this.bindings.target(tab.id);
+  const target=await this.bindings.target(tab.id);this.bindings.phase?.("绑定标签与页面事件");
   for(const context of this.browser.contexts())for(const page of context.pages()){
    if(page.isClosed())continue;
    if(!this.targetIDs.has(page)){let cdp;try{cdp=await context.newCDPSession(page);this.targetIDs.set(page,(await cdp.send('Target.getTargetInfo')).targetInfo.targetId);}catch(error){if(page.isClosed()||/Target.*closed|Session.*closed|No target with given id|No session with given id/i.test(error.message))continue;throw error;}finally{await cdp?.detach().catch(()=>{});}}
@@ -146,10 +146,10 @@ export class BrowserController{
    const old=this.bindings.tabs(session).find(t=>t.id===(c.tabId||this.selected.get(session)));
    const id=c.newTab||!old?(await this.bindings.create(session,'about:blank')).id:old.id;
    this.selectPage(session,id);const page=await this.pageFor(session,id);this.rememberSite(session,page);await this.recorder.start(session,page);
-   await this.runAction(page,()=>page.goto(url.href,{waitUntil:'domcontentloaded',timeout:25000}),signal);await this.bindings.activate(session,id,signal);return {...this.result(page),...await this.observation.snapshotData(page,{includeDocument:false,selector:c.observationSelector,maxTextChars:c.maxTextChars,maxRefs:c.maxRefs})};
+   await this.runAction(page,()=>page.goto(url.href,{waitUntil:'domcontentloaded',timeout:25000}),signal);signal?.throwIfAborted();await this.bindings.activate(session,id,signal);return {...this.result(page),...await this.observation.snapshotData(page,{includeDocument:false,selector:c.observationSelector,maxTextChars:c.maxTextChars,maxRefs:c.maxRefs})};
   }
   const id=c.tabId||this.selected.get(session)||this.bindings.active(session);
-  const page=await this.pageFor(session,id);if(c.action!=='close_tab')this.selectPage(session,id);
+  const page=await this.pageFor(session,id);signal?.throwIfAborted();this.bindings.phase?.(['cdp','evaluate','snapshot','inspect','table'].includes(c.action)?'读取网页或等待 DevTools 回执':'执行网页动作并核对结果');if(c.action!=='close_tab')this.selectPage(session,id);
   if(c.action==='select_tab'){await this.bindings.activate(session,id,signal);return this.result(page);}
   if(c.action==='close_tab'){await this.bindings.close(session,id,signal);this.forgetPage(id);const activeTabId=this.selected.get(session);if(activeTabId)await this.bindings.activate(session,activeTabId,signal);return {closed:true,activeTabId,tabs:this.bindings.tabs(session)};}
   if(c.action==='snapshot')return {...this.result(page),...await this.observation.snapshotData(page,c)};

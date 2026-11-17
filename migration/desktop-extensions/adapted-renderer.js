@@ -111,19 +111,21 @@ function customizeSection(title,items,kind,category=null) {
 }
 function renderCustomize() {
   if(!state.customize)return;
-  customizeSidebar();
+
   const root=document.getElementById('customize-page'),kind=state.customize,isSkill=kind==='skills',query=customization.query[kind],q=query.trim().toLowerCase();
+  if(!['user','system'].includes(customization.scope))customization.scope='user';
   const focused=document.activeElement?.id==='customize-search',caret=focused?document.activeElement.selectionStart:null;
+  const addAnchor=root.dataset.kind===kind?root.querySelector('[data-plugin-add-anchor]'):null;
   const top=root.scrollTop;root.classList.remove('hidden');root.dataset.kind=kind;
-  if(customization.detail){renderPluginDetail(root);return;}
+  if(customization.detail){renderPluginDetail(root);root.insertAdjacentHTML('afterbegin',extensionTabs(kind));return;}
   let body='';
   const matches=p=>!q||[p.name,customizeName(p),customizeRawDescription(p),customizeDescription(p),p.interface?.category].join(' ').toLowerCase().includes(q);
   if(isSkill){
-    const skills=customizeSkills().filter(s=>!s.pluginId&&!isEvaBuiltin(s)&&matches(s));
-    body=customizeSection('已安装',skills,'skills');
-    body+=`<div class="customize-tabs" aria-label="技能来源">${[['user','个人'],['system','系统'],['plugins','插件技能']].map(([v,l])=>`<button data-customize-scope="${v}" class="${customization.scope===v?'selected':''}" aria-pressed="${customization.scope===v}">${l}</button>`).join('')}</div>`;
-    const scoped=customization.scope==='plugins'?customizeSkills().filter(s=>s.pluginId&&matches(s)):skills.filter(s=>s.scope===(customization.scope==='user'?'user':'system'));
-    body+=`<div class="customize-grid customize-scope-grid">${scoped.slice(0,customization.limit).map(s=>customizeCard(s,'skills')).join('')||'<p class="customize-muted">没有匹配的技能</p>'}</div>`;
+    const skills=customizeSkills().filter(s=>!window.evaReferences.isPluginSkill(s)&&!isEvaBuiltin(s)&&matches(s));
+    body='';
+    body+=`<div class="customize-tabs" aria-label="技能来源">${[['user','个人'],['system','系统']].map(([v,l])=>`<button data-customize-scope="${v}" class="${customization.scope===v?'selected':''}" aria-pressed="${customization.scope===v}">${l}</button>`).join('')}</div>`;
+    const scoped=skills.filter(s=>s.scope===(customization.scope==='user'?'user':'system'));
+    body+=`<section class="customize-section"><h3>${({user:'个人技能',system:'系统技能',plugins:'插件技能'})[customization.scope]}</h3><div class="customize-grid customize-scope-grid">${scoped.slice(0,customization.limit).map(s=>customizeCard(s,'skills')).join('')||'<p class="customize-empty">没有匹配的技能</p>'}</div></section>`;
     if(scoped.length>customization.limit)body+='<button class="btn" data-customize-more>显示更多</button>';
   }else{
     body=`<div class="customize-tabs" aria-label="插件来源"><button data-customize-tab="public" class="${customization.tab==='public'?'selected':''}" aria-pressed="${customization.tab==='public'}">公开</button><button data-customize-tab="personal" class="${customization.tab==='personal'?'selected':''}" aria-pressed="${customization.tab==='personal'}">个人</button></div>`;
@@ -145,7 +147,13 @@ function renderCustomize() {
   }
   const builtins=customizeSkills().filter(s=>isEvaBuiltin(s)&&matches(s));body=customizeSection('Eva 内置 · 无需登录 ChatGPT',builtins,'skills')+body;if(!isSkill&&customization.chatgptSignedIn===false){body=customizeSection('Eva 内置 · 无需登录 ChatGPT',builtins,'skills')+customizeSection('本地插件',customizePlugins().filter(matches),'plugins')+'<p class="customize-muted">本地插件可使用当前配置的模型；登录 ChatGPT 后可浏览账号提供的云端目录。</p>';}
   const sourceErrors=customization.plugins?.marketplaceLoadErrors||[];const errors=[...customization.errors,...(customization.operationError?[customization.operationError]:[])].filter(Boolean);if(sourceErrors.length)body='<details class="customize-source-status"><summary>有 '+sourceErrors.length+' 个来源尚未同步；已安装插件仍可使用</summary><p>'+sourceErrors.map(error=>esc(error.marketplaceName||'插件来源')+'：'+esc(customizeError(error.message||error.error||'暂时无法读取'))).join('<br>')+'</p><button class="btn" data-customize-source-retry>重新同步来源</button></details>'+body;
-  root.innerHTML=`<div class="customize-content"><header class="customize-heading"><div><h1>${isSkill?'技能':'插件'}</h1><p>${isSkill?'通过任务专用技能扩展 Eva':'连接插件，让 Eva 在你的各类工具中协同工作'}</p></div><div class="customize-toolbar"><label class="customize-search">${ic('search')}<input id="customize-search" placeholder="搜索${isSkill?'技能':'插件'}" value="${esc(query)}"/></label><button class="icon-btn" data-customize-refresh title="刷新" aria-label="刷新"${customization.loading?' disabled':''}>${ic('refresh')}</button><button class="icon-btn" data-customize-settings title="管理设置" aria-label="管理设置">${ic('gear')}</button><button class="customize-add" data-customize-add>添加${isSkill?'':ic('chevron')}</button></div></header>${errors.map(e=>`<p class="customize-error" role="alert">${esc(e)}</p>`).join('')}${customization.loading&&!customization[kind]&&!builtins.length?'<p class="customize-muted" role="status">正在读取目录…</p>':body}</div>`;
+  root.innerHTML=`<div class="customize-content">${extensionTabs(kind)}${extensionToolbar({
+    searchId:'customize-search',label:isSkill?'搜索技能':'搜索插件',value:query,
+    refresh:'data-customize-refresh'+(customization.loading?' disabled':''),
+    settings:`<button type="button" class="icon-btn" data-customize-settings title="管理设置" aria-label="管理设置">${ic('gear')}</button>`,
+    add:'data-customize-add aria-haspopup="menu"'
+  })}${errors.map(e=>`<p class="customize-error" role="alert">${esc(e)}</p>`).join('')}${customization.loading&&!customization[kind]&&!builtins.length?'<p class="customize-muted" role="status">正在读取目录…</p>':body}</div>`;
+  const filters=root.querySelector('.customize-tabs');if(filters)root.querySelector('.customize-heading').after(filters);
   root.scrollTop=top;
   if(customization.plugins?._raeSnapshot){const note=document.createElement('p');note.className='customize-muted';note.setAttribute('role','status');note.textContent='正在显示本地目录快照，在线更新完成后自动同步。';root.querySelector('.customize-content').prepend(note);}
   const search=root.querySelector('#customize-search');search.oninput=()=>{const caret=search.selectionStart;customization.query[kind]=search.value;customization.limit=120;renderCustomize();const next=document.getElementById('customize-search');next.focus();next.setSelectionRange(caret,caret);};
@@ -155,9 +163,9 @@ function renderCustomize() {
   root.querySelectorAll('[data-customize-category]').forEach(b=>b.onclick=()=>{customization.category=b.dataset.customizeCategory||null;root.scrollTop=0;renderCustomize();});
   root.querySelectorAll('[data-customize-scope]').forEach(b=>b.onclick=()=>{customization.scope=b.dataset.customizeScope;renderCustomize();});
   root.querySelector('[data-customize-more]')?.addEventListener('click',()=>{customization.limit+=120;renderCustomize();});
-  root.querySelector('[data-customize-settings]').onclick=()=>customizeManagement(kind);
-  if(kind==='plugins')globalThis.EvaPluginAddHost?.mount(root.querySelector('[data-customize-add]'));
-  else root.querySelector('[data-customize-add]').onclick=()=>customizeManagement(kind,true);
+  root.querySelector('[data-customize-settings]').onclick=()=>customizeManagement(kind,isSkill);
+  const addButton=root.querySelector('[data-customize-add]');
+  if(addAnchor)addButton.replaceWith(addAnchor);globalThis.EvaPluginAddHost?.mount(addAnchor||addButton);
   bindCustomizeDetails(root);
   root.querySelectorAll('.customize-icon img').forEach(img=>img.onerror=()=>{img.parentElement.innerHTML=ic(isSkill?'codex':'plugin');});
   if(focused){search.focus();search.setSelectionRange(caret,caret);}
@@ -350,7 +358,7 @@ async function tryPluginDetail(entry,index){
    host=EvaNativePluginAdd.createPluginAddHost({onError:fail,openExternal:value=>api.openExternal(typeof value==='string'?value:value.url||value.href),
     refresh:refreshCustomizationAfterMutation,
     addMarketplace:params=>api.localPluginAuthoring('addMarketplace',params),
-    importArchive:file=>api.importPluginFile(file),createMcp:params=>api.localPluginAuthoring('createMcp',params),onMcpCreated:async result=>{await refreshCustomizationAfterMutation();toast(result.requiresAuthorization?'MCP 已保存到本地设置，仍需在 MCP 设置中完成服务器授权。':'MCP 已保存到本地设置。');if(result.reloadError)fail(new Error(result.reloadError));},
+    importArchive:file=>api.importPluginFile(file),createMcp:params=>api.localPluginAuthoring('createMcp',params),onMcpCreated:async result=>{await refreshCustomizationAfterMutation();if(settingPage==='mcp')await window.openMcpSettings();toast(result.requiresAuthorization?'MCP 已保存到本地设置，仍需在 MCP 设置中完成服务器授权。':'MCP 已保存到本地设置。');if(result.reloadError)fail(new Error(result.reloadError));},
     recorder,openRecorder:draft,
     enablePlugin:async id=>{await api.call('config/value/write',{keyPath:'plugins.'+JSON.stringify(id)+'.enabled',value:true,mergeStrategy:'replace'});await refreshCustomizationAfterMutation();},
     installRecorder:async({plugin})=>{const params={pluginName:plugin.name,...(plugin.marketplace.path?{marketplacePath:plugin.marketplace.path}:{remoteMarketplaceName:plugin.marketplace.name})};await api.call('plugin/install',params);await refreshCustomizationAfterMutation();},
@@ -361,9 +369,7 @@ async function tryPluginDetail(entry,index){
  }
  globalThis.EvaPluginAddHost={mount(button){if(!button)return;const current=++epoch;
   // Replace the legacy button, so the original button is never nested inside it.
-  const anchor=document.createElement('span');anchor.className='eva-native-plugin-add';anchor.dataset.pluginAddAnchor='';button.replaceWith(anchor);target=anchor;
+  const anchor=button.matches('[data-plugin-add-anchor]')?button:document.createElement('span');anchor.className='eva-native-plugin-add';anchor.dataset.pluginAddAnchor='';if(anchor!==button)button.replaceWith(anchor);target=anchor;
   load().then(value=>{if(current===epoch&&target?.isConnected)value.mount(target);}).catch(fail);
  },detach(){epoch++;target=null;host?.detach();}};
 })();
-
-

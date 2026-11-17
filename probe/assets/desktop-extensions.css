@@ -148,7 +148,6 @@
 .desktop-extensions .customize-toolbar{margin:0;gap:4px;display:flex;flex-wrap:nowrap;width:100%}
 .desktop-extensions .customize-search{flex:1;min-width:50px;width:auto;background:var(--soft);border:0;border-radius:12px;height:44px;padding:8px 10px}
 .desktop-extensions .customize-toolbar .icon-btn{width:44px;height:44px;flex-shrink:0;border-radius:13px}
-.desktop-extensions .customize-add{font-size:14px;font-weight:550;min-height:44px;padding:8px 12px;border-radius:12px;flex-shrink:0;background:var(--accent);color:var(--paper)}
 .desktop-extensions .customize-tabs{margin:14px 0;gap:4px}
 .desktop-extensions .customize-tabs button{min-height:40px;padding:6px 12px;font-size:12px;border-radius:8px}
 .desktop-extensions .customize-section{margin:18px 0}
@@ -160,10 +159,42 @@
 .desktop-extensions .customize-card-copy{gap:3px}
 .desktop-extensions .customize-card-copy>span{font-size:12px}
 .desktop-extensions .customize-grid{gap:0 24px}
-#mcp-page .extension-entry>summary{padding:10px 0;min-height:64px}
-#mcp-page .extension-search{margin:0 0 12px;border:0;background:var(--soft);border-radius:12px}
-#mcp-page .extension-add>summary{cursor:pointer;min-height:44px;padding:10px 0;font-size:13px}
+/* The toolbar triggers share the plugin menu's compact pill. */
+.desktop-extensions .customize-toolbar :is(.customize-add, .eva-native-plugin-add button[aria-haspopup="menu"]) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  box-sizing: border-box;
+  width: 66px;
+  min-height: 28px;
+  height: 28px;
+  gap: 4px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 13px;
+  font-weight: 550;
+  line-height: 1;
+  white-space: nowrap;
+}
+.desktop-extensions .customize-add > svg {
+  width: 14px;
+  height: 14px;
+  transform: rotate(90deg);
+}
+.desktop-extensions .customize-toolbar .customize-add[aria-expanded="true"] > svg { transform: rotate(-90deg); }
+/* Shared page body: all catalogs use the same rows, groups and states. */
+.desktop-extensions .customize-page[data-kind] .customize-grid{gap:0 24px}
+.desktop-extensions .customize-page[data-kind] .customize-icon{width:36px;height:36px;flex-basis:36px}
+.desktop-extensions .customize-page[data-kind] .customize-card{padding:4px 0;min-height:60px;border:0;border-bottom:1px solid var(--line);border-radius:12px}
+.desktop-extensions .customize-empty{padding:20px 0;margin:0;grid-column:1/-1}
+.desktop-extensions .customize-error{padding:12px;border-radius:12px;background:var(--soft);overflow-wrap:anywhere}
+.eva-desktop-dialog .mcp-add-form .field{display:grid;gap:6px;margin:12px 0;font-size:13px}
+.eva-desktop-dialog .mcp-add-form .field[hidden]{display:none}
+.eva-desktop-dialog .mcp-add-form .field :is(input,select,textarea){width:100%;min-width:0;min-height:40px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink)}
+#mcp-page #mcp-notice{margin:12px 0}
 #mcp-page #mcp-notice:empty{display:none}
-#mcp-page #mcp-notice{font-size:12px;color:var(--muted);margin:0 0 12px}
-#mcp-page #mcp-refresh{min-height:44px;padding:8px 12px;border:1px solid var(--line);border-radius:8px;margin-top:12px}
 @media(max-width:700px){.desktop-extensions{display:flex;overflow:hidden}.desktop-extensions .customize-page{overflow:auto}.desktop-extensions .customize-content{padding:0 20px 28px}.desktop-extensions .customize-toolbar{margin:0}.desktop-extensions .customize-card-copy strong{white-space:normal;overflow-wrap:anywhere}.desktop-extensions .customize-card-copy>span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;white-space:normal}.desktop-extensions .customize-page[data-kind=skills] .customize-icon{width:36px;height:36px;flex-basis:36px}}

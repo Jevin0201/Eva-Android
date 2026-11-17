@@ -79,9 +79,9 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-vi
 .welcome .word{font-size:18px;font-weight:650;letter-spacing:-.5px;color:var(--muted);margin-bottom:4px}
 .welcome h2{font-size:27px;font-weight:650;letter-spacing:-.6px;line-height:1.45}
 .welcome p{font-size:13px;line-height:1.8;max-width:290px}
-.welcome .examples{position:absolute;bottom:12px;left:16px;right:16px;display:flex;justify-content:flex-start;flex-wrap:nowrap;gap:8px;margin:0;overflow-x:auto;padding:2px 0 6px;scrollbar-width:none}
+.welcome .examples{position:absolute;bottom:12px;left:16px;right:16px;display:flex;justify-content:flex-start;flex-wrap:nowrap;gap:8px;margin:0;overflow:visible;padding:2px 2px 6px}
 .welcome .examples::-webkit-scrollbar{display:none}
-.welcome .examples button{flex:none;display:inline-flex;align-items:center;gap:7px;min-height:44px;padding:10px 13px;border-radius:12px;font-size:12px;border:1px solid var(--line);background:var(--paper);white-space:nowrap}
+.welcome .examples button{zoom:.97;flex:0 1 auto;min-width:0;display:inline-flex;align-items:center;gap:7px;min-height:44px;padding:10px 13px;border-radius:12px;font-size:12px;border:1px solid var(--line);background:var(--paper);white-space:nowrap}
 .welcome .examples svg{width:17px;height:17px;color:var(--ink)}
 .tree-capabilities{padding:0 4px 10px;border-bottom:1px solid var(--line);margin-bottom:8px}
 .tree-capabilities button{display:flex;align-items:center;gap:10px;width:100%;min-height:44px;padding:9px 12px;border-radius:11px;font-size:13px;text-align:left}

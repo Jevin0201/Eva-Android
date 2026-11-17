@@ -15,6 +15,12 @@ import java.io.IOException;
 /** User-selected phone execution surface. Never falls back to the main screen on failure. */
 final class PhoneAgentDisplay {
  static volatile PhoneAgentDisplay active;
+ // Runtime routing is independent of the user's saved background preference.
+ private static volatile boolean foregroundSelected;
+ static boolean foregroundSelected(){return foregroundSelected;}
+ static boolean backgroundSelected(Context context){return desired(context)&&!foregroundSelected;}
+ static void selectForeground(){foregroundSelected=true;stop();}
+ static void selectBackground(){foregroundSelected=false;}
  private static final Object lifecycleLock = new Object();
  private static final java.util.concurrent.ExecutorService lifecycle = java.util.concurrent.Executors.newSingleThreadExecutor();
  private static long ticket, lastRestore;
@@ -26,6 +32,7 @@ final class PhoneAgentDisplay {
    if (!PhoneTools.owner.isEmpty()) throw new IOException("请先停止正在执行的手机任务");
    boolean changed=desired(context)!=enabled;
    if (!context.getSharedPreferences("eva-phone",0).edit().putBoolean("backgroundDisplayEnabled",enabled).commit()) throw new IOException("后台屏选择保存失败");
+   foregroundSelected=false;
    if(changed)PhoneAccessibility.generation++;
    if (!enabled) { stop(); recoveryReason=""; return; }
   }
@@ -42,13 +49,14 @@ final class PhoneAgentDisplay {
  }
  static String status(Context context) {
   if(!desired(context))return "后台屏未选择";
+  if(foregroundSelected)return "当前在前台操作 · 后台屏开启设置已保留";
   PhoneAgentDisplay value=active;
   if(connected(context,value))return "后台屏已运行 · 屏幕 "+value.id;
   return "后台屏已保持开启选择 · "+(recoveryReason.isEmpty()?"等待恢复":recoveryReason);
  }
  static void restore(Context context) {
   final Context application=context.getApplicationContext();
-  if(!desired(application))return;
+  if(!backgroundSelected(application)){if(foregroundSelected)PhoneAgentPreview.show(application);return;}
   PhoneAgentDisplay existing = active;
   if (connected(application, existing)) {
    DisplayMetrics phone = new DisplayMetrics();
@@ -71,7 +79,7 @@ final class PhoneAgentDisplay {
  }
  private static void create(Context context,long token,long epoch) throws Exception { create(context,token,epoch,""); }
  private static void create(Context context,long token,long epoch,String taskOwner) throws Exception {
-  synchronized(lifecycleLock){if(token!=ticket||!desired(context)||active!=null)return;}
+  synchronized(lifecycleLock){if(token!=ticket||!backgroundSelected(context)||active!=null)return;}
   if(Build.VERSION.SDK_INT<34)throw new IOException("独立焦点后台屏需要 Android 14 或更新版本");
   if(!PhoneAccessibility.armed||PhoneAccessibility.live==null)throw new IOException("等待手机控制与无障碍连接");
   if(((android.app.KeyguardManager)context.getSystemService(Context.KEYGUARD_SERVICE)).isKeyguardLocked())throw new IOException("等待手机解锁");
@@ -79,7 +87,7 @@ final class PhoneAgentDisplay {
   PhoneAgentDisplay created=new PhoneAgentDisplay(context);
   boolean publish=false;
   synchronized(PhoneTools.class){synchronized(lifecycleLock){
-   if(token==ticket&&desired(context)&&epoch==PhoneAccessibility.generation&&PhoneAccessibility.armed&&PhoneAccessibility.live!=null&&PhoneTools.owner.equals(taskOwner)){
+   if(token==ticket&&backgroundSelected(context)&&epoch==PhoneAccessibility.generation&&PhoneAccessibility.armed&&PhoneAccessibility.live!=null&&PhoneTools.owner.equals(taskOwner)){
     // Publishing occurs only without a phone owner. Keep the session generation stable so
     // a foreground-service start queued before this recovery does not cancel itself.
     active=created;publish=true;recoveryReason="";
@@ -123,7 +131,8 @@ final class PhoneAgentDisplay {
 
  static void start(Context context) throws Exception {
   if(android.os.Looper.myLooper()==android.os.Looper.getMainLooper())throw new IOException("后台屏创建需要后台线程");
-  if(!desired(context))context.getSharedPreferences("eva-phone",0).edit().putBoolean("backgroundDisplayEnabled",true).commit();
+  if(!desired(context))throw new IOException("后台执行屏已由用户关闭，请在手机控制设置开启");
+  selectBackground();
   final long token,epoch=PhoneAccessibility.generation;
   synchronized(lifecycleLock){token=ticket;}
   lifecycle.submit(()->{create(context,token,epoch);return null;}).get(20,java.util.concurrent.TimeUnit.SECONDS);
@@ -132,7 +141,8 @@ final class PhoneAgentDisplay {
  static void startForTask(Context context,String taskOwner,long epoch)throws Exception {
   if(taskOwner.isEmpty()||!PhoneTools.owner.equals(taskOwner))throw new IOException("后台切换缺少当前任务归属");
   if(!PhoneShell.authorized())throw new IOException("后台执行需要 Shizuku 启动并授权");
-  if(!context.getSharedPreferences("eva-phone",0).edit().putBoolean("backgroundDisplayEnabled",true).commit())throw new IOException("后台屏选择保存失败");
+  if(!desired(context))throw new IOException("后台执行屏已由用户关闭，请在手机控制设置开启");
+  selectBackground();
   final long token; synchronized(lifecycleLock){token=ticket;}
   lifecycle.submit(()->{create(context,token,epoch,taskOwner);return null;}).get(20,java.util.concurrent.TimeUnit.SECONDS);
   if(!connected(context,active))throw new IOException("后台屏未就绪，请检查控制权限后重试");
@@ -162,7 +172,7 @@ final class PhoneAgentDisplay {
  }
  static void guard(Context context) throws IOException {
   PhoneAgentDisplay value = active;
-  if (value == null) {if(desired(context)){restore(context);throw new IOException(status(context));}return;}
+  if (value == null) {if(backgroundSelected(context)){restore(context);throw new IOException(status(context));}return;}
   android.hardware.display.DisplayManager manager = (android.hardware.display.DisplayManager)context.getSystemService(Context.DISPLAY_SERVICE);
   if (PhoneShell.binder == null || !PhoneShell.binder.isBinderAlive() || manager.getDisplay(value.id) == null)
    {stop();restore(context);throw new IOException("后台屏连接已断开，等待恢复；"+status(context));}

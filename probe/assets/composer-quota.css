@@ -1,0 +1,64 @@
+.composer-footer:has(> .composer-quota) {
+  grid-template-columns: minmax(0, 1fr) minmax(0, auto) minmax(0, 1fr);
+  column-gap: 4px;
+}
+.composer-footer:has(> .composer-quota) > .workspace-chip {
+  grid-column: 1;
+  align-items: center;
+}
+.composer-footer:has(> .composer-quota) > .workspace-chip svg { margin-top: 0; }
+.composer-footer:has(> .composer-quota) > .workspace-chip span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.composer-footer:has(> .composer-quota) > [data-context-controls] {
+  grid-column: 3;
+  justify-self: end;
+  flex-wrap: nowrap;
+  gap: 2px;
+  white-space: nowrap;
+}
+.composer-footer:has(> .composer-quota) > [data-context-controls] button { padding-inline: 1px; }
+.composer-quota {
+  position: relative;
+  grid-column: 2;
+  min-width: 0;
+  max-width: min(150px, 42vw);
+  text-align: center;
+}
+.composer-quota-toggle {
+  display: block;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 2px 3px;
+  min-height: 24px;
+  border-radius: 5px;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.composer-quota-toggle:hover, .composer-quota-toggle[aria-expanded="true"] { background: var(--soft); }
+.composer-quota-panel {
+  position: absolute;
+  inset: auto auto calc(100% + 6px) 50%;
+  transform: translateX(-50%);
+  z-index: 12;
+  width: min(294px, calc(100vw - 40px));
+  max-height: min(360px, 47dvh);
+  overflow: auto;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--paper);
+  background: color-mix(in srgb, var(--paper) 94%, var(--accent));
+  box-shadow: 0 6px 20px #0002;
+  color: var(--ink);
+  font-size: 12px;
+  text-align: left;
+}
+.composer-quota-panel p + p { margin-top: 4px; }
+.composer-quota-panel > button { margin-top: 8px; min-height: 30px; color: var(--accent); }

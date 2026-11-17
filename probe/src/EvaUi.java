@@ -21,6 +21,7 @@ public final class EvaUi {
    else if(kind.equals("history")){c.drawCircle(12,12,9,p);c.drawLine(12,6,12,12,p);c.drawLine(12,12,16,14,p);}
    else if(kind.equals("stop")){c.drawRoundRect(6,6,18,18,2,2,p);}
    else if(kind.equals("refresh")){c.drawArc(4,4,20,20,45,285,false,p);c.drawLine(19,3,19,8,p);c.drawLine(19,8,14,8,p);}
+   else if(kind.equals("switch-display")){c.drawArc(5,5,19,19,210,150,false,p);c.drawArc(5,5,19,19,30,150,false,p);Path q=new Path();q.moveTo(15.5f,9);q.lineTo(19,12);q.lineTo(22,8.5f);q.moveTo(2,15.5f);q.lineTo(5,12);q.lineTo(8.5f,15);c.drawPath(q,p);}
    else if(kind.equals("file")){Path q=new Path();q.moveTo(5,3);q.lineTo(14,3);q.lineTo(20,9);q.lineTo(20,21);q.lineTo(5,21);q.close();c.drawPath(q,p);c.drawLine(9,13,16,13,p);c.drawLine(9,17,16,17,p);}
    else if(kind.equals("menu")){c.drawRoundRect(3,4,21,20,3,3,p);c.drawLine(9,4,9,20,p);}
    else if(kind.equals("plus")){c.drawLine(5,12,19,12,p);c.drawLine(12,5,12,19,p);}

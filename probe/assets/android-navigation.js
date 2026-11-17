@@ -2,36 +2,30 @@
 'use strict';
 // Native back dispatch enters here, then follows the latest overlay owners.
 (() => {
- const history=[];
- let restoring=false;
+ // A section has one parent. Tabs, filters and sibling settings are not history.
+ let parent=null;
  function settingsLocation(){
-  if(settingPage==='desktop-extensions'){
-   const tab=document.querySelector('.eva-extension-tabs [aria-selected="true"]');
-   return tab?.dataset.action?.slice(9)||'extensions';
-  }
+  if(['desktop-extensions','extensions','plugins','skills','mcp'].includes(settingPage))return 'extensions';
   return settingPage;
  }
  const openSettings=settingsGo;
  settingsGo=function(page){
   const before=settingsLocation();
-  if(!before)history.length=0;
   const result=openSettings(page);
   const after=settingsLocation();
   if(after!==before){
-   if(after==='settings')history.length=0;
-   else if(!restoring&&before)history.push(before);
+   if(!before||after==='settings')parent=null;
+   else if(before==='settings')parent='settings';
+   // Moving between siblings keeps their shared parent, never the previous tab.
   }
   return result;
  };
  function backSettings(){
-  if(settingPage==='settings'){
-   history.length=0;settingPage=null;render();return;
-  }
-  const destination=history.at(-1)||'settings';
-  const before=settingsLocation();
-  restoring=true;
-  try{settingsGo(destination);}finally{restoring=false;}
-  if(settingsLocation()!==before&&history.at(-1)===destination)history.pop();
+  if(settingPage==='skills'&&window.skillManager&&!skillManager.canLeave())return;
+  if(parent&&settingPage!=='settings'){settingsGo(parent);return;}
+  parent=null;
+  if(window.evaDesktopExtensions?.close)evaDesktopExtensions.close();
+  else{window.EvaPluginAddHost?.detach();settingPage=null;render();}
  }
  const go=navigate;
  navigate=function(action){

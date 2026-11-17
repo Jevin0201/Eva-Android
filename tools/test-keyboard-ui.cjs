@@ -8,7 +8,7 @@ const fs=require('fs'),assert=require('assert/strict'),{chromium,launchOptions}=
  await p.setViewportSize({width:390,height:480});const button=await p.getByRole('button',{name:'收起键盘',exact:true}).boundingBox();assert(button.y>=0&&button.y+button.height<=480);
  await p.getByRole('button',{name:'收起键盘',exact:true}).click();assert.equal(await p.locator('#prompt').inputValue(),'保留草稿');assert.equal(await p.evaluate(()=>hides),1);assert(await p.locator('#eva-keyboard-toolbar').isHidden());
  await p.evaluate(()=>{projectDialog();document.querySelector('.project-input').focus();evaKeyboardState({visible:true,height:900});});
- await p.evaluate(()=>evaBack());assert.equal(await p.locator('#eva-panel').count(),1);assert.equal(await p.evaluate(()=>hides),2);await p.evaluate(()=>evaBack());assert.equal(await p.locator('#eva-panel').count(),0);
+ await p.evaluate(()=>evaAndroidBack());assert.equal(await p.locator('#eva-panel').count(),1);assert.equal(await p.evaluate(()=>hides),2);await p.evaluate(()=>evaAndroidBack());assert.equal(await p.locator('#eva-panel').count(),0);
  await p.locator('#prompt').focus();await p.evaluate(()=>{evaKeyboardState({visible:true,height:900});evaKeyboardState({visible:false,height:0});});assert.notEqual(await p.evaluate(()=>document.activeElement.id),'prompt');assert.equal(await p.locator('#prompt').inputValue(),'保留草稿');assert.deepEqual(errors,[]);
  console.log('PASS visible keyboard-dismiss action, native bridge, draft preservation, resized viewport, keyboard-first back, IME-hide focus reset');
 }finally{await b.close()}})().catch(e=>{console.error(e);process.exitCode=1});

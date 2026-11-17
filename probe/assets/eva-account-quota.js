@@ -1,16 +1,16 @@
 /* Existing account/rateLimits snapshots, displayed directly in the logo menu. */
 (function(root,factory){const exported=factory();if(typeof module==='object'&&module.exports)module.exports=exported;else {root.desktopQuota=exported;root.accountQuota=exported.createMenu();}})(globalThis,function(){
  'use strict';
- function quotaView(account,snapshot){
+ function quotaView(account,snapshot,allWindows=false){
   if(account?.type!=='chatgpt')return null;
   const entries=snapshot?.rateLimitsByLimitId&&Object.keys(snapshot.rateLimitsByLimitId).length?Object.entries(snapshot.rateLimitsByLimitId):[['codex',snapshot?.rateLimits]];
   const plan=String(account.planType&&account.planType!=='unknown'?account.planType:snapshot?.rateLimits?.planType||account.planType||'unknown').toLowerCase();
   const pro=['pro','prolite','promax'].includes(plan),plus=plan==='plus';
   const buckets=entries.filter(([,bucket])=>bucket).map(([id,bucket])=>{
    const native=['primary','secondary'].flatMap((key)=>{const w=bucket[key];if(!w)return [];const mins=w.windowDurationMins??(key==='primary'?300:10080);return [{...w,mins}];});
-   const windows=(pro?[10080]:plus?[300,10080]:[...new Set(native.map(w=>w.mins))]).map(mins=>{
+   const windows=(!allWindows&&pro?[10080]:!allWindows&&plus?[300,10080]:[...new Set(native.map(w=>w.mins))]).map(mins=>{
     const w=native.find(w=>w.mins===mins),valid=typeof w?.usedPercent==='number'&&Number.isFinite(w.usedPercent),used=valid?Math.min(100,Math.max(0,w.usedPercent)):null;
-    return {label:mins===300?'5 小时限额':mins===10080?'7 天限额':mins%60===0?`${mins/60} 小时限额`:`${mins} 分钟限额`,remaining:used===null?null:100-used,used,reset:typeof w?.resetsAt==='number'&&Number.isFinite(w.resetsAt)?w.resetsAt:null};
+    return {mins,label:mins===300?'5 小时限额':mins===10080?'7 天限额':mins%60===0?`${mins/60} 小时限额`:`${mins} 分钟限额`,remaining:used===null?null:100-used,used,reset:typeof w?.resetsAt==='number'&&Number.isFinite(w.resetsAt)?w.resetsAt:null};
    });return {id,name:bucket.limitName||id,windows};
   });
   return {plan,planLabel:plan==='plus'?'Plus':pro?'Pro':plan==='unknown'?'OpenAI GPT':plan,buckets};

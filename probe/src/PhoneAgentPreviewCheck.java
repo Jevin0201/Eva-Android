@@ -50,6 +50,7 @@ public final class PhoneAgentPreviewCheck extends Instrumentation {
     public void onStart() {
         Bundle result = new Bundle();
         SharedPreferences prefs = getTargetContext().getSharedPreferences("eva-phone", 0);
+        boolean keep=PhoneTaskService.keep(getTargetContext());
         boolean armed = PhoneAccessibility.armed, desired = PhoneAgentDisplay.desired(getTargetContext());
         boolean hasPreview = prefs.contains("previewEnabled"), preview = PhoneAgentPreview.enabled(getTargetContext());
         boolean hasX = prefs.contains("previewX"), hasY = prefs.contains("previewY");
@@ -84,6 +85,7 @@ public final class PhoneAgentPreviewCheck extends Instrumentation {
                 Bitmap bitmap = ((BitmapDrawable) image.getDrawable()).getBitmap();
                 return root.isAttachedToWindow() && !bitmap.isRecycled() && bitmap.getWidth() > 0 && Math.min(bitmap.getWidth(), bitmap.getHeight()) <= 480;
             }), "No scaled live bitmap in attached overlay");
+            ui(()->{Bitmap capture=Bitmap.createBitmap(root.getWidth(),root.getHeight(),Bitmap.Config.ARGB_8888);root.draw(new android.graphics.Canvas(capture));try(java.io.FileOutputStream output=new java.io.FileOutputStream(new java.io.File(getTargetContext().getFilesDir(),"phone-preview-ui.png"))){capture.compress(Bitmap.CompressFormat.PNG,100,output);}capture.recycle();return null;});
             int beforeFrame = ui(() -> {
                 Bitmap frame = ((BitmapDrawable)image.getDrawable()).getBitmap();
                 int[] pixels = new int[frame.getWidth()*frame.getHeight()];
@@ -108,7 +110,7 @@ public final class PhoneAgentPreviewCheck extends Instrumentation {
             android.os.HandlerThread renderer = (android.os.HandlerThread) field(overlay, "renderer");
             check(renderer.isAlive() && renderer.getLooper() != android.os.Looper.getMainLooper(), "Preview scaling must run off the UI thread");
             LinearLayout header = ui(() -> (LinearLayout) root.getChildAt(0));
-            TextView title = ui(() -> (TextView) header.getChildAt(0));
+            View title = header;
             TextView fold = ui(() -> (TextView) header.getChildAt(1));
             TextView close = ui(() -> (TextView) header.getChildAt(2));
             ui(() -> { fold.performClick(); return null; });
@@ -128,19 +130,45 @@ public final class PhoneAgentPreviewCheck extends Instrumentation {
             check(ui(() -> !root.isAttachedToWindow() && image.getDrawable() == null), "Close retained overlay image resources");
             PhoneAgentPreview.setEnabled(getTargetContext(), true);
             await(PhoneAgentPreview::isShowing, "Overlay could not reopen");
-            PhoneAgentDisplay.stop();
+            boolean savedPreview=PhoneAgentPreview.enabled(getTargetContext());
+            PhoneTools.bind("preview-mode-check");PhoneTools.turn="preview-mode-turn";
+            final long switchEpoch=PhoneAccessibility.generation;
+            Object switchOverlay=ui(()->field(null,"current"));
+            View toFront=ui(()->(View)field(switchOverlay,"mode"));
+            ui(()->{toFront.performClick();return null;});
+            await(()->PhoneAgentDisplay.foregroundSelected()&&PhoneAgentDisplay.active==null&&PhoneAgentPreview.isShowing(),"Preview did not switch to foreground");
+            org.json.JSONObject front=PhoneTools.execute(getTargetContext(),new org.json.JSONObject().put("action","observe"));
+            check(front.optInt("displayId",-1)==0&&front.toString().contains("fixture-clicked"),"Task state lost moving to foreground: "+front.optString("package")+" "+front.optJSONArray("nodes"));
+            check(PhoneAgentDisplay.desired(getTargetContext()),"Foreground cleared saved background choice");
+            PhoneAgentDisplay.restore(getTargetContext());Thread.sleep(250);
+            check(PhoneAgentDisplay.active==null,"Recovery overrode foreground selection");
+            Object frontOverlay=ui(()->field(null,"current"));
+            View toBack=ui(()->(View)field(frontOverlay,"mode"));
+            ui(()->{toBack.performClick();return null;});
+            await(()->!PhoneAgentDisplay.foregroundSelected()&&PhoneAgentDisplay.active!=null,"Preview did not switch to background");
+            Thread.sleep(500);
+            org.json.JSONObject back=PhoneTools.execute(getTargetContext(),new org.json.JSONObject().put("action","observe"));
+            check(back.optInt("displayId",0)>0&&back.toString().contains("fixture-clicked"),"Task state lost moving back to background: "+back.optString("package")+" "+back.optJSONArray("nodes"));
+            check(PhoneAccessibility.generation==switchEpoch&&PhoneTools.owner.equals("preview-mode-check"),"Switch cancelled current phone task");
+            PhoneTools.execute(getTargetContext(),new org.json.JSONObject().put("action","hide_preview"));
+            check(PhoneAgentPreview.enabled(getTargetContext())==savedPreview,"Tool hide changed saved preview preference");
+            PhoneTools.release("preview-mode-check");PhoneResourceScheduler.releaseThread("preview-mode-check");
+            PhoneTools.stop(getTargetContext());
+            check(PhoneAgentDisplay.desired(getTargetContext())&&PhoneAgentPreview.enabled(getTargetContext())==savedPreview,"Stopping control cleared saved display/preview preference");
             await(() -> !PhoneAgentPreview.isShowing(), "Stopping display left overlay visible");
-            result.putString("result", "PASS live scaled overlay bitmap updates after real background click, collapse/expand, drag, cross-App attachment, close preserves background execution, physical screen aspect, background scaling, image cleanup, display stop removes overlay");
+            result.putString("result", "PASS live scaled overlay bitmap updates after real background click, collapse/expand, drag, cross-App attachment, close preserves background execution, physical screen aspect, background scaling, image cleanup, display stop removes overlay; preview foreground/background preserves task and settings; tool preview choice does not overwrite user preference");
         } catch (Throwable error) { result.putString("result", "FAIL " + error); }
         finally {
             if (began) {
-                PhoneAgentPreview.hide();
+                PhoneTools.release("preview-mode-check");PhoneResourceScheduler.releaseThread("preview-mode-check");
+                PhoneAgentDisplay.selectBackground();PhoneAgentPreview.hide();
                 PhoneAgentDisplay.stop();
                 SharedPreferences.Editor edit = prefs.edit().putBoolean("backgroundDisplayEnabled", desired);
                 if (hasPreview) edit.putBoolean("previewEnabled", preview); else edit.remove("previewEnabled");
                 if (hasX) edit.putInt("previewX", x); else edit.remove("previewX");
                 if (hasY) edit.putInt("previewY", y); else edit.remove("previewY");
                 edit.commit();
+                PhoneTaskService.setKeep(getTargetContext(),keep);
                 PhoneAccessibility.armed = armed;
                 PhoneAgentDisplay.restore(getTargetContext());
                 getTargetContext().startActivity(new Intent(getTargetContext(), ShellActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP));

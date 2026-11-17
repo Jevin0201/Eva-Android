@@ -89,16 +89,18 @@ public final class PhoneAgentDisplayCheck extends Instrumentation {
    if(backgroundAgain.optInt("displayId")<=0||!PhoneTools.owner.equals("display-check"))throw new Exception("task background switch failed");
    PhoneTools.executeObserved(getTargetContext(),new JSONObject().put("action","show_preview"),foregroundEpoch);
    PhoneTools.executeObserved(getTargetContext(),new JSONObject().put("action","hide_preview"),foregroundEpoch);
-   if(PhoneAgentDisplay.active==null||PhoneAgentPreview.enabled(getTargetContext()))throw new Exception("closing preview stopped execution");
+   if(PhoneAgentDisplay.active==null||PhoneAgentPreview.visibleChoice(getTargetContext()))throw new Exception("closing preview stopped execution");
    PhoneTools.executeObserved(getTargetContext(),new JSONObject().put("action","foreground"),foregroundEpoch);
    PhoneTools.release("display-check");PhoneResourceScheduler.releaseThread("display-check");
-   if(PhoneAgentDisplay.desired(getTargetContext())||PhoneAgentDisplay.active!=null)throw new Exception("explicit disable not reflected immediately");
+   if(!PhoneAgentDisplay.desired(getTargetContext())||PhoneAgentDisplay.active!=null)throw new Exception("foreground changed saved background choice");
+   PhoneAgentDisplay.setEnabled(getTargetContext(),false);
+   if(PhoneAgentDisplay.desired(getTargetContext()))throw new Exception("manual disable not saved");
    PhoneAgentDisplay.restore(getTargetContext());
    Thread.sleep(100);
    if(PhoneAgentDisplay.active!=null)throw new Exception("disabled background screen resurrected");
    result.putString("result", "PASS background display create, launch, observe, node click, Unicode input, tool screenshot, real batch, gesture, fresh frame, persisted choice, suspension, busy-task recovery guard, rebuild, preflight fallback without send, owned foreground/background switches, preview toggle preserves execution, explicit disable");
   } catch (Throwable error) { result.putString("result", "FAIL " + error); }
-  finally { PhoneResourceScheduler.releaseThread("display-check");PhoneTools.owner="";PhoneAgentDisplay.stop();getTargetContext().getSharedPreferences("eva-phone",0).edit().putBoolean("backgroundDisplayEnabled",desired).commit();PhoneAccessibility.armed = armed;PhoneAgentPreview.setEnabled(getTargetContext(),preview);PhoneAgentDisplay.restore(getTargetContext()); }
+  finally { PhoneResourceScheduler.releaseThread("display-check");PhoneTools.owner="";PhoneAgentDisplay.selectBackground();PhoneAgentDisplay.stop();getTargetContext().getSharedPreferences("eva-phone",0).edit().putBoolean("backgroundDisplayEnabled",desired).commit();PhoneAccessibility.armed = armed;PhoneAgentPreview.setEnabled(getTargetContext(),preview);PhoneAgentDisplay.restore(getTargetContext()); }
   finish(result.getString("result", "").startsWith("PASS") ? -1 : 0, result);
  }
 }

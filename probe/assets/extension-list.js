@@ -9,3 +9,12 @@ const extensionLogoCache=new Map();
 function extensionPluginLogo(p){const face=p.interface||{},path=face.logo||face.iconLarge||face.composerIcon||face.iconSmall;if(path&&window.EvaHost?.pluginIcon){if(!extensionLogoCache.has(path))extensionLogoCache.set(path,EvaHost.pluginIcon(path)||'');const src=extensionLogoCache.get(path);if(src)return '<img alt="" src="'+esc(src)+'">'}return extensionIcon('plugin')}
 
 function extensionTabs(kind){return '<nav class="eva-extension-tabs" aria-label="技能与插件" role="tablist">'+[['plugins','插件'],['skills','技能'],['mcp','MCP']].map(([key,label])=>'<button role="tab" data-action="settings:'+key+'" '+(kind===key?'aria-current="page" aria-selected="true"':'aria-selected="false"')+'>'+label+'</button>').join('')+'</nav>'}
+
+function extensionToolbar({searchId, label, value='', refresh, settings='', add}){
+  return `<header class="customize-heading"><div class="customize-toolbar">
+    <label class="customize-search">${icon('search')}<input id="${searchId}" aria-label="${esc(label)}" placeholder="${esc(label)}" value="${esc(value)}"></label>
+    <button type="button" class="icon-btn" ${refresh} title="刷新" aria-label="刷新">${icon('refresh')}</button>
+    ${settings}
+    <button type="button" class="customize-add" ${add}>添加${extensionIcon('chevron')}</button>
+  </div></header>`;
+}

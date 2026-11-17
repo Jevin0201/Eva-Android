@@ -5,6 +5,14 @@ await p.addInitScript(()=>{window.calls=[];window.events=[];window.EvaHost={load
 await p.route('https://eva.invalid/**',r=>{const n=new URL(r.request().url()).pathname.slice(1);return r.fulfill({body:fs.readFileSync('probe/assets/'+n),contentType:n.endsWith('.js')?'text/javascript':n.endsWith('.css')?'text/css':'text/html'});});
 await p.goto('https://eva.invalid/index.html');await p.evaluate(()=>{route='chat';kernelEvent({method:'turn/started',params:{threadId:'thread',turn:{id:'turn',status:'inProgress',items:[]}}});delete active().recoveryState;delete active().recoveryNotice;kernelBusy=true;render();});
 assert.equal(await p.locator('[data-task-stop]').isEnabled(),true);
+await p.evaluate(()=>{EvaHost.resumeBrowser=(thread,turn)=>{calls.push({method:'browser/resume',thread,turn});return true};kernelEvent({method:'android/browserStatus',params:{threadId:'thread',turnId:'turn',paused:true,message:'你已接管网页'}})});
+await p.locator('[data-browser-notice] button').click();
+assert.equal(await p.evaluate(()=>calls.find(x=>x.method==='browser/resume').turn),'turn');
+assert.equal(await p.locator('[data-task-stop]').isEnabled(),true);
+assert.equal(await p.evaluate(()=>calls.some(x=>x.method==='turn/interrupt')),false);
+await p.evaluate(()=>kernelEvent({method:'android/browserStatus',params:{threadId:'thread',turnId:'turn',paused:false,message:'Eva 已恢复网页控制'}}));
+assert.equal(await p.locator('[data-browser-notice] button').count(),0);
+
 await p.locator('#prompt').fill('请先检查结果');await p.locator('[data-action=kernel-steer]').click();await p.waitForFunction(()=>calls.some(c=>c.method==='turn/steer'));
 let call=await p.evaluate(()=>calls.find(c=>c.method==='turn/steer'));assert.equal(call.params.expectedTurnId,'turn');assert.equal(call.params.threadId,'thread');assert.equal(call.params.input[0].text,'请先检查结果');assert.equal(await p.evaluate(()=>data.chats.length),1);
 await p.locator('[data-task-stop]').click();await p.waitForFunction(()=>calls.some(c=>c.method==='turn/interrupt'));assert.equal(await p.evaluate(()=>calls.find(c=>c.method==='turn/interrupt').params.turnId),'turn');
@@ -14,5 +22,7 @@ await p.evaluate(()=>{active().running=true;active().kernelThread.turns=[{id:'ne
 // Stop before turn ID exists stays clickable and cancels the pending send.
 await p.evaluate(()=>{active().kernelThread.turns=[];active().running=true;kernelBusy=true;render();});await p.locator('[data-task-stop]').click();assert.equal(await p.evaluate(()=>window.taskStopBeforeStart(active())),true);
 await p.evaluate(()=>{kernelBusy=false;active().running=true;active().kernelThread.turns=[{id:'stale',status:'inProgress',items:[]}];EvaHost.kernelCall=(ticket,method,json)=>{calls.push({method,params:JSON.parse(json)});events.push(method==='turn/interrupt'?{ticket,error:'thread not found'}:{ticket,result:method==='thread/turns/list'?{data:[{id:'stale',status:'interrupted',items:[]}],nextCursor:null}:{thread:{id:'thread',status:{type:'notLoaded'},turns:[{id:'stale',status:'interrupted',items:[]}]}}});};render();});await p.locator('[data-task-stop]').click();await p.waitForFunction(()=>active().running===false);assert.equal(await p.evaluate(()=>active().kernelThread.turns[0].status),'interrupted');assert.equal(await p.locator('[data-task-stop]').count(),0);
+await p.evaluate(()=>{kernelEvent({method:'turn/started',params:{threadId:'thread',turn:{id:'browser-check',status:'inProgress',items:[]}}});kernelEvent({method:'turn/completed',params:{threadId:'thread',turn:{id:'browser-check',status:'completed',items:[{id:'read',type:'dynamicToolCall',tool:'browser_cdp',status:'failed',success:false}]}}});});
+assert.match(await p.locator('[data-browser-notice]').innerText(),/未收到最终答复/);
 console.log('PASS stale running flag reconciliation; stop during send; steer same active turn; stop completion; rejected steer restores draft; early stop cancellation');
 }finally{await b.close();}})().catch(e=>{console.error(e);process.exitCode=1;});

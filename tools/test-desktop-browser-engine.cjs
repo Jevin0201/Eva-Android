@@ -4,7 +4,7 @@ const fs=require('node:fs'),readline=require('node:readline'),assert=require('no
 const endpoint=process.argv[2];if(!endpoint)throw Error('Pass forwarded private host endpoint');
 const root=fs.mkdtempSync(require('node:path').resolve(process.env.EVA_BROWSER_TEST_ROOT||'artifacts/desktop-browser-20261108/test-'));
 const worker=spawn(process.execPath,[process.env.EVA_BROWSER_WORKER||'probe/assets/desktop-browser/android-worker.mjs',endpoint],{env:{...process.env,EVA_BROWSER_ROOT:root}});worker.stderr.pipe(process.stderr);
-const pending=new Map();let n=0;readline.createInterface({input:worker.stdout}).on('line',line=>{const r=JSON.parse(line),p=pending.get(r.id);if(p){pending.delete(r.id);r.error?p.reject(Error(r.error)):p.resolve(r.result);}});
+const pending=new Map();let n=0;readline.createInterface({input:worker.stdout}).on('line',line=>{const r=JSON.parse(line),p=pending.get(r.id);if(r.stage)return;if(p){pending.delete(r.id);r.error?p.reject(Error(r.error)):p.resolve(r.result);}});
 const call=(tool,args={})=>new Promise((resolve,reject)=>{const id=String(++n);const timer=setTimeout(()=>reject(Error(tool+' timed out')),65000);pending.set(id,{resolve:r=>{clearTimeout(timer);console.log('PASS',tool,JSON.stringify(r).slice(0,180));resolve(r)},reject:e=>{clearTimeout(timer);reject(e)}});worker.stdin.write(JSON.stringify({id,session:'isolated-browser-check',tool,args})+'\n');});
 (async()=>{try{
  const tabs=await call('browser_tabs');assert(tabs.tabs.length);

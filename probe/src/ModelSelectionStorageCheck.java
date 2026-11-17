@@ -48,6 +48,11 @@ public final class ModelSelectionStorageCheck extends Instrumentation {
             JSONObject state = new JSONObject().put("chats", new JSONArray().put(chat))
                 .put("drafts", new JSONArray().put(draft)).put("active", "chat");
             UiStateStore.save(context, state.toString());
+            long loadStart=android.os.SystemClock.elapsedRealtime();
+            JSONObject fast=new JSONObject(UiStateStore.load(context));
+            result.putLong("unselectedLoadMs",android.os.SystemClock.elapsedRealtime()-loadStart);
+            check(fast.getJSONArray("chats").toString().equals(state.getJSONArray("chats").toString()),"fast path preserves complete history");
+            check(fast.getJSONArray("drafts").toString().equals(state.getJSONArray("drafts").toString()),"fast path preserves drafts");
             String digests = snapshotDigests(context);
             check(UiStateStore.modelSelection(context, selection("chat", "chosen"), UiStateStore.nextOperation()), "chat selection saved");
             check(snapshotDigests(context).equals(digests), "selection never rewrites snapshot/history chunks");
@@ -85,6 +90,13 @@ public final class ModelSelectionStorageCheck extends Instrumentation {
             try { UiStateStore.modelSelection(context, "{selection:{providerId:fixture,model:fixture}}", UiStateStore.nextOperation()); }
             catch (Exception expected) { rejected = true; }
             check(rejected, "missing scope rejected");
+            UiStateStore.save(context,new JSONObject().put("chats",new JSONArray()).put("drafts",new JSONArray()).toString());
+            JSONObject empty=new JSONObject(UiStateStore.load(context));
+            check(empty.getJSONArray("chats").length()==0&&empty.getJSONArray("drafts").length()==0,"empty metadata has valid JSON");
+            UiStateStore.save(context,state.toString());
+            try(SQLiteDatabase db=UiStateStore.open(context)){db.execSQL("UPDATE chunks SET body=X'00' WHERE key LIKE 'chats:%' AND ordinal=0");}
+            boolean corrupt=false;try{UiStateStore.load(context);}catch(IllegalStateException expected){corrupt=true;}
+            check(corrupt,"fast path still rejects corrupted history chunks");
             result.putString("stream", "PASS model selection storage " + checks + " checks\n");
         } catch (Throwable error) {
             result.putString("stream", "FAIL model selection storage " + error + "\n");
